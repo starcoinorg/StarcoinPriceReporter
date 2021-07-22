@@ -1,6 +1,8 @@
 package org.starcoin.stcpricereporter.taskservice;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -10,17 +12,20 @@ import java.util.Arrays;
 
 @Component
 public class CoinExTaskService {
+    private Logger LOG = LoggerFactory.getLogger(CoinExTaskService.class);
 
     @Autowired
     private RestTemplate restTemplate;
 
-    @Scheduled(fixedDelay = 10000)
+    @Scheduled(fixedDelay = 5000)
     public void task() {
 //        System.out.println("Thread Name : "
 //                + Thread.currentThread().getName() + "  i am a task : date ->  "
 //                + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
-        LatestTransactionsDataResponse latestTransactionsDataResponse = restTemplate.getForObject("https://api.coinex.com/v1/market/deals?market=STCUSDT", LatestTransactionsDataResponse.class);
+        String url = "https://api.coinex.com/v1/market/deals?market=STCUSDT&limit=1";
+        LatestTransactionsDataResponse latestTransactionsDataResponse = restTemplate.getForObject(url, LatestTransactionsDataResponse.class);
         System.out.println(latestTransactionsDataResponse);
+        //todo
 
     }
 

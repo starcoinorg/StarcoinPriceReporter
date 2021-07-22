@@ -7,31 +7,57 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
+import org.starcoin.stcpricereporter.utils.DateTimeUtils;
 
+import java.math.BigDecimal;
 import java.util.Arrays;
 
 @Component
 public class CoinExTaskService {
     private Logger LOG = LoggerFactory.getLogger(CoinExTaskService.class);
 
+    public static final String STC_USDT_TOKEN_PAIR = "STCUSDT";
+
+    private static final String GET_DEALS_URL_FORMAT = "https://api.coinex.com/v1/market/deals?market=%1$s&limit=1";
+
     @Autowired
     private RestTemplate restTemplate;
 
-    @Scheduled(fixedDelay = 5000)
+    @Scheduled(cron = "${starcoin.stc-price-reporter.coinex-task-cron}")
     public void task() {
 //        System.out.println("Thread Name : "
 //                + Thread.currentThread().getName() + "  i am a task : date ->  "
 //                + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
-        String url = "https://api.coinex.com/v1/market/deals?market=STCUSDT&limit=1";
+        String url = String.format(GET_DEALS_URL_FORMAT, STC_USDT_TOKEN_PAIR);
         LatestTransactionsDataResponse latestTransactionsDataResponse = restTemplate.getForObject(url, LatestTransactionsDataResponse.class);
+
+        if (!LatestTransactionsDataResponse.MESSAGE_OK.equals(latestTransactionsDataResponse.message)) {
+            LOG.error("Message is not OK.", latestTransactionsDataResponse);
+            return;
+        }
+        if (latestTransactionsDataResponse.data.length != 1) {
+            LOG.error("latestTransactionsDataResponse.data.length != 1");
+            return;
+        }
+        System.out.println("-------- get latest transactions from CoinEx ---------");
         System.out.println(latestTransactionsDataResponse);
+        String price = latestTransactionsDataResponse.data[0].price;
+        BigDecimal decimalPrice = new BigDecimal(price);
+        System.out.println(decimalPrice);
+        long dateInMilliseconds = latestTransactionsDataResponse.data[0].dateInMilliseconds;
+        System.out.println(DateTimeUtils.toDefaultZonedDateTime(dateInMilliseconds));
         //todo
 
     }
 
     public static class LatestTransactionsDataResponse {
+
+        public static final String MESSAGE_OK = "OK";
+
         private String code;
+
         private LatestTransactionData[] data;
+
         private String message;
 
         public String getCode() {

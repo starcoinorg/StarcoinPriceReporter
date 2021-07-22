@@ -12,19 +12,23 @@ import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import static org.starcoin.stcpricereporter.utils.DateTimeUtils.getDefaultZonedDateTime;
+import static org.starcoin.stcpricereporter.utils.DateTimeUtils.toDefaultZonedDateTime;
 
 @Component
 public class BixinTaskService {
     private Logger LOG = LoggerFactory.getLogger(BixinTaskService.class);
 
+    public static final String STC_USDT_TOKEN_PAIR = "STC_USDT";
+
+    private static final String GET_TICKS_URL_FORMAT = "https://uniapi.876ex.com/v1/market/ticks/%1$s?limit=1";
+
     @Autowired
     private RestTemplate restTemplate;
 
-    @Scheduled(fixedDelay = 1000)
+    @Scheduled(cron = "${starcoin.stc-price-reporter.bixin-task-cron}")
     public void task() {
 
-        String url = "https://uniapi.876ex.com/v1/market/ticks/STC_USDT?limit=1";
+        String url = String.format(GET_TICKS_URL_FORMAT, STC_USDT_TOKEN_PAIR);
 
         GetTicksResponse getTicksResponse = restTemplate.getForObject(url, GetTicksResponse.class);
         System.out.println("------------ GET Ticks from Bixin -------------");
@@ -48,7 +52,7 @@ public class BixinTaskService {
         Long dateInMillis = decimals.get(GetTicksResponse.TicksResult.TICK_DATE_IN_MILLISECONDS_INDEX).longValue();
         BigDecimal price = decimals.get(GetTicksResponse.TicksResult.TICK_PRICE_INDEX);
         System.out.println(dateInMillis);
-        ZonedDateTime zdt = getDefaultZonedDateTime(dateInMillis);
+        ZonedDateTime zdt = toDefaultZonedDateTime(dateInMillis);
         System.out.println(zdt);
         System.out.println(price);
         //todo

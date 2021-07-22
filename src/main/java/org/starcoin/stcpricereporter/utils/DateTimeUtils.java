@@ -6,7 +6,7 @@ import java.time.ZonedDateTime;
 
 public class DateTimeUtils {
 
-    public static ZonedDateTime getDefaultZonedDateTime(Long dateInMillis) {
+    public static ZonedDateTime toDefaultZonedDateTime(Long dateInMillis) {
         return ZonedDateTime.ofInstant(Instant.ofEpochMilli(dateInMillis),
                 ZoneId.systemDefault());
     }

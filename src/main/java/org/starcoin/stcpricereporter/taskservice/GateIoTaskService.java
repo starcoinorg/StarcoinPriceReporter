@@ -9,37 +9,53 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+import org.starcoin.stcpricereporter.utils.DateTimeUtils;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Component
 public class GateIoTaskService {
     private Logger LOG = LoggerFactory.getLogger(GateIoTaskService.class);
 
-    @Scheduled(fixedDelay = 5000)
+    public static final String STC_USDT_TOKEN_PAIR = "STC_USDT";
+
+    @Scheduled(cron = "${starcoin.stc-price-reporter.gateio-task-cron}")
     public void task() {
         ApiClient apiClient = Configuration.getDefaultApiClient();
         //defaultClient.setBasePath("https://api.gateio.ws/api/v4");
 
-        String currencyPair = "STC_USDT";
         SpotApi spotApi = new SpotApi(apiClient);
 //        CurrencyPair pair = spotApi.getCurrencyPair(currencyPair);
 //        System.out.println("testing against currency pair: " + currencyPair);
 //        String minAmount = pair.getMinQuoteAmount();
 
+        long dateTimeInMillis = System.currentTimeMillis();
         // get last price
         List<Ticker> tickers;
         try {
-            tickers = spotApi.listTickers().currencyPair(currencyPair).execute();
+            tickers = spotApi.listTickers().currencyPair(STC_USDT_TOKEN_PAIR).execute();
         } catch (ApiException e) {
            LOG.error("Gate.io ApiException", e);
            return;
         }
-        assert tickers.size() == 1;
+        //assert tickers.size() == 1;
+        if (!(tickers.size() == 1)) {
+            LOG.error("!(tickers.size() == 1)");
+            return;
+        }
         String lastPrice = tickers.get(0).getLast();
-        assert lastPrice != null;
+        //assert lastPrice != null;
+        if (lastPrice == null) {
+            LOG.error("lastPrice == null");
+            return;
+        }
+        System.out.println("------------ Get spot tickers from Gate.io -------------");
         System.out.println(tickers);
-        System.out.println(lastPrice);
+        //System.out.println(lastPrice);
+        BigDecimal decimalPrice = new BigDecimal(lastPrice);
+        System.out.println(decimalPrice);
+        System.out.println(DateTimeUtils.toDefaultZonedDateTime(dateTimeInMillis));
         //todo
     }
 

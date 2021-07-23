@@ -43,8 +43,8 @@ public class DevNetworkInteractApp {
 //                .expect("\"ok\":", 10)
 //                .sendLine("account import -i " + secondPrivateKey)
 //                .expect("\"ok\":", 10)
-                .sendLine("account default 0x07fa08a855753f0ff7292fdcbe871216")
-                .expect("\"ok\":", 10)
+//                .sendLine("account default 0x07fa08a855753f0ff7292fdcbe871216")
+//                .expect("\"ok\":", 10)
                 .sendLine("account unlock 0x07fa08a855753f0ff7292fdcbe871216")
                 .expect("\"ok\":", 10)
                 .sendLine("account unlock 0xff2794187d72cc3a9240198ca98ac7b6")
@@ -68,6 +68,20 @@ public class DevNetworkInteractApp {
                         "--function 0x07fa08a855753f0ff7292fdcbe871216::PriceOracleScripts::register_oracle " +
                         "-t 0x07fa08a855753f0ff7292fdcbe871216::STCUSDT::STCUSDT " +
                         "--arg 8u8 " +
+                        "-b")
+                .expect("\"ok\":", 10)
+
+                .sendLine("account execute-function -s 0x07fa08a855753f0ff7292fdcbe871216 " +
+                        "--function 0x07fa08a855753f0ff7292fdcbe871216::PriceOracleScripts::init_data_source " +
+                        "-t 0x07fa08a855753f0ff7292fdcbe871216::STCUSDT::STCUSDT " +
+                        "--arg 10000000u128 " +
+                        "-b")
+                .expect("\"ok\":", 10)
+
+                .sendLine("account execute-function -s 0x07fa08a855753f0ff7292fdcbe871216 " +
+                        "--function 0x07fa08a855753f0ff7292fdcbe871216::PriceOracleScripts::update " +
+                        "-t 0x07fa08a855753f0ff7292fdcbe871216::STCUSDT::STCUSDT " +
+                        "--arg 10000000u128 " +
                         "-b")
                 .expect("\"ok\":", 10)
         ;

@@ -5,7 +5,7 @@ module Oracle {
     use 0x1::Timestamp;
     use 0x1::Signer;
     use 0x1::Vector;
-    use 0x1::CoreAddresses;
+    //use 0x1::CoreAddresses;
     use 0x1::Errors;
 
     struct OracleInfo<OracleT: copy + store + drop, Info: copy + store + drop> has key {
@@ -49,6 +49,11 @@ module Oracle {
     const ERR_NO_UPDATE_CAPABILITY: u64 = 101;
     const ERR_NO_DATA_SOURCE: u64 = 102;
 
+    fun oracle_address(): address {
+        @0x07fa08a855753f0ff7292fdcbe871216
+        // 0x1
+    }
+
     /// Register `OracleT` as an oracle type.
     public fun register_oracle<OracleT: copy + store + drop, Info: copy + store + drop>(signer: &signer, info: Info) {
         //TODO implement a global register by contact account.
@@ -61,18 +66,18 @@ module Oracle {
 
     /// Get the `OracleT` oracle's counter, the counter represent how many `OracleT` datasources
     public fun get_oracle_counter<OracleT: copy + store + drop, Info: copy + store + drop>(): u64  acquires OracleInfo {
-        let oracle_info = borrow_global_mut<OracleInfo<OracleT, Info>>(CoreAddresses::GENESIS_ADDRESS());
+        let oracle_info = borrow_global_mut<OracleInfo<OracleT, Info>>(oracle_address());//CoreAddresses::GENESIS_ADDRESS());
         oracle_info.counter
     }
 
     public fun get_oracle_info<OracleT: copy + store + drop, Info: copy + store + drop>(): Info  acquires OracleInfo {
-        let oracle_info = borrow_global_mut<OracleInfo<OracleT, Info>>(CoreAddresses::GENESIS_ADDRESS());
+        let oracle_info = borrow_global_mut<OracleInfo<OracleT, Info>>(oracle_address());//CoreAddresses::GENESIS_ADDRESS());
         *&oracle_info.info
     }
 
     /// Init a data source for type `OracleT`
     public fun init_data_source<OracleT: copy + store + drop, Info: copy + store + drop, ValueT: copy + store + drop>(signer: &signer, init_value: ValueT) acquires OracleInfo {
-        let oracle_info = borrow_global_mut<OracleInfo<OracleT, Info>>(CoreAddresses::GENESIS_ADDRESS());
+        let oracle_info = borrow_global_mut<OracleInfo<OracleT, Info>>(oracle_address());//CoreAddresses::GENESIS_ADDRESS());
         let now = Timestamp::now_milliseconds();
         move_to(signer, OracleFeed<OracleT, ValueT> {
             record: DataRecord<ValueT> {
@@ -200,20 +205,20 @@ module PriceOracle {
     }
 }
 
-module STCUSDOracle {
-    use 0x07fa08a855753f0ff7292fdcbe871216::PriceOracle;
-
-    /// The STC to USD price oracle
-    struct STCUSD has copy, store, drop {}
-
-    public fun register(signer: &signer) {
-        PriceOracle::register_oracle<STCUSD>(signer, 6);
-    }
-
-    public fun read(addr: address): u128 {
-        PriceOracle::read<STCUSD>(addr)
-    }
-}
+//module STCUSDOracle {
+//    use 0x07fa08a855753f0ff7292fdcbe871216::PriceOracle;
+//
+//    /// The STC to USD price oracle
+//    struct STCUSD has copy, store, drop {}
+//
+//    public fun register(signer: &signer) {
+//        PriceOracle::register_oracle<STCUSD>(signer, 6);
+//    }
+//
+//    public fun read(addr: address): u128 {
+//        PriceOracle::read<STCUSD>(addr)
+//    }
+//}
 
 module PriceOracleScripts {
     use 0x07fa08a855753f0ff7292fdcbe871216::PriceOracle;

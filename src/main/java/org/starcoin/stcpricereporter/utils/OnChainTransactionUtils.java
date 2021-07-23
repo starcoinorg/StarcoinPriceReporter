@@ -19,13 +19,15 @@ public class OnChainTransactionUtils {
      *  }
      */
     public static TransactionPayload encodePriceOracleUpdateScriptFunction(TypeTag oracleType,
-                                                                      @Unsigned @Int128 BigInteger price) {
+                                                                           @Unsigned @Int128 BigInteger price,
+                                                                           String oracleScriptsAddress) {
         ScriptFunction.Builder script_function_builder = new ScriptFunction.Builder();
         script_function_builder.ty_args = Arrays.asList(oracleType);
         script_function_builder.args = Arrays.asList(encode_u128_argument(price));
         script_function_builder.function = new Identifier("update");
-        script_function_builder.module = new ModuleId(AccountAddress.valueOf(
-                CommonUtils.hexToByteArray("0x07fa08a855753f0ff7292fdcbe871216")),
+
+        script_function_builder.module = new ModuleId(AccountAddress.valueOf(//todo
+                CommonUtils.hexToByteArray(oracleScriptsAddress)),
                 new Identifier("PriceOracleScripts"));
 
         TransactionPayload.ScriptFunction.Builder builder = new TransactionPayload.ScriptFunction.Builder();

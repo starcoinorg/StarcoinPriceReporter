@@ -1,5 +1,7 @@
 package org.starcoin.stcpricereporter;
 
+import org.starcoin.stcpricereporter.taskservice.OnChainManager;
+
 import java.io.File;
 import java.io.IOException;
 
@@ -67,7 +69,7 @@ public class DevNetworkInteractApp {
                 .sendLine("account execute-function -s 0x07fa08a855753f0ff7292fdcbe871216 " +
                         "--function 0x07fa08a855753f0ff7292fdcbe871216::PriceOracleScripts::register_oracle " +
                         "-t 0x07fa08a855753f0ff7292fdcbe871216::STCUSDT::STCUSDT " +
-                        "--arg 8u8 " +
+                        String.format("--arg %1$su8 ", OnChainManager.PRICE_PRECISION) +
                         "-b")
                 .expect("\"ok\":", 10)
 

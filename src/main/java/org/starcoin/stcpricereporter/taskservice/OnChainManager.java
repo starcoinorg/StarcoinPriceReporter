@@ -32,6 +32,8 @@ public class OnChainManager {
     @Value("${starcoin.chain-id}")
     private Integer starcoinChainId;
 
+    private String oracleScriptsAddressHex = "0x07fa08a855753f0ff7292fdcbe871216";
+
     public void reportOnChain(BigDecimal decimalPrice) {
         TypeObj oracleTypeObject = TypeObj.builder()
                 .moduleName("STCUSDT")
@@ -44,7 +46,7 @@ public class OnChainManager {
         final StarcoinClient starcoinClient = new StarcoinClient(starcoinFeedUrl, starcoinChainId);
 
         TransactionPayload transactionPayload = OnChainTransactionUtils.encodePriceOracleUpdateScriptFunction(oracleTypeTag,
-                decimalPrice.multiply(BigDecimal.TEN.pow(PRICE_PRECISION)).toBigInteger());
+                decimalPrice.multiply(BigDecimal.TEN.pow(PRICE_PRECISION)).toBigInteger(), oracleScriptsAddressHex);
         starcoinClient.submitTransaction(senderAddress, senderPrivateKey, transactionPayload);
     }
 
@@ -78,5 +80,13 @@ public class OnChainManager {
 
     public void setStarcoinChainId(Integer starcoinChainId) {
         this.starcoinChainId = starcoinChainId;
+    }
+
+    public String getOracleScriptsAddressHex() {
+        return oracleScriptsAddressHex;
+    }
+
+    public void setOracleScriptsAddressHex(String oracleScriptsAddressHex) {
+        this.oracleScriptsAddressHex = oracleScriptsAddressHex;
     }
 }

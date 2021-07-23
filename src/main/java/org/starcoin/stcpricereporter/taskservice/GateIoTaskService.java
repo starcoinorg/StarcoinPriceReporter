@@ -7,9 +7,9 @@ import io.gate.gateapi.api.SpotApi;
 import io.gate.gateapi.models.Ticker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
-import org.starcoin.stcpricereporter.utils.DateTimeUtils;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -19,6 +19,9 @@ public class GateIoTaskService {
     private Logger LOG = LoggerFactory.getLogger(GateIoTaskService.class);
 
     public static final String STC_USDT_TOKEN_PAIR = "STC_USDT";
+
+    @Autowired
+    private OnChainManager onChainManager;
 
     @Scheduled(cron = "${starcoin.stc-price-reporter.gateio-task-cron}")
     public void task() {
@@ -44,19 +47,21 @@ public class GateIoTaskService {
             LOG.error("!(tickers.size() == 1)");
             return;
         }
-        String lastPrice = tickers.get(0).getLast();
+        String lastPriceString = tickers.get(0).getLast();
         //assert lastPrice != null;
-        if (lastPrice == null) {
+        if (lastPriceString == null) {
             LOG.error("lastPrice == null");
             return;
         }
-        System.out.println("------------ Get spot tickers from Gate.io -------------");
-        System.out.println(tickers);
+        //System.out.println("------------ Get spot tickers from Gate.io -------------");
+        //System.out.println(tickers);
         //System.out.println(lastPrice);
-        BigDecimal decimalPrice = new BigDecimal(lastPrice);
-        System.out.println(decimalPrice);
-        System.out.println(DateTimeUtils.toDefaultZonedDateTime(dateTimeInMillis));
-        //todo
+        BigDecimal price = new BigDecimal(lastPriceString);
+        //System.out.println(decimalPrice);
+        //System.out.println(DateTimeUtils.toDefaultZonedDateTime(dateTimeInMillis));
+
+        onChainManager.reportOnChain(price);
+
     }
 
 }

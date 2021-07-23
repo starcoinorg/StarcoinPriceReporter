@@ -8,7 +8,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
 import java.math.BigDecimal;
-import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -24,6 +23,9 @@ public class BixinTaskService {
 
     @Autowired
     private RestTemplate restTemplate;
+
+    @Autowired
+    OnChainManager onChainManager;
 
     @Scheduled(cron = "${starcoin.stc-price-reporter.bixin-task-cron}")
     public void task() {
@@ -51,11 +53,13 @@ public class BixinTaskService {
         GetTicksResponse.DecimalList decimals = getTicksResponse.getResults()[0].data[0];
         Long dateInMillis = decimals.get(GetTicksResponse.TicksResult.TICK_DATE_IN_MILLISECONDS_INDEX).longValue();
         BigDecimal price = decimals.get(GetTicksResponse.TicksResult.TICK_PRICE_INDEX);
-        System.out.println(dateInMillis);
-        ZonedDateTime zdt = toDefaultZonedDateTime(dateInMillis);
-        System.out.println(zdt);
-        System.out.println(price);
-        //todo
+        //System.out.println(dateInMillis);
+        //ZonedDateTime zdt = toDefaultZonedDateTime(dateInMillis);
+        //System.out.println(zdt);
+        //System.out.println(price);
+
+        onChainManager.reportOnChain(price);
+
     }
 
 

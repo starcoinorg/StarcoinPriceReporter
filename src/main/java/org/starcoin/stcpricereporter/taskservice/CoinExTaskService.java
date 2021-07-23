@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
-import org.starcoin.stcpricereporter.utils.DateTimeUtils;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
@@ -22,6 +21,9 @@ public class CoinExTaskService {
 
     @Autowired
     private RestTemplate restTemplate;
+
+    @Autowired
+    OnChainManager onChainManager;
 
     @Scheduled(cron = "${starcoin.stc-price-reporter.coinex-task-cron}")
     public void task() {
@@ -39,14 +41,15 @@ public class CoinExTaskService {
             LOG.error("latestTransactionsDataResponse.data.length != 1");
             return;
         }
-        System.out.println("-------- get latest transactions from CoinEx ---------");
-        System.out.println(latestTransactionsDataResponse);
-        String price = latestTransactionsDataResponse.data[0].price;
-        BigDecimal decimalPrice = new BigDecimal(price);
-        System.out.println(decimalPrice);
+        //System.out.println("-------- get latest transactions from CoinEx ---------");
+        //System.out.println(latestTransactionsDataResponse);
+        String priceString = latestTransactionsDataResponse.data[0].price;
+        BigDecimal price = new BigDecimal(priceString);
+        //System.out.println(price);
         long dateInMilliseconds = latestTransactionsDataResponse.data[0].dateInMilliseconds;
-        System.out.println(DateTimeUtils.toDefaultZonedDateTime(dateInMilliseconds));
-        //todo
+        //System.out.println(DateTimeUtils.toDefaultZonedDateTime(dateInMilliseconds));
+
+        onChainManager.reportOnChain(price);
 
     }
 

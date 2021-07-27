@@ -74,7 +74,7 @@
 				<version>4.8.2</version>
 				<configuration>
 					<packageName>org.starcoin.stcpricereporter.model</packageName>
-					<sourceDestination>src/main/java/generated</sourceDestination>
+<!--					<sourceDestination>src/generated/java</sourceDestination>-->
 					<nativeJavaType>true</nativeJavaType>
 					<outputFormat>java,bin</outputFormat>
 					<soliditySourceFiles>
@@ -84,9 +84,9 @@
 						</includes>
 					</soliditySourceFiles>
 					<outputDirectory>
-						<java>src/java/generated</java>
-						<bin>src/bin/generated</bin>
-						<abi>src/abi/generated</abi>
+						<java>src/generated/java</java>
+						<bin>src/generated/bin</bin>
+						<abi>src/generated/abi</abi>
 					</outputDirectory>
 					<contract>
 <!--						<includes>-->
@@ -124,7 +124,7 @@
 						</goals>
 						<configuration>
 							<sources>
-								<source>${basedir}/src/java/generated</source>
+								<source>${basedir}/src/generated/java</source>
 							</sources>
 						</configuration>
 					</execution>

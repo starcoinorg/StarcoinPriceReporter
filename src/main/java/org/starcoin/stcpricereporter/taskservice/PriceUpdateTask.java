@@ -11,16 +11,26 @@ import org.web3j.tx.gas.DefaultGasProvider;
 
 import java.math.BigInteger;
 
-@Component
-public class TestTaskService {
+//@Component
+public class PriceUpdateTask implements Runnable {
+    private static final Credentials NO_CREDENTIALS = Credentials.create("0x99");
 
-    @Scheduled(fixedDelay = 5000)
-    public void task() {
-        Web3j web3 = Web3j.build(new HttpService("https://mainnet.infura.io/v3/72637bfa15a940dcadcec25a6fe0fca1"));
+    private String ethereumHttpServiceUrl;
+    private String contractAddress;//= "0x5f4eC3Df9cbd43714FE2740f5E3616155c5b8419";
+    private String tokenPairName;
+
+    public PriceUpdateTask(String ethereumHttpServiceUrl, String tokenPairName, String contractAddress) {
+        this.ethereumHttpServiceUrl = ethereumHttpServiceUrl;
+        this.tokenPairName = tokenPairName;
+        this.contractAddress = contractAddress;
+    }
+
+    //@Scheduled(fixedDelay = 5000)
+    @Override
+    public void run() {
+        Web3j web3 = Web3j.build(new HttpService(ethereumHttpServiceUrl));
         DefaultGasProvider defaultGasProvider = new DefaultGasProvider();
-        Credentials credentials = Credentials.create("0x99");
-        String contractAddress = "0x5f4eC3Df9cbd43714FE2740f5E3616155c5b8419";
-        AggregatorV3Interface aggregatorV3Interface = AggregatorV3Interface.load(contractAddress, web3, credentials, defaultGasProvider);
+        AggregatorV3Interface aggregatorV3Interface = AggregatorV3Interface.load(contractAddress, web3, NO_CREDENTIALS, defaultGasProvider);
         BigInteger decimals;
         try {
             decimals = aggregatorV3Interface.decimals().send();
@@ -37,7 +47,7 @@ public class TestTaskService {
             BigInteger timeStamp = s.component4();
             BigInteger answeredInRound = s.component5();
             BigInteger[] prices = price.divideAndRemainder(BigInteger.TEN.pow(decimals.intValue()));
-            System.out.println("price:" + prices[0] + "." + prices[1]);
+            System.out.println(tokenPairName + ", price:" + prices[0] + "." + prices[1]);
             System.out.println(DateTimeUtils.toDefaultZonedDateTime(timeStamp.longValue() * 1000));
         });
     }

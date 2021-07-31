@@ -2,8 +2,10 @@ package org.starcoin.stcpricereporter;
 
 import org.starcoin.stcpricereporter.taskservice.OnChainManager;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.List;
 
 public class DevNetworkInteractApp {
 
@@ -38,6 +40,7 @@ public class DevNetworkInteractApp {
             throw new NullPointerException();
         }
 
+
         CommandLineInteractor commandLineInteractor = new CommandLineInteractor(process);
         commandLineInteractor.expect("Start console,", 10)
                  //导入账户，部署合约
@@ -63,6 +66,8 @@ public class DevNetworkInteractApp {
                 .expect("\"ok\":", 10)
                 .sendLine("dev deploy storage/0x07fa08a855753f0ff7292fdcbe871216/modules/PriceOracleScripts.mv -b")
                 .expect("\"ok\":", 10)
+
+                // /////////////////////////////////////////////
                 .sendLine("dev deploy storage/0x07fa08a855753f0ff7292fdcbe871216/modules/STCUSDT.mv -b")
                 .expect("\"ok\":", 10)
 
@@ -86,9 +91,30 @@ public class DevNetworkInteractApp {
                         "--arg 10000000u128 " +
                         "-b")
                 .expect("\"ok\":", 10)
+                // /////////////////////////////////////////////
         ;
 
 
+        // /////////////////////////////////////////////
+        String deployFilePath = "src/test/resources/ConsoleDeployPairRegisterOracleInitDataSource.txt";
+        List<String> lines = readAllLines(deployFilePath);
+        lines.stream().filter(c -> !c.isEmpty()).forEach( line -> {
+            //System.out.println(line);
+            commandLineInteractor.sendLine(line)
+                    .expect("\"ok\":", 10)
+            ;
+        });
+        // if (true) return;
+        // /////////////////////////////////////////////
+    }
+
+    private static List<String> readAllLines(String filePath) {
+        try {
+            return Files.readAllLines(Paths.get(filePath));
+        } catch (IOException e) {
+            e.printStackTrace();
+            throw new RuntimeException(e);
+        }
     }
 
 }

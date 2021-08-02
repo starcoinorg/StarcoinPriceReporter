@@ -3,7 +3,6 @@ package org.starcoin.stcpricereporter.chainlink;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
-import java.util.Locale;
 
 public class PriceFeedRecord {
     private String pair;

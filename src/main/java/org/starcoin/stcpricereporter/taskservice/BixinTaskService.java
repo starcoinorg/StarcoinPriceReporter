@@ -11,11 +11,11 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import static org.starcoin.stcpricereporter.utils.DateTimeUtils.toDefaultZonedDateTime;
-
 @Component
 public class BixinTaskService {
     private Logger LOG = LoggerFactory.getLogger(BixinTaskService.class);
+
+    public static final String DATASOURCE_KEY = "Bixin";
 
     public static final String STC_USDT_TOKEN_PAIR = "STC_USDT";
 
@@ -23,6 +23,9 @@ public class BixinTaskService {
 
     @Autowired
     private RestTemplate restTemplate;
+
+    @Autowired
+    StcPriceAggregator stcPriceAggregator;
 
     @Autowired
     OnChainManager onChainManager;
@@ -57,6 +60,8 @@ public class BixinTaskService {
         //ZonedDateTime zdt = toDefaultZonedDateTime(dateInMillis);
         //System.out.println(zdt);
         //System.out.println(price);
+
+        stcPriceAggregator.updatePrice(DATASOURCE_KEY, price, dateInMillis / 1000);
 
         onChainManager.reportOnChain(StcUsdtOracleType.INSTANCE, StcUsdtOracleType.toOracleIntegerPrice(price));
 

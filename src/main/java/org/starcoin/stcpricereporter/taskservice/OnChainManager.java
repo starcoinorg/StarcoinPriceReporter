@@ -17,7 +17,7 @@ import java.math.BigInteger;
 @Component
 public class OnChainManager {
 
-    @Value("${starcoin.stc-price-reporter.sender-address}")
+    //@Value("${starcoin.stc-price-reporter.sender-address}")
     private String senderAddressHex = "0x07fa08a855753f0ff7292fdcbe871216";
 
     @Value("${starcoin.stc-price-reporter.sender-private-key}")
@@ -29,8 +29,9 @@ public class OnChainManager {
     @Value("${starcoin.chain-id}")
     private Integer starcoinChainId;
 
-    @Value("${starcoin.stc-price-reporter.oracle-scripts-address}")
-    private String oracleScriptsAddressHex = "0x01";//"0x07fa08a855753f0ff7292fdcbe871216";
+    //@Value("${starcoin.stc-price-reporter.oracle-scripts-address}")
+    private String oracleScriptsAddressHex = "0x00000000000000000000000000000001";
+                                           //"0x07fa08a855753f0ff7292fdcbe871216";
 
     public void reportOnChain(PriceOracleType priceOracleType, BigInteger price) {
         TypeObj oracleTypeObject = TypeObj.builder()

@@ -15,12 +15,17 @@ import java.util.Arrays;
 public class CoinExTaskService {
     private Logger LOG = LoggerFactory.getLogger(CoinExTaskService.class);
 
+    public static final String DATASOURCE_KEY = "CoinEx";
+
     public static final String STC_USDT_TOKEN_PAIR = "STCUSDT";
 
     private static final String GET_DEALS_URL_FORMAT = "https://api.coinex.com/v1/market/deals?market=%1$s&limit=1";
 
     @Autowired
     private RestTemplate restTemplate;
+
+    @Autowired
+    StcPriceAggregator stcPriceAggregator;
 
     @Autowired
     OnChainManager onChainManager;
@@ -41,13 +46,15 @@ public class CoinExTaskService {
             LOG.error("latestTransactionsDataResponse.data.length != 1");
             return;
         }
-        //System.out.println("-------- get latest transactions from CoinEx ---------");
+        System.out.println("-------- get latest transactions from CoinEx ---------");
         //System.out.println(latestTransactionsDataResponse);
         String priceString = latestTransactionsDataResponse.data[0].price;
         BigDecimal price = new BigDecimal(priceString);
         //System.out.println(price);
-        long dateInMilliseconds = latestTransactionsDataResponse.data[0].dateInMilliseconds;
+        //long dateInMilliseconds = latestTransactionsDataResponse.data[0].dateInMilliseconds;
         //System.out.println(DateTimeUtils.toDefaultZonedDateTime(dateInMilliseconds));
+        long dateInSeconds = latestTransactionsDataResponse.data[0].dateInSeconds;
+        stcPriceAggregator.updatePrice(DATASOURCE_KEY, price, dateInSeconds);
 
         onChainManager.reportOnChain(StcUsdtOracleType.INSTANCE, StcUsdtOracleType.toOracleIntegerPrice(price));
 

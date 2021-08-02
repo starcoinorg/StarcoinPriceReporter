@@ -18,7 +18,12 @@ import java.util.List;
 public class GateIoTaskService {
     private Logger LOG = LoggerFactory.getLogger(GateIoTaskService.class);
 
+    public static final String DATASOURCE_KEY = "Gate.io";
+
     public static final String STC_USDT_TOKEN_PAIR = "STC_USDT";
+
+    @Autowired
+    StcPriceAggregator stcPriceAggregator;
 
     @Autowired
     private OnChainManager onChainManager;
@@ -60,6 +65,7 @@ public class GateIoTaskService {
         //System.out.println(decimalPrice);
         //System.out.println(DateTimeUtils.toDefaultZonedDateTime(dateTimeInMillis));
 
+        stcPriceAggregator.updatePrice(DATASOURCE_KEY, price, dateTimeInMillis / 1000);
         onChainManager.reportOnChain(StcUsdtOracleType.INSTANCE, StcUsdtOracleType.toOracleIntegerPrice(price));
 
     }

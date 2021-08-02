@@ -12,15 +12,12 @@ import org.starcoin.utils.AccountAddressUtils;
 import org.starcoin.utils.SignatureUtils;
 import org.starcoin.utils.StarcoinClient;
 
-import java.math.BigDecimal;
+import java.math.BigInteger;
 
 @Component
 public class OnChainManager {
 
-    public static final int PRICE_PRECISION = 8;
-
-    public static final String STC_USDT_ORALCE_TYPE_MODULE_ADDRESS = "0x07fa08a855753f0ff7292fdcbe871216";
-
+    @Value("${starcoin.stc-price-reporter.sender-address}")
     private String senderAddressHex = "0x07fa08a855753f0ff7292fdcbe871216";
 
     @Value("${starcoin.stc-price-reporter.sender-private-key}")
@@ -32,13 +29,14 @@ public class OnChainManager {
     @Value("${starcoin.chain-id}")
     private Integer starcoinChainId;
 
-    private String oracleScriptsAddressHex = "0x07fa08a855753f0ff7292fdcbe871216";
+    @Value("${starcoin.stc-price-reporter.oracle-scripts-address}")
+    private String oracleScriptsAddressHex = "0x01";//"0x07fa08a855753f0ff7292fdcbe871216";
 
-    public void reportOnChain(BigDecimal decimalPrice) {
+    public void reportOnChain(PriceOracleType priceOracleType, BigInteger price) {
         TypeObj oracleTypeObject = TypeObj.builder()
-                .moduleName("STCUSDT")
-                .moduleAddress(STC_USDT_ORALCE_TYPE_MODULE_ADDRESS)
-                .name("STCUSDT").build();
+                .moduleName(priceOracleType.getModuleName())
+                .moduleAddress(priceOracleType.getModuleAddress())
+                .name(priceOracleType.getStructName()).build();
         TypeTag oracleTypeTag = oracleTypeObject.toTypeTag();
 
         final Ed25519PrivateKey senderPrivateKey = SignatureUtils.strToPrivateKey(senderPrivateKeyHex);
@@ -46,7 +44,7 @@ public class OnChainManager {
         final StarcoinClient starcoinClient = new StarcoinClient(starcoinFeedUrl, starcoinChainId);
 
         TransactionPayload transactionPayload = OnChainTransactionUtils.encodePriceOracleUpdateScriptFunction(oracleTypeTag,
-                decimalPrice.multiply(BigDecimal.TEN.pow(PRICE_PRECISION)).toBigInteger(), oracleScriptsAddressHex);
+                price, oracleScriptsAddressHex);
         starcoinClient.submitTransaction(senderAddress, senderPrivateKey, transactionPayload);
     }
 

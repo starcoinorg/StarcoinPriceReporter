@@ -60,7 +60,7 @@ public class GateIoTaskService {
         //System.out.println(decimalPrice);
         //System.out.println(DateTimeUtils.toDefaultZonedDateTime(dateTimeInMillis));
 
-        onChainManager.reportOnChain(price);
+        onChainManager.reportOnChain(StcUsdtOracleType.INSTANCE, StcUsdtOracleType.toOracleIntegerPrice(price));
 
     }
 

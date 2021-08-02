@@ -58,7 +58,7 @@ public class BixinTaskService {
         //System.out.println(zdt);
         //System.out.println(price);
 
-        onChainManager.reportOnChain(price);
+        onChainManager.reportOnChain(StcUsdtOracleType.INSTANCE, StcUsdtOracleType.toOracleIntegerPrice(price));
 
     }
 

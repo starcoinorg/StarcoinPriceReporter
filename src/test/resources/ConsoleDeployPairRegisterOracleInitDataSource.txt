@@ -1,65 +1,65 @@
 
 dev deploy storage/0x07fa08a855753f0ff7292fdcbe871216/modules/AAVE_USD.mv -b
-account execute-function -s 0x07fa08a855753f0ff7292fdcbe871216 --function 0x07fa08a855753f0ff7292fdcbe871216::PriceOracleScripts::register_oracle -t 0x07fa08a855753f0ff7292fdcbe871216::AAVE_USD::AAVE_USD --arg 8u8 -b
-account execute-function -s 0x07fa08a855753f0ff7292fdcbe871216 --function 0x07fa08a855753f0ff7292fdcbe871216::PriceOracleScripts::init_data_source -t 0x07fa08a855753f0ff7292fdcbe871216::AAVE_USD::AAVE_USD --arg 1000000000u128 -b
+account execute-function -s 0x07fa08a855753f0ff7292fdcbe871216 --function 0x01::PriceOracleScripts::register_oracle -t 0x07fa08a855753f0ff7292fdcbe871216::AAVE_USD::AAVE_USD --arg 8u8 -b
+account execute-function -s 0x07fa08a855753f0ff7292fdcbe871216 --function 0x01::PriceOracleScripts::init_data_source -t 0x07fa08a855753f0ff7292fdcbe871216::AAVE_USD::AAVE_USD --arg 1000000000u128 -b
 
 dev deploy storage/0x07fa08a855753f0ff7292fdcbe871216/modules/BAT_USD.mv -b
-account execute-function -s 0x07fa08a855753f0ff7292fdcbe871216 --function 0x07fa08a855753f0ff7292fdcbe871216::PriceOracleScripts::register_oracle -t 0x07fa08a855753f0ff7292fdcbe871216::BAT_USD::BAT_USD --arg 8u8 -b
-account execute-function -s 0x07fa08a855753f0ff7292fdcbe871216 --function 0x07fa08a855753f0ff7292fdcbe871216::PriceOracleScripts::init_data_source -t 0x07fa08a855753f0ff7292fdcbe871216::BAT_USD::BAT_USD --arg 1000000000u128 -b
+account execute-function -s 0x07fa08a855753f0ff7292fdcbe871216 --function 0x01::PriceOracleScripts::register_oracle -t 0x07fa08a855753f0ff7292fdcbe871216::BAT_USD::BAT_USD --arg 8u8 -b
+account execute-function -s 0x07fa08a855753f0ff7292fdcbe871216 --function 0x01::PriceOracleScripts::init_data_source -t 0x07fa08a855753f0ff7292fdcbe871216::BAT_USD::BAT_USD --arg 1000000000u128 -b
 
 dev deploy storage/0x07fa08a855753f0ff7292fdcbe871216/modules/BTC_USD.mv -b
-account execute-function -s 0x07fa08a855753f0ff7292fdcbe871216 --function 0x07fa08a855753f0ff7292fdcbe871216::PriceOracleScripts::register_oracle -t 0x07fa08a855753f0ff7292fdcbe871216::BTC_USD::BTC_USD --arg 8u8 -b
-account execute-function -s 0x07fa08a855753f0ff7292fdcbe871216 --function 0x07fa08a855753f0ff7292fdcbe871216::PriceOracleScripts::init_data_source -t 0x07fa08a855753f0ff7292fdcbe871216::BTC_USD::BTC_USD --arg 1000000000u128 -b
+account execute-function -s 0x07fa08a855753f0ff7292fdcbe871216 --function 0x01::PriceOracleScripts::register_oracle -t 0x07fa08a855753f0ff7292fdcbe871216::BTC_USD::BTC_USD --arg 8u8 -b
+account execute-function -s 0x07fa08a855753f0ff7292fdcbe871216 --function 0x01::PriceOracleScripts::init_data_source -t 0x07fa08a855753f0ff7292fdcbe871216::BTC_USD::BTC_USD --arg 1000000000u128 -b
 
 dev deploy storage/0x07fa08a855753f0ff7292fdcbe871216/modules/COMP_USD.mv -b
-account execute-function -s 0x07fa08a855753f0ff7292fdcbe871216 --function 0x07fa08a855753f0ff7292fdcbe871216::PriceOracleScripts::register_oracle -t 0x07fa08a855753f0ff7292fdcbe871216::COMP_USD::COMP_USD --arg 8u8 -b
-account execute-function -s 0x07fa08a855753f0ff7292fdcbe871216 --function 0x07fa08a855753f0ff7292fdcbe871216::PriceOracleScripts::init_data_source -t 0x07fa08a855753f0ff7292fdcbe871216::COMP_USD::COMP_USD --arg 1000000000u128 -b
+account execute-function -s 0x07fa08a855753f0ff7292fdcbe871216 --function 0x01::PriceOracleScripts::register_oracle -t 0x07fa08a855753f0ff7292fdcbe871216::COMP_USD::COMP_USD --arg 8u8 -b
+account execute-function -s 0x07fa08a855753f0ff7292fdcbe871216 --function 0x01::PriceOracleScripts::init_data_source -t 0x07fa08a855753f0ff7292fdcbe871216::COMP_USD::COMP_USD --arg 1000000000u128 -b
 
 dev deploy storage/0x07fa08a855753f0ff7292fdcbe871216/modules/CV_INDEX.mv -b
-account execute-function -s 0x07fa08a855753f0ff7292fdcbe871216 --function 0x07fa08a855753f0ff7292fdcbe871216::PriceOracleScripts::register_oracle -t 0x07fa08a855753f0ff7292fdcbe871216::CV_INDEX::CV_INDEX --arg 18u8 -b
-account execute-function -s 0x07fa08a855753f0ff7292fdcbe871216 --function 0x07fa08a855753f0ff7292fdcbe871216::PriceOracleScripts::init_data_source -t 0x07fa08a855753f0ff7292fdcbe871216::CV_INDEX::CV_INDEX --arg 1000000000u128 -b
+account execute-function -s 0x07fa08a855753f0ff7292fdcbe871216 --function 0x01::PriceOracleScripts::register_oracle -t 0x07fa08a855753f0ff7292fdcbe871216::CV_INDEX::CV_INDEX --arg 18u8 -b
+account execute-function -s 0x07fa08a855753f0ff7292fdcbe871216 --function 0x01::PriceOracleScripts::init_data_source -t 0x07fa08a855753f0ff7292fdcbe871216::CV_INDEX::CV_INDEX --arg 1000000000u128 -b
 
 dev deploy storage/0x07fa08a855753f0ff7292fdcbe871216/modules/DAI_USD.mv -b
-account execute-function -s 0x07fa08a855753f0ff7292fdcbe871216 --function 0x07fa08a855753f0ff7292fdcbe871216::PriceOracleScripts::register_oracle -t 0x07fa08a855753f0ff7292fdcbe871216::DAI_USD::DAI_USD --arg 8u8 -b
-account execute-function -s 0x07fa08a855753f0ff7292fdcbe871216 --function 0x07fa08a855753f0ff7292fdcbe871216::PriceOracleScripts::init_data_source -t 0x07fa08a855753f0ff7292fdcbe871216::DAI_USD::DAI_USD --arg 1000000000u128 -b
+account execute-function -s 0x07fa08a855753f0ff7292fdcbe871216 --function 0x01::PriceOracleScripts::register_oracle -t 0x07fa08a855753f0ff7292fdcbe871216::DAI_USD::DAI_USD --arg 8u8 -b
+account execute-function -s 0x07fa08a855753f0ff7292fdcbe871216 --function 0x01::PriceOracleScripts::init_data_source -t 0x07fa08a855753f0ff7292fdcbe871216::DAI_USD::DAI_USD --arg 1000000000u128 -b
 
 dev deploy storage/0x07fa08a855753f0ff7292fdcbe871216/modules/ETH_USD.mv -b
-account execute-function -s 0x07fa08a855753f0ff7292fdcbe871216 --function 0x07fa08a855753f0ff7292fdcbe871216::PriceOracleScripts::register_oracle -t 0x07fa08a855753f0ff7292fdcbe871216::ETH_USD::ETH_USD --arg 8u8 -b
-account execute-function -s 0x07fa08a855753f0ff7292fdcbe871216 --function 0x07fa08a855753f0ff7292fdcbe871216::PriceOracleScripts::init_data_source -t 0x07fa08a855753f0ff7292fdcbe871216::ETH_USD::ETH_USD --arg 1000000000u128 -b
+account execute-function -s 0x07fa08a855753f0ff7292fdcbe871216 --function 0x01::PriceOracleScripts::register_oracle -t 0x07fa08a855753f0ff7292fdcbe871216::ETH_USD::ETH_USD --arg 8u8 -b
+account execute-function -s 0x07fa08a855753f0ff7292fdcbe871216 --function 0x01::PriceOracleScripts::init_data_source -t 0x07fa08a855753f0ff7292fdcbe871216::ETH_USD::ETH_USD --arg 1000000000u128 -b
 
 dev deploy storage/0x07fa08a855753f0ff7292fdcbe871216/modules/GRT_ETH.mv -b
-account execute-function -s 0x07fa08a855753f0ff7292fdcbe871216 --function 0x07fa08a855753f0ff7292fdcbe871216::PriceOracleScripts::register_oracle -t 0x07fa08a855753f0ff7292fdcbe871216::GRT_ETH::GRT_ETH --arg 18u8 -b
-account execute-function -s 0x07fa08a855753f0ff7292fdcbe871216 --function 0x07fa08a855753f0ff7292fdcbe871216::PriceOracleScripts::init_data_source -t 0x07fa08a855753f0ff7292fdcbe871216::GRT_ETH::GRT_ETH --arg 1000000000u128 -b
+account execute-function -s 0x07fa08a855753f0ff7292fdcbe871216 --function 0x01::PriceOracleScripts::register_oracle -t 0x07fa08a855753f0ff7292fdcbe871216::GRT_ETH::GRT_ETH --arg 18u8 -b
+account execute-function -s 0x07fa08a855753f0ff7292fdcbe871216 --function 0x01::PriceOracleScripts::init_data_source -t 0x07fa08a855753f0ff7292fdcbe871216::GRT_ETH::GRT_ETH --arg 1000000000u128 -b
 
 dev deploy storage/0x07fa08a855753f0ff7292fdcbe871216/modules/LINK_USD.mv -b
-account execute-function -s 0x07fa08a855753f0ff7292fdcbe871216 --function 0x07fa08a855753f0ff7292fdcbe871216::PriceOracleScripts::register_oracle -t 0x07fa08a855753f0ff7292fdcbe871216::LINK_USD::LINK_USD --arg 8u8 -b
-account execute-function -s 0x07fa08a855753f0ff7292fdcbe871216 --function 0x07fa08a855753f0ff7292fdcbe871216::PriceOracleScripts::init_data_source -t 0x07fa08a855753f0ff7292fdcbe871216::LINK_USD::LINK_USD --arg 1000000000u128 -b
+account execute-function -s 0x07fa08a855753f0ff7292fdcbe871216 --function 0x01::PriceOracleScripts::register_oracle -t 0x07fa08a855753f0ff7292fdcbe871216::LINK_USD::LINK_USD --arg 8u8 -b
+account execute-function -s 0x07fa08a855753f0ff7292fdcbe871216 --function 0x01::PriceOracleScripts::init_data_source -t 0x07fa08a855753f0ff7292fdcbe871216::LINK_USD::LINK_USD --arg 1000000000u128 -b
 
 dev deploy storage/0x07fa08a855753f0ff7292fdcbe871216/modules/MKR_USD.mv -b
-account execute-function -s 0x07fa08a855753f0ff7292fdcbe871216 --function 0x07fa08a855753f0ff7292fdcbe871216::PriceOracleScripts::register_oracle -t 0x07fa08a855753f0ff7292fdcbe871216::MKR_USD::MKR_USD --arg 8u8 -b
-account execute-function -s 0x07fa08a855753f0ff7292fdcbe871216 --function 0x07fa08a855753f0ff7292fdcbe871216::PriceOracleScripts::init_data_source -t 0x07fa08a855753f0ff7292fdcbe871216::MKR_USD::MKR_USD --arg 1000000000u128 -b
+account execute-function -s 0x07fa08a855753f0ff7292fdcbe871216 --function 0x01::PriceOracleScripts::register_oracle -t 0x07fa08a855753f0ff7292fdcbe871216::MKR_USD::MKR_USD --arg 8u8 -b
+account execute-function -s 0x07fa08a855753f0ff7292fdcbe871216 --function 0x01::PriceOracleScripts::init_data_source -t 0x07fa08a855753f0ff7292fdcbe871216::MKR_USD::MKR_USD --arg 1000000000u128 -b
 
 dev deploy storage/0x07fa08a855753f0ff7292fdcbe871216/modules/REP_USD.mv -b
-account execute-function -s 0x07fa08a855753f0ff7292fdcbe871216 --function 0x07fa08a855753f0ff7292fdcbe871216::PriceOracleScripts::register_oracle -t 0x07fa08a855753f0ff7292fdcbe871216::REP_USD::REP_USD --arg 8u8 -b
-account execute-function -s 0x07fa08a855753f0ff7292fdcbe871216 --function 0x07fa08a855753f0ff7292fdcbe871216::PriceOracleScripts::init_data_source -t 0x07fa08a855753f0ff7292fdcbe871216::REP_USD::REP_USD --arg 1000000000u128 -b
+account execute-function -s 0x07fa08a855753f0ff7292fdcbe871216 --function 0x01::PriceOracleScripts::register_oracle -t 0x07fa08a855753f0ff7292fdcbe871216::REP_USD::REP_USD --arg 8u8 -b
+account execute-function -s 0x07fa08a855753f0ff7292fdcbe871216 --function 0x01::PriceOracleScripts::init_data_source -t 0x07fa08a855753f0ff7292fdcbe871216::REP_USD::REP_USD --arg 1000000000u128 -b
 
 dev deploy storage/0x07fa08a855753f0ff7292fdcbe871216/modules/SUSHI_USD.mv -b
-account execute-function -s 0x07fa08a855753f0ff7292fdcbe871216 --function 0x07fa08a855753f0ff7292fdcbe871216::PriceOracleScripts::register_oracle -t 0x07fa08a855753f0ff7292fdcbe871216::SUSHI_USD::SUSHI_USD --arg 8u8 -b
-account execute-function -s 0x07fa08a855753f0ff7292fdcbe871216 --function 0x07fa08a855753f0ff7292fdcbe871216::PriceOracleScripts::init_data_source -t 0x07fa08a855753f0ff7292fdcbe871216::SUSHI_USD::SUSHI_USD --arg 1000000000u128 -b
+account execute-function -s 0x07fa08a855753f0ff7292fdcbe871216 --function 0x01::PriceOracleScripts::register_oracle -t 0x07fa08a855753f0ff7292fdcbe871216::SUSHI_USD::SUSHI_USD --arg 8u8 -b
+account execute-function -s 0x07fa08a855753f0ff7292fdcbe871216 --function 0x01::PriceOracleScripts::init_data_source -t 0x07fa08a855753f0ff7292fdcbe871216::SUSHI_USD::SUSHI_USD --arg 1000000000u128 -b
 
 dev deploy storage/0x07fa08a855753f0ff7292fdcbe871216/modules/UNI_USD.mv -b
-account execute-function -s 0x07fa08a855753f0ff7292fdcbe871216 --function 0x07fa08a855753f0ff7292fdcbe871216::PriceOracleScripts::register_oracle -t 0x07fa08a855753f0ff7292fdcbe871216::UNI_USD::UNI_USD --arg 8u8 -b
-account execute-function -s 0x07fa08a855753f0ff7292fdcbe871216 --function 0x07fa08a855753f0ff7292fdcbe871216::PriceOracleScripts::init_data_source -t 0x07fa08a855753f0ff7292fdcbe871216::UNI_USD::UNI_USD --arg 1000000000u128 -b
+account execute-function -s 0x07fa08a855753f0ff7292fdcbe871216 --function 0x01::PriceOracleScripts::register_oracle -t 0x07fa08a855753f0ff7292fdcbe871216::UNI_USD::UNI_USD --arg 8u8 -b
+account execute-function -s 0x07fa08a855753f0ff7292fdcbe871216 --function 0x01::PriceOracleScripts::init_data_source -t 0x07fa08a855753f0ff7292fdcbe871216::UNI_USD::UNI_USD --arg 1000000000u128 -b
 
 dev deploy storage/0x07fa08a855753f0ff7292fdcbe871216/modules/YFI_USD.mv -b
-account execute-function -s 0x07fa08a855753f0ff7292fdcbe871216 --function 0x07fa08a855753f0ff7292fdcbe871216::PriceOracleScripts::register_oracle -t 0x07fa08a855753f0ff7292fdcbe871216::YFI_USD::YFI_USD --arg 8u8 -b
-account execute-function -s 0x07fa08a855753f0ff7292fdcbe871216 --function 0x07fa08a855753f0ff7292fdcbe871216::PriceOracleScripts::init_data_source -t 0x07fa08a855753f0ff7292fdcbe871216::YFI_USD::YFI_USD --arg 1000000000u128 -b
+account execute-function -s 0x07fa08a855753f0ff7292fdcbe871216 --function 0x01::PriceOracleScripts::register_oracle -t 0x07fa08a855753f0ff7292fdcbe871216::YFI_USD::YFI_USD --arg 8u8 -b
+account execute-function -s 0x07fa08a855753f0ff7292fdcbe871216 --function 0x01::PriceOracleScripts::init_data_source -t 0x07fa08a855753f0ff7292fdcbe871216::YFI_USD::YFI_USD --arg 1000000000u128 -b
 
 dev deploy storage/0x07fa08a855753f0ff7292fdcbe871216/modules/YFII_ETH.mv -b
-account execute-function -s 0x07fa08a855753f0ff7292fdcbe871216 --function 0x07fa08a855753f0ff7292fdcbe871216::PriceOracleScripts::register_oracle -t 0x07fa08a855753f0ff7292fdcbe871216::YFII_ETH::YFII_ETH --arg 18u8 -b
-account execute-function -s 0x07fa08a855753f0ff7292fdcbe871216 --function 0x07fa08a855753f0ff7292fdcbe871216::PriceOracleScripts::init_data_source -t 0x07fa08a855753f0ff7292fdcbe871216::YFII_ETH::YFII_ETH --arg 1000000000u128 -b
+account execute-function -s 0x07fa08a855753f0ff7292fdcbe871216 --function 0x01::PriceOracleScripts::register_oracle -t 0x07fa08a855753f0ff7292fdcbe871216::YFII_ETH::YFII_ETH --arg 18u8 -b
+account execute-function -s 0x07fa08a855753f0ff7292fdcbe871216 --function 0x01::PriceOracleScripts::init_data_source -t 0x07fa08a855753f0ff7292fdcbe871216::YFII_ETH::YFII_ETH --arg 1000000000u128 -b
 
 dev deploy storage/0x07fa08a855753f0ff7292fdcbe871216/modules/ZRX_USD.mv -b
-account execute-function -s 0x07fa08a855753f0ff7292fdcbe871216 --function 0x07fa08a855753f0ff7292fdcbe871216::PriceOracleScripts::register_oracle -t 0x07fa08a855753f0ff7292fdcbe871216::ZRX_USD::ZRX_USD --arg 8u8 -b
-account execute-function -s 0x07fa08a855753f0ff7292fdcbe871216 --function 0x07fa08a855753f0ff7292fdcbe871216::PriceOracleScripts::init_data_source -t 0x07fa08a855753f0ff7292fdcbe871216::ZRX_USD::ZRX_USD --arg 1000000000u128 -b
+account execute-function -s 0x07fa08a855753f0ff7292fdcbe871216 --function 0x01::PriceOracleScripts::register_oracle -t 0x07fa08a855753f0ff7292fdcbe871216::ZRX_USD::ZRX_USD --arg 8u8 -b
+account execute-function -s 0x07fa08a855753f0ff7292fdcbe871216 --function 0x01::PriceOracleScripts::init_data_source -t 0x07fa08a855753f0ff7292fdcbe871216::ZRX_USD::ZRX_USD --arg 1000000000u128 -b
 

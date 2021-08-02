@@ -1,6 +1,7 @@
 package org.starcoin.stcpricereporter;
 
 import org.starcoin.stcpricereporter.taskservice.OnChainManager;
+import org.starcoin.stcpricereporter.taskservice.StcUsdtOracleType;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -44,12 +45,12 @@ public class DevNetworkInteractApp {
         CommandLineInteractor commandLineInteractor = new CommandLineInteractor(process);
         commandLineInteractor.expect("Start console,", 10)
                  //导入账户，部署合约
-//                .sendLine("account import -i " + firstPrivateKey)
-//                .expect("\"ok\":", 10)
-//                .sendLine("account import -i " + secondPrivateKey)
-//                .expect("\"ok\":", 10)
-//                .sendLine("account default 0x07fa08a855753f0ff7292fdcbe871216")
-//                .expect("\"ok\":", 10)
+                .sendLine("account import -i " + firstPrivateKey)
+                .expect("\"ok\":", 10)
+                .sendLine("account import -i " + secondPrivateKey)
+                .expect("\"ok\":", 10)
+                .sendLine("account default 0x07fa08a855753f0ff7292fdcbe871216")
+                .expect("\"ok\":", 10)
                 .sendLine("account unlock 0x07fa08a855753f0ff7292fdcbe871216")
                 .expect("\"ok\":", 10)
                 .sendLine("account unlock 0xff2794187d72cc3a9240198ca98ac7b6")
@@ -58,42 +59,42 @@ public class DevNetworkInteractApp {
                 .expect("\"ok\":", 10)
                 .sendLine("dev get-coin 0xff2794187d72cc3a9240198ca98ac7b6")
                 .expect("\"ok\":", 10)
-                .sendLine("dev deploy storage/0x07fa08a855753f0ff7292fdcbe871216/modules/Oracle.mv -b")
-                .expect("\"ok\":", 10)
-                .sendLine("dev deploy storage/0x07fa08a855753f0ff7292fdcbe871216/modules/PriceOracle.mv -b")
-                .expect("\"ok\":", 10)
-                .sendLine("dev deploy storage/0x07fa08a855753f0ff7292fdcbe871216/modules/PriceOracleAggregator.mv -b")
-                .expect("\"ok\":", 10)
-                .sendLine("dev deploy storage/0x07fa08a855753f0ff7292fdcbe871216/modules/PriceOracleScripts.mv -b")
-                .expect("\"ok\":", 10)
+//                .sendLine("dev deploy storage/0x07fa08a855753f0ff7292fdcbe871216/modules/Oracle.mv -b")
+//                .expect("\"ok\":", 10)
+//                .sendLine("dev deploy storage/0x07fa08a855753f0ff7292fdcbe871216/modules/PriceOracle.mv -b")
+//                .expect("\"ok\":", 10)
+//                .sendLine("dev deploy storage/0x07fa08a855753f0ff7292fdcbe871216/modules/PriceOracleAggregator.mv -b")
+//                .expect("\"ok\":", 10)
+//                .sendLine("dev deploy storage/0x07fa08a855753f0ff7292fdcbe871216/modules/PriceOracleScripts.mv -b")
+//                .expect("\"ok\":", 10)
 
                 // /////////////////////////////////////////////
                 .sendLine("dev deploy storage/0x07fa08a855753f0ff7292fdcbe871216/modules/STCUSDT.mv -b")
                 .expect("\"ok\":", 10)
 
                 .sendLine("account execute-function -s 0x07fa08a855753f0ff7292fdcbe871216 " +
-                        "--function 0x07fa08a855753f0ff7292fdcbe871216::PriceOracleScripts::register_oracle " +
+                        "--function 0x01::PriceOracleScripts::register_oracle " +
                         "-t 0x07fa08a855753f0ff7292fdcbe871216::STCUSDT::STCUSDT " +
-                        String.format("--arg %1$su8 ", OnChainManager.PRICE_PRECISION) +
+                        String.format("--arg %1$su8 ", StcUsdtOracleType.PRICE_PRECISION) +
                         "-b")
                 .expect("\"ok\":", 10)
 
                 .sendLine("account execute-function -s 0x07fa08a855753f0ff7292fdcbe871216 " +
-                        "--function 0x07fa08a855753f0ff7292fdcbe871216::PriceOracleScripts::init_data_source " +
+                        "--function 0x01::PriceOracleScripts::init_data_source " +
                         "-t 0x07fa08a855753f0ff7292fdcbe871216::STCUSDT::STCUSDT " +
                         "--arg 10000000u128 " +
                         "-b")
                 .expect("\"ok\":", 10)
 
                 .sendLine("account execute-function -s 0x07fa08a855753f0ff7292fdcbe871216 " +
-                        "--function 0x07fa08a855753f0ff7292fdcbe871216::PriceOracleScripts::update " +
+                        "--function 0x01::PriceOracleScripts::update " +
                         "-t 0x07fa08a855753f0ff7292fdcbe871216::STCUSDT::STCUSDT " +
                         "--arg 10000000u128 " +
                         "-b")
                 .expect("\"ok\":", 10)
                 // /////////////////////////////////////////////
         ;
-
+        if (true) return;
 
         // /////////////////////////////////////////////
         String deployFilePath = "src/test/resources/ConsoleDeployPairRegisterOracleInitDataSource.txt";
@@ -104,7 +105,7 @@ public class DevNetworkInteractApp {
                     .expect("\"ok\":", 10)
             ;
         });
-        // if (true) return;
+
         // /////////////////////////////////////////////
     }
 

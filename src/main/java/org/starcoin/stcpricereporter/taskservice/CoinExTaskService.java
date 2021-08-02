@@ -49,7 +49,7 @@ public class CoinExTaskService {
         long dateInMilliseconds = latestTransactionsDataResponse.data[0].dateInMilliseconds;
         //System.out.println(DateTimeUtils.toDefaultZonedDateTime(dateInMilliseconds));
 
-        onChainManager.reportOnChain(price);
+        onChainManager.reportOnChain(StcUsdtOracleType.INSTANCE, StcUsdtOracleType.toOracleIntegerPrice(price));
 
     }
 

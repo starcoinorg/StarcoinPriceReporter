@@ -11,7 +11,7 @@ public class StcPriceAggregateOnChainHelper {
         boolean needReport = stcPriceAggregator.updatePrice(datasourceKey, price, dateTimeInSeconds);
         if (needReport) {
             System.out.println("STC / USDT, report on-chain...");
-            onChainManager.initDataSourceOrUpdateOnChain(stcPriceAggregator.getStcPriceCache(), StcUsdtOracleType.INSTANCE, StcUsdtOracleType.toOracleIntegerPrice(price));
+            onChainManager.initDataSourceOrUpdateOnChain(stcPriceAggregator.getStcPriceCache(), StcUsdOracleType.INSTANCE, StcUsdOracleType.toOracleIntegerPrice(price));
             stcPriceAggregator.markOnChainUpdated();
             return true;
         }

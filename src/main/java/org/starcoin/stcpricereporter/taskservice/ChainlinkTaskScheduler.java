@@ -27,7 +27,9 @@ import static org.starcoin.stcpricereporter.chainlink.utils.CsvUtils.readCsvPric
 @Service
 public class ChainlinkTaskScheduler implements SchedulingConfigurer {
 
-    private static Logger LOGGER = LoggerFactory.getLogger(ChainlinkTaskScheduler.class);
+    private static Logger LOG = LoggerFactory.getLogger(ChainlinkTaskScheduler.class);
+
+    private static final String ORACLE_TYPE_MODULE_ADDRESS = "0x07fa08a855753f0ff7292fdcbe871216";
 
     private static final int FIXED_DELAY_SECONDS = 7;
 
@@ -37,7 +39,6 @@ public class ChainlinkTaskScheduler implements SchedulingConfigurer {
     @Autowired
     private OnChainManager onChainManager;
 
-    private String oracleTypeModuleAddress = "0x07fa08a855753f0ff7292fdcbe871216";
     // ScheduledTaskRegistrar scheduledTaskRegistrar;
     // ScheduledFuture future;
 
@@ -71,14 +72,14 @@ public class ChainlinkTaskScheduler implements SchedulingConfigurer {
         }
         List<PriceFeedRecord> priceFeedRecords = readCsvPriceFeedRecords(in)
                 .stream().filter(f -> f.getEnabled() != null && f.getEnabled()).collect(Collectors.toList());
-        System.out.println(priceFeedRecords);
+        LOG.debug(priceFeedRecords.toString());
 
         for (PriceFeedRecord p : priceFeedRecords) {
             taskRegistrar.getScheduler().schedule(
                     new ChainlinkPriceUpdateTask(ethereumHttpServiceUrl, p.getPair(), p.getProxy(),
                             p.getDecimals(),
                             this.onChainManager,
-                            new PriceOracleType(oracleTypeModuleAddress, p.getMoveTokenPairName(), p.getMoveTokenPairName())), //() -> scheduleFixed(),
+                            new PriceOracleType(ORACLE_TYPE_MODULE_ADDRESS, p.getMoveTokenPairName(), p.getMoveTokenPairName())), //() -> scheduleFixed(),
                     t -> {
                         Calendar nextExecutionTime = new GregorianCalendar();
                         Date lastActualExecutionTime = t.lastActualExecutionTime();

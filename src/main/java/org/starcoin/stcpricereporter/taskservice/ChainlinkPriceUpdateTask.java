@@ -1,5 +1,7 @@
 package org.starcoin.stcpricereporter.taskservice;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.starcoin.stcpricereporter.model.AggregatorV3Interface;
 import org.starcoin.stcpricereporter.utils.DateTimeUtils;
 import org.web3j.crypto.Credentials;
@@ -11,6 +13,8 @@ import java.math.BigInteger;
 
 
 public class ChainlinkPriceUpdateTask implements Runnable {
+    private Logger LOG = LoggerFactory.getLogger(ChainlinkPriceUpdateTask.class);
+
     private static final Credentials NO_CREDENTIALS = Credentials.create("0x99");
 
     private final String ethereumHttpServiceUrl;
@@ -54,19 +58,19 @@ public class ChainlinkPriceUpdateTask implements Runnable {
         }
         aggregatorV3Interface.latestRoundData().flowable().subscribe(s ->
         {
-            System.out.println("Chainlink latestRoundData: " + s);
+            LOG.debug("Chainlink latestRoundData: " + s);
             BigInteger roundID = s.component1();
             BigInteger price = s.component2();
             BigInteger startedAt = s.component3();
             BigInteger timeStamp = s.component4();
             BigInteger answeredInRound = s.component5();
             BigInteger[] priceParts = price.divideAndRemainder(BigInteger.TEN.pow(decimals));
-            System.out.println(tokenPairName + ", price: " + priceParts[0] + "." + priceParts[1] + ", timestamp: "
+            LOG.debug(tokenPairName + ", price: " + priceParts[0] + "." + priceParts[1] + ", timestamp: "
                     + DateTimeUtils.toDefaultZonedDateTime(timeStamp.longValue() * 1000));
 
             boolean needReport = chainlinkPriceCache.tryUpdate(price, timeStamp.divide(BigInteger.valueOf(1000)).longValue());
             if (needReport) {
-                System.out.println(tokenPairName + ", report on-chain...");
+                LOG.debug(tokenPairName + ", report on-chain...");
                 this.onChainManager.initDataSourceOrUpdateOnChain(chainlinkPriceCache, priceOracleType, price);
                 markOnChainUpdated();
             }

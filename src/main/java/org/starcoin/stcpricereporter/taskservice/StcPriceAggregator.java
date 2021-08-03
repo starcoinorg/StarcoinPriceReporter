@@ -1,5 +1,7 @@
 package org.starcoin.stcpricereporter.taskservice;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
@@ -8,6 +10,7 @@ import java.util.concurrent.ConcurrentMap;
 
 @Component
 public class StcPriceAggregator {
+    private Logger LOG = LoggerFactory.getLogger(StcPriceAggregator.class);
 
     public static final long MAX_EXPIRATION_SECONDS = 2 * 60;
 
@@ -22,7 +25,7 @@ public class StcPriceAggregator {
     public boolean updatePrice(String datasourceKey, BigDecimal price, Long dateTimeInSeconds) {
         stcPriceMap.put(datasourceKey, new StcPrice(price, dateTimeInSeconds));
         BigDecimal aggregatePrice = aggregatePrices();
-        System.out.println("Aggregated STC price: " + aggregatePrice);
+        LOG.debug("Aggregated STC price: " + aggregatePrice);
         return stcPriceCache.tryUpdate(aggregatePrice, System.currentTimeMillis() / 1000);
     }
 
@@ -50,7 +53,7 @@ public class StcPriceAggregator {
                 priceCount[0] = priceCount[0] + 1;
                 priceSum[0] = priceSum[0].add(v.getPrice());
             } else {
-                System.out.println("Unavailable price, datasource key: "
+                LOG.debug("Unavailable price, datasource key: "
                         + k + ", timestamp: " + v.getDateTimeInSeconds());
             }
         });

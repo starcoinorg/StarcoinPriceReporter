@@ -1,5 +1,7 @@
 package org.starcoin.stcpricereporter.taskservice;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.starcoin.bean.TypeObj;
@@ -16,6 +18,7 @@ import java.math.BigInteger;
 
 @Component
 public class OnChainManager {
+    private Logger LOG = LoggerFactory.getLogger(OnChainManager.class);
 
     private final String senderAddressHex;// = "0x07fa08a855753f0ff7292fdcbe871216";
 
@@ -47,7 +50,7 @@ public class OnChainManager {
                                               PriceOracleType priceOracleType, BigInteger price) {
         if (offChainPriceCache.isFirstUpdate()) {
             if (!isDataSourceInitialize(priceOracleType)) {
-                System.out.println("Init data-source first.");
+                LOG.debug("Init data-source first.");
                 initDataSource(priceOracleType, price);
                 updateOnChain(priceOracleType, price);//todo remove this!!!
             } else {

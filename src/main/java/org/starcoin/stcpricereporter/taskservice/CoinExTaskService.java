@@ -48,7 +48,7 @@ public class CoinExTaskService {
             LOG.error("latestTransactionsDataResponse.data.length != 1");
             return;
         }
-        System.out.println("-------- get latest transactions from CoinEx ---------");
+        LOG.debug("-------- get latest transactions from CoinEx ---------");
         //System.out.println(latestTransactionsDataResponse);
         String priceString = latestTransactionsDataResponse.data[0].price;
         BigDecimal price = new BigDecimal(priceString);

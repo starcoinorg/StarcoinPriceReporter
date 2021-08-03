@@ -38,8 +38,8 @@ public class BixinTaskService {
         String url = String.format(GET_TICKS_URL_FORMAT, STC_USDT_TOKEN_PAIR);
 
         GetTicksResponse getTicksResponse = restTemplate.getForObject(url, GetTicksResponse.class);
-        System.out.println("------------ GET Ticks from Bixin -------------");
-        System.out.println(getTicksResponse);
+        LOG.debug("------------ GET Ticks from Bixin -------------");
+        LOG.debug(getTicksResponse.toString());
         //assert getTicksResponse.getResults().length == 1;
         if (!(getTicksResponse.getResults().length == 1)) {
             LOG.error("!(getTicksResponse.getResults().length == 1)");

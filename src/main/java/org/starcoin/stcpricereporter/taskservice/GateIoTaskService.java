@@ -60,9 +60,9 @@ public class GateIoTaskService {
             LOG.error("lastPrice == null");
             return;
         }
-        System.out.println("------------ Get spot tickers from Gate.io -------------");
+        LOG.debug("------------ Get spot tickers from Gate.io -------------");
         //System.out.println(tickers);
-        System.out.println(lastPriceString);
+        LOG.debug(lastPriceString);
         BigDecimal price = new BigDecimal(lastPriceString);
         //System.out.println(decimalPrice);
         //System.out.println(DateTimeUtils.toDefaultZonedDateTime(dateTimeInMillis));

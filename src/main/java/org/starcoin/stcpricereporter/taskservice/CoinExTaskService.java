@@ -11,6 +11,8 @@ import org.springframework.web.client.RestTemplate;
 import java.math.BigDecimal;
 import java.util.Arrays;
 
+import static org.starcoin.stcpricereporter.taskservice.StcPriceAggregateOnChainHelper.tryUpdateStcPriceOnChain;
+
 @Component
 public class CoinExTaskService {
     private Logger LOG = LoggerFactory.getLogger(CoinExTaskService.class);
@@ -54,10 +56,9 @@ public class CoinExTaskService {
         //long dateInMilliseconds = latestTransactionsDataResponse.data[0].dateInMilliseconds;
         //System.out.println(DateTimeUtils.toDefaultZonedDateTime(dateInMilliseconds));
         long dateInSeconds = latestTransactionsDataResponse.data[0].dateInSeconds;
-        stcPriceAggregator.updatePrice(DATASOURCE_KEY, price, dateInSeconds);
 
-        onChainManager.reportOnChain(StcUsdtOracleType.INSTANCE, StcUsdtOracleType.toOracleIntegerPrice(price));
-
+        tryUpdateStcPriceOnChain(DATASOURCE_KEY, price, dateInSeconds,
+                this.stcPriceAggregator, this.onChainManager);
     }
 
     public static class LatestTransactionsDataResponse {

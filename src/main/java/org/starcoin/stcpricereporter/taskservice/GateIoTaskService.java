@@ -14,6 +14,8 @@ import org.springframework.stereotype.Component;
 import java.math.BigDecimal;
 import java.util.List;
 
+import static org.starcoin.stcpricereporter.taskservice.StcPriceAggregateOnChainHelper.tryUpdateStcPriceOnChain;
+
 @Component
 public class GateIoTaskService {
     private Logger LOG = LoggerFactory.getLogger(GateIoTaskService.class);
@@ -65,8 +67,8 @@ public class GateIoTaskService {
         //System.out.println(decimalPrice);
         //System.out.println(DateTimeUtils.toDefaultZonedDateTime(dateTimeInMillis));
 
-        stcPriceAggregator.updatePrice(DATASOURCE_KEY, price, dateTimeInMillis / 1000);
-        onChainManager.reportOnChain(StcUsdtOracleType.INSTANCE, StcUsdtOracleType.toOracleIntegerPrice(price));
+        tryUpdateStcPriceOnChain(DATASOURCE_KEY, price, dateTimeInMillis / 1000,
+                this.stcPriceAggregator, this.onChainManager);
 
     }
 

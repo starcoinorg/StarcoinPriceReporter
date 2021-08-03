@@ -11,6 +11,8 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import static org.starcoin.stcpricereporter.taskservice.StcPriceAggregateOnChainHelper.tryUpdateStcPriceOnChain;
+
 @Component
 public class BixinTaskService {
     private Logger LOG = LoggerFactory.getLogger(BixinTaskService.class);
@@ -61,9 +63,8 @@ public class BixinTaskService {
         //System.out.println(zdt);
         //System.out.println(price);
 
-        stcPriceAggregator.updatePrice(DATASOURCE_KEY, price, dateInMillis / 1000);
-
-        onChainManager.reportOnChain(StcUsdtOracleType.INSTANCE, StcUsdtOracleType.toOracleIntegerPrice(price));
+        tryUpdateStcPriceOnChain(DATASOURCE_KEY, price, dateInMillis / 1000,
+                this.stcPriceAggregator, this.onChainManager);
 
     }
 

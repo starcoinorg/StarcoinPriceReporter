@@ -9,18 +9,25 @@ import java.util.concurrent.ConcurrentMap;
 @Component
 public class StcPriceAggregator {
 
-    public static final BigDecimal DEVIATION_PERCENTAGE = BigDecimal.valueOf(0.5);
+    public static final long MAX_EXPIRATION_SECONDS = 2 * 60;
 
-    public static final long MAX_EXPIRATION_SECONDS = 5 * 60;
+    private final ConcurrentMap<String, StcPrice> stcPriceMap = new ConcurrentHashMap<>();
 
-    private ConcurrentMap<String, StcPrice> stcPriceMap = new ConcurrentHashMap<>();
+    private final StcPriceCache stcPriceCache = new StcPriceCache();
+
+    public OffChainPriceCache<BigDecimal> getStcPriceCache() {
+        return stcPriceCache;
+    }
 
     public boolean updatePrice(String datasourceKey, BigDecimal price, Long dateTimeInSeconds) {
         stcPriceMap.put(datasourceKey, new StcPrice(price, dateTimeInSeconds));
         BigDecimal aggregatePrice = aggregatePrices();
-        System.out.println("Aggregated price: " + aggregatePrice);
-        //todo
-        return true;
+        System.out.println("Aggregated STC price: " + aggregatePrice);
+        return stcPriceCache.tryUpdate(aggregatePrice, System.currentTimeMillis() / 1000);
+    }
+
+    public void markOnChainUpdated() {
+        this.stcPriceCache.setDirty(false);
     }
 
     private BigDecimal aggregatePrices() {
@@ -50,7 +57,7 @@ public class StcPriceAggregator {
         if (priceCount[0] == 0) {
             throw new RuntimeException("No available prices.");
         }
-        BigDecimal aggregatePrice = priceSum[0].divide(BigDecimal.valueOf(priceCount[0]));
+        BigDecimal aggregatePrice = priceSum[0].divide(BigDecimal.valueOf(priceCount[0]), BigDecimal.ROUND_HALF_DOWN);
         return aggregatePrice;
     }
 
@@ -71,4 +78,48 @@ public class StcPriceAggregator {
             return dateTimeInSeconds;
         }
     }
+
+    public static class StcPriceCache implements OffChainPriceCache<BigDecimal> {
+        public static final BigDecimal DEVIATION_PERCENTAGE = BigDecimal.valueOf(0.5);
+        private static final int HEARTBEAT_SECONDS = 60 * 60; // One hour
+        private BigDecimal price;
+        private Long lastUpdatedAt;
+        private boolean dirty = false;
+        private boolean firstUpdate = false;
+
+        @Override
+        public synchronized boolean tryUpdate(BigDecimal price, Long dateTimeInSeconds) {
+            if (this.price == null
+                    || this.dirty
+                    || this.price.subtract(price).abs().divide(this.price, BigDecimal.ROUND_HALF_DOWN)
+                    .multiply(BigDecimal.valueOf(100L)).compareTo(DEVIATION_PERCENTAGE) > 0
+                    || dateTimeInSeconds > this.lastUpdatedAt + HEARTBEAT_SECONDS
+            ) {
+                if (this.price == null) {
+                    this.firstUpdate = true;
+                }
+                this.price = price;
+                this.lastUpdatedAt = dateTimeInSeconds;
+                this.dirty = true;
+            }
+            return this.dirty;
+        }
+
+        @Override
+        public synchronized boolean isDirty() {
+            return dirty;
+        }
+
+        @Override
+        public synchronized void setDirty(boolean dirty) {
+            this.dirty = dirty;
+        }
+
+        @Override
+        public synchronized boolean isFirstUpdate() {
+            return firstUpdate;
+        }
+    }
+
+
 }

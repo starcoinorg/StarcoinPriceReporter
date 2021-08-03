@@ -52,7 +52,7 @@ public class GenerateMoveTokenPairsAndConsoleDeploymentFile {
         writeTextFile(moveCodeFilePath, moveCode);
 
         try {
-            template = handlebars.compile("ConsoleDeployPairRegisterOracleInitDataSource");
+            template = handlebars.compile("ConsoleDeployPairRegisterOracle");
         } catch (IOException e) {
             e.printStackTrace();
             throw new RuntimeException(e);
@@ -64,7 +64,7 @@ public class GenerateMoveTokenPairsAndConsoleDeploymentFile {
             e.printStackTrace();
             throw new RuntimeException(e);
         }
-        String deployFilePath = "src/test/resources/ConsoleDeployPairRegisterOracleInitDataSource.txt";
+        String deployFilePath = "src/test/resources/ConsoleDeployPairRegisterOracle.txt";
         writeTextFile(deployFilePath, deployFileContent);
     }
 

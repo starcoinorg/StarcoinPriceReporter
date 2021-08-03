@@ -2,6 +2,8 @@ package org.starcoin.stcpricereporter.taskservice;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.scheduling.TaskScheduler;
 import org.springframework.scheduling.annotation.SchedulingConfigurer;
@@ -23,14 +25,20 @@ import static org.starcoin.stcpricereporter.chainlink.utils.CsvUtils.readCsvPric
 
 
 @Service
-public class DynamicScheduler implements SchedulingConfigurer {
+public class ChainlinkTaskScheduler implements SchedulingConfigurer {
 
-    private static Logger LOGGER = LoggerFactory.getLogger(DynamicScheduler.class);
+    private static Logger LOGGER = LoggerFactory.getLogger(ChainlinkTaskScheduler.class);
 
-    private String ethereumHttpServiceUrl = "https://mainnet.infura.io/v3/72637bfa15a940dcadcec25a6fe0fca1";
+    private static final int FIXED_DELAY_SECONDS = 7;
 
+    @Value("${starcoin.stc-price-reporter.ethereum-http-service-url}")
+    private String ethereumHttpServiceUrl;
+
+    @Autowired
+    private OnChainManager onChainManager;
+
+    private String oracleTypeModuleAddress = "0x07fa08a855753f0ff7292fdcbe871216";
     // ScheduledTaskRegistrar scheduledTaskRegistrar;
-
     // ScheduledFuture future;
 
     @Bean
@@ -52,10 +60,11 @@ public class DynamicScheduler implements SchedulingConfigurer {
             taskRegistrar.setScheduler(poolScheduler());
         }
 
-        String csvFilePath = "src/main/resources/EthereumPriceFeeds-Mainnet.csv";
+        //String csvFilePath = "src/main/resources/EthereumPriceFeeds-Mainnet.csv";
+        String csvFileName = "EthereumPriceFeeds-Mainnet.csv";
         Reader in;
         try {
-            in = new FileReader(csvFilePath);
+            in = new FileReader(getClass().getClassLoader().getResource(csvFileName).getFile());
         } catch (FileNotFoundException e) {
             e.printStackTrace();
             throw new RuntimeException(e);
@@ -66,12 +75,15 @@ public class DynamicScheduler implements SchedulingConfigurer {
 
         for (PriceFeedRecord p : priceFeedRecords) {
             taskRegistrar.getScheduler().schedule(
-                    new PriceUpdateTask(ethereumHttpServiceUrl, p.getPair(), p.getProxy()), //() -> scheduleFixed(),
+                    new ChainlinkPriceUpdateTask(ethereumHttpServiceUrl, p.getPair(), p.getProxy(),
+                            p.getDecimals(),
+                            this.onChainManager,
+                            new PriceOracleType(oracleTypeModuleAddress, p.getMoveTokenPairName(), p.getMoveTokenPairName())), //() -> scheduleFixed(),
                     t -> {
                         Calendar nextExecutionTime = new GregorianCalendar();
                         Date lastActualExecutionTime = t.lastActualExecutionTime();
                         nextExecutionTime.setTime(lastActualExecutionTime != null ? lastActualExecutionTime : new Date());
-                        nextExecutionTime.add(Calendar.SECOND, 7);
+                        nextExecutionTime.add(Calendar.SECOND, FIXED_DELAY_SECONDS);
                         return nextExecutionTime.getTime();
                     });
 

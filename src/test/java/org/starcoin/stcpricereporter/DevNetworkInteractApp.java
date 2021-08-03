@@ -18,11 +18,11 @@ public class DevNetworkInteractApp {
         String shellPath = "/bin/sh";
         String starcoinCmd = "/Users/yangjiefeng/Documents/starcoinorg/starcoin/target/debug/starcoin -n dev -d alice console";
         String moveProjectDir = "/Users/yangjiefeng/Documents/wubuku/StcPriceReporter/src/test/move";
-        if (args.length < 2) {
-            throw new IllegalArgumentException("Please enter two account private keys");
+        if (args.length < 1) {
+            throw new IllegalArgumentException("Please enter account private key");
         }
         String firstPrivateKey = args[0];
-        String secondPrivateKey = args[1];
+        //String secondPrivateKey = args[1];
         Process process = null;
         try {
             ProcessBuilder processBuilder = new ProcessBuilder(
@@ -45,20 +45,18 @@ public class DevNetworkInteractApp {
         CommandLineInteractor commandLineInteractor = new CommandLineInteractor(process);
         commandLineInteractor.expect("Start console,", 10)
                  //导入账户，部署合约
-                .sendLine("account import -i " + firstPrivateKey)
-                .expect("\"ok\":", 10)
-                .sendLine("account import -i " + secondPrivateKey)
-                .expect("\"ok\":", 10)
+//                .sendLine("account import -i " + firstPrivateKey)
+//                .expect("\"ok\":", 10)
                 .sendLine("account default 0x07fa08a855753f0ff7292fdcbe871216")
                 .expect("\"ok\":", 10)
                 .sendLine("account unlock 0x07fa08a855753f0ff7292fdcbe871216")
                 .expect("\"ok\":", 10)
-                .sendLine("account unlock 0xff2794187d72cc3a9240198ca98ac7b6")
-                .expect("\"ok\":", 10)
+                //.sendLine("account unlock 0xff2794187d72cc3a9240198ca98ac7b6")
+                //.expect("\"ok\":", 10)
                 .sendLine("dev get-coin 0x07fa08a855753f0ff7292fdcbe871216")
                 .expect("\"ok\":", 10)
-                .sendLine("dev get-coin 0xff2794187d72cc3a9240198ca98ac7b6")
-                .expect("\"ok\":", 10)
+                //.sendLine("dev get-coin 0xff2794187d72cc3a9240198ca98ac7b6")
+                //.expect("\"ok\":", 10)
 //                .sendLine("dev deploy storage/0x07fa08a855753f0ff7292fdcbe871216/modules/Oracle.mv -b")
 //                .expect("\"ok\":", 10)
 //                .sendLine("dev deploy storage/0x07fa08a855753f0ff7292fdcbe871216/modules/PriceOracle.mv -b")
@@ -94,10 +92,10 @@ public class DevNetworkInteractApp {
                 .expect("\"ok\":", 10)
                 // /////////////////////////////////////////////
         ;
-        if (true) return;
+        //if (true) return;
 
         // /////////////////////////////////////////////
-        String deployFilePath = "src/test/resources/ConsoleDeployPairRegisterOracleInitDataSource.txt";
+        String deployFilePath = "src/test/resources/ConsoleDeployPairRegisterOracle.txt";
         List<String> lines = readAllLines(deployFilePath);
         lines.stream().filter(c -> !c.isEmpty()).forEach( line -> {
             //System.out.println(line);

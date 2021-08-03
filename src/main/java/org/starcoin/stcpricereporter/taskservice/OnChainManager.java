@@ -17,23 +17,66 @@ import java.math.BigInteger;
 @Component
 public class OnChainManager {
 
-    //@Value("${starcoin.stc-price-reporter.sender-address}")
-    private String senderAddressHex = "0x07fa08a855753f0ff7292fdcbe871216";
+    private final String senderAddressHex;// = "0x07fa08a855753f0ff7292fdcbe871216";
 
-    @Value("${starcoin.stc-price-reporter.sender-private-key}")
-    private String senderPrivateKeyHex;
+    private final String senderPrivateKeyHex;
 
-    @Value("${starcoin.feed-url}")
-    private String starcoinFeedUrl;
+    private final String starcoinFeedUrl;
 
-    @Value("${starcoin.chain-id}")
-    private Integer starcoinChainId;
+    private final Integer starcoinChainId;
 
-    //@Value("${starcoin.stc-price-reporter.oracle-scripts-address}")
-    private String oracleScriptsAddressHex = "0x00000000000000000000000000000001";
-                                           //"0x07fa08a855753f0ff7292fdcbe871216";
+    private final String oracleScriptsAddressHex;// = "0x00000000000000000000000000000001";
+    //"0x07fa08a855753f0ff7292fdcbe871216";
 
-    public void reportOnChain(PriceOracleType priceOracleType, BigInteger price) {
+    private final StarcoinClient starcoinClient;
+
+    public OnChainManager(@Value("${starcoin.stc-price-reporter.sender-address}") String senderAddressHex,
+                          @Value("${starcoin.stc-price-reporter.sender-private-key}") String senderPrivateKeyHex,
+                          @Value("${starcoin.feed-url}") String starcoinFeedUrl,
+                          @Value("${starcoin.chain-id}") Integer starcoinChainId,
+                          @Value("${starcoin.stc-price-reporter.oracle-scripts-address}") String oracleScriptsAddressHex) {
+        this.senderAddressHex = senderAddressHex;
+        this.senderPrivateKeyHex = senderPrivateKeyHex;
+        this.starcoinFeedUrl = starcoinFeedUrl;
+        this.starcoinChainId = starcoinChainId;
+        this.oracleScriptsAddressHex = oracleScriptsAddressHex;
+        this.starcoinClient = new StarcoinClient(this.starcoinFeedUrl, this.starcoinChainId);
+    }
+
+    public void initDataSourceOrUpdateOnChain(OffChainPriceCache<?> offChainPriceCache,
+                                              PriceOracleType priceOracleType, BigInteger price) {
+        if (offChainPriceCache.isFirstUpdate()) {
+            if (!isDataSourceInitialize(priceOracleType)) {
+                System.out.println("Init data-source first.");
+                initDataSource(priceOracleType, price);
+                updateOnChain(priceOracleType, price);//todo remove this!!!
+            } else {
+                updateOnChain(priceOracleType, price);
+            }
+        } else {
+            updateOnChain(priceOracleType, price);
+        }
+    }
+
+    public void updateOnChain(PriceOracleType priceOracleType, BigInteger price) {
+        submitOracleTransaction(priceOracleType, oracleTypeTag ->
+                OnChainTransactionUtils.encodePriceOracleUpdateScriptFunction(oracleTypeTag,
+                        price, oracleScriptsAddressHex));
+    }
+
+    public boolean isDataSourceInitialize(PriceOracleType priceOracleType) {
+        //todo check on chain!!!
+        return false;
+    }
+
+    public void initDataSource(PriceOracleType priceOracleType, BigInteger price) {
+        submitOracleTransaction(priceOracleType, oracleTypeTag ->
+                OnChainTransactionUtils.encodePriceOracleInitDataSourceScriptFunction(oracleTypeTag,
+                        price, oracleScriptsAddressHex));
+    }
+
+    private void submitOracleTransaction(PriceOracleType priceOracleType,
+                                         java.util.function.Function<TypeTag, TransactionPayload> transactionPayloadProvider) {
         TypeObj oracleTypeObject = TypeObj.builder()
                 .moduleName(priceOracleType.getModuleName())
                 .moduleAddress(priceOracleType.getModuleAddress())
@@ -42,50 +85,8 @@ public class OnChainManager {
 
         final Ed25519PrivateKey senderPrivateKey = SignatureUtils.strToPrivateKey(senderPrivateKeyHex);
         final AccountAddress senderAddress = AccountAddressUtils.create(senderAddressHex);
-        final StarcoinClient starcoinClient = new StarcoinClient(starcoinFeedUrl, starcoinChainId);
-
-        TransactionPayload transactionPayload = OnChainTransactionUtils.encodePriceOracleUpdateScriptFunction(oracleTypeTag,
-                price, oracleScriptsAddressHex);
-        starcoinClient.submitTransaction(senderAddress, senderPrivateKey, transactionPayload);
+        TransactionPayload transactionPayload = transactionPayloadProvider.apply(oracleTypeTag);
+        this.starcoinClient.submitTransaction(senderAddress, senderPrivateKey, transactionPayload);
     }
 
-    public String getSenderAddressHex() {
-        return senderAddressHex;
-    }
-
-    public void setSenderAddressHex(String senderAddressHex) {
-        this.senderAddressHex = senderAddressHex;
-    }
-
-    public String getSenderPrivateKeyHex() {
-        return senderPrivateKeyHex;
-    }
-
-    public void setSenderPrivateKeyHex(String senderPrivateKeyHex) {
-        this.senderPrivateKeyHex = senderPrivateKeyHex;
-    }
-
-    public String getStarcoinFeedUrl() {
-        return starcoinFeedUrl;
-    }
-
-    public void setStarcoinFeedUrl(String starcoinFeedUrl) {
-        this.starcoinFeedUrl = starcoinFeedUrl;
-    }
-
-    public Integer getStarcoinChainId() {
-        return starcoinChainId;
-    }
-
-    public void setStarcoinChainId(Integer starcoinChainId) {
-        this.starcoinChainId = starcoinChainId;
-    }
-
-    public String getOracleScriptsAddressHex() {
-        return oracleScriptsAddressHex;
-    }
-
-    public void setOracleScriptsAddressHex(String oracleScriptsAddressHex) {
-        this.oracleScriptsAddressHex = oracleScriptsAddressHex;
-    }
 }

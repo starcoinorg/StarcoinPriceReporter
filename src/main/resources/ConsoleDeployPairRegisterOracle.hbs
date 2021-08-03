@@ -1,5 +1,4 @@
 {{#each feeds}}
 dev deploy storage/0x07fa08a855753f0ff7292fdcbe871216/modules/{{moveTokenPairName}}.mv -b
 account execute-function -s 0x07fa08a855753f0ff7292fdcbe871216 --function 0x01::PriceOracleScripts::register_oracle -t 0x07fa08a855753f0ff7292fdcbe871216::{{moveTokenPairName}}::{{moveTokenPairName}} --arg {{decimals}}u8 -b
-account execute-function -s 0x07fa08a855753f0ff7292fdcbe871216 --function 0x01::PriceOracleScripts::init_data_source -t 0x07fa08a855753f0ff7292fdcbe871216::{{moveTokenPairName}}::{{moveTokenPairName}} --arg 1000000000u128 -b
 {{/each}}

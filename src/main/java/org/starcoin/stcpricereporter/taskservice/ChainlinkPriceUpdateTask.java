@@ -82,6 +82,19 @@ public class ChainlinkPriceUpdateTask implements Runnable {
         this.chainlinkPriceCache.setDirty(false);
     }
 
+    @Override
+    public String toString() {
+        return "ChainlinkPriceUpdateTask{" +
+                "ethereumHttpServiceUrl='" + ethereumHttpServiceUrl + '\'' +
+                ", contractAddress='" + contractAddress + '\'' +
+                ", tokenPairName='" + tokenPairName + '\'' +
+                ", decimals=" + decimals +
+                //", onChainManager=" + onChainManager +
+                ", priceOracleType=" + priceOracleType +
+                //", chainlinkPriceCache=" + chainlinkPriceCache +
+                '}';
+    }
+
     public static class ChainlinkPriceCache implements OffChainPriceCache<BigInteger> {
 
         private BigInteger price;

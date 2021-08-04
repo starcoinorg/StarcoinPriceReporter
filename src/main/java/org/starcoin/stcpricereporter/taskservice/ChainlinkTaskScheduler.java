@@ -75,11 +75,11 @@ public class ChainlinkTaskScheduler implements SchedulingConfigurer {
         LOG.debug(priceFeedRecords.toString());
 
         for (PriceFeedRecord p : priceFeedRecords) {
-            taskRegistrar.getScheduler().schedule(
-                    new ChainlinkPriceUpdateTask(ethereumHttpServiceUrl, p.getPair(), p.getProxy(),
-                            p.getDecimals(),
-                            this.onChainManager,
-                            new PriceOracleType(ORACLE_TYPE_MODULE_ADDRESS, p.getMoveTokenPairName(), p.getMoveTokenPairName())), //() -> scheduleFixed(),
+            ChainlinkPriceUpdateTask chainlinkPriceUpdateTask = new ChainlinkPriceUpdateTask(ethereumHttpServiceUrl, p.getPair(), p.getProxy(),
+                    p.getDecimals(),
+                    this.onChainManager,
+                    new PriceOracleType(ORACLE_TYPE_MODULE_ADDRESS, p.getMoveTokenPairName(), p.getMoveTokenPairName()));
+            taskRegistrar.getScheduler().schedule(chainlinkPriceUpdateTask,//() -> scheduleFixed(),
                     t -> {
                         Calendar nextExecutionTime = new GregorianCalendar();
                         Date lastActualExecutionTime = t.lastActualExecutionTime();
@@ -87,7 +87,7 @@ public class ChainlinkTaskScheduler implements SchedulingConfigurer {
                         nextExecutionTime.add(Calendar.SECOND, FIXED_DELAY_SECONDS);
                         return nextExecutionTime.getTime();
                     });
-
+            LOG.info("Task scheduled, " + chainlinkPriceUpdateTask);
         }
 
 //        // or cron way

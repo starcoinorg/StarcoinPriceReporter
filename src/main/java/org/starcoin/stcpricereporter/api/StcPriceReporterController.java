@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.starcoin.stcpricereporter.data.model.PriceFeed;
-import org.starcoin.stcpricereporter.data.repo.PriceFeedRepository;
+import org.starcoin.stcpricereporter.service.PriceFeedService;
 
 import javax.annotation.Resource;
 
@@ -16,10 +16,10 @@ import javax.annotation.Resource;
 public class StcPriceReporterController {
 
     @Resource
-    private PriceFeedRepository priceFeedRepository;
+    private PriceFeedService priceFeedService;
 
     @GetMapping("priceFeeds/{pairId}")
     public PriceFeed getPriceFeed(@PathVariable("pairId") String pairId) {
-        return priceFeedRepository.findById(pairId).orElse(null);
+        return priceFeedService.getPriceFeed(pairId);
     }
 }

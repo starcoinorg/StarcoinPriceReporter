@@ -84,7 +84,7 @@ public class StcPriceAggregator {
 
     public static class StcPriceCache implements OffChainPriceCache<BigDecimal> {
         public static final BigDecimal DEVIATION_PERCENTAGE = BigDecimal.valueOf(0.5);
-        private static final int HEARTBEAT_SECONDS = 60 * 60; // One hour
+        public static final int HEARTBEAT_SECONDS = 60 * 60; // One hour
         private BigDecimal price;
         private Long lastUpdatedAt;
         private boolean dirty = false;

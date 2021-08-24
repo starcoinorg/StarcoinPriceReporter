@@ -11,6 +11,7 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.scheduling.config.ScheduledTaskRegistrar;
 import org.springframework.stereotype.Service;
 import org.starcoin.stcpricereporter.chainlink.PriceFeedRecord;
+import org.starcoin.stcpricereporter.service.PriceFeedService;
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -39,8 +40,8 @@ public class ChainlinkTaskScheduler implements SchedulingConfigurer {
     @Autowired
     private OnChainManager onChainManager;
 
-    // ScheduledTaskRegistrar scheduledTaskRegistrar;
-    // ScheduledFuture future;
+    @Autowired
+    private PriceFeedService priceFeedService;
 
     @Bean
     public TaskScheduler poolScheduler() {
@@ -51,12 +52,8 @@ public class ChainlinkTaskScheduler implements SchedulingConfigurer {
         return scheduler;
     }
 
-    // We can have multiple tasks inside the same registrar as we can see below.
     @Override
     public void configureTasks(ScheduledTaskRegistrar taskRegistrar) {
-//        if (scheduledTaskRegistrar == null) {
-//            scheduledTaskRegistrar = taskRegistrar;
-//        }
         if (taskRegistrar.getScheduler() == null) {
             taskRegistrar.setScheduler(poolScheduler());
         }
@@ -75,6 +72,11 @@ public class ChainlinkTaskScheduler implements SchedulingConfigurer {
         LOG.debug(priceFeedRecords.toString());
 
         for (PriceFeedRecord p : priceFeedRecords) {
+            // ///////////////////////////////
+            String tokenPairId = p.getMoveTokenPairName();
+            priceFeedService.createPriceFeedIfNotExists(tokenPairId, p.getPair(), p.getDecimals(),
+                    p.getDeviationPercentage(), p.getHeartbeatHours());
+            // ///////////////////////////////
             ChainlinkPriceUpdateTask chainlinkPriceUpdateTask = new ChainlinkPriceUpdateTask(ethereumHttpServiceUrl, p.getPair(), p.getProxy(),
                     p.getDecimals(),
                     this.onChainManager,

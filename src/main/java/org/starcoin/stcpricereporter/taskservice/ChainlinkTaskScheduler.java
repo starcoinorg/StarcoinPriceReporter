@@ -73,8 +73,8 @@ public class ChainlinkTaskScheduler implements SchedulingConfigurer {
 
         for (PriceFeedRecord p : priceFeedRecords) {
             // ///////////////////////////////
-            String tokenPairId = p.getMoveTokenPairName();
-            priceFeedService.createPriceFeedIfNotExists(tokenPairId, p.getPair(), p.getDecimals(),
+            String pairId = p.getMoveTokenPairName(); // Pair Id. in database!
+            priceFeedService.createPriceFeedIfNotExists(pairId, p.getPair(), p.getDecimals(),
                     p.getDeviationPercentage(), p.getHeartbeatHours());
             // ///////////////////////////////
             ChainlinkPriceUpdateTask chainlinkPriceUpdateTask = new ChainlinkPriceUpdateTask(ethereumHttpServiceUrl, p.getPair(), p.getProxy(),

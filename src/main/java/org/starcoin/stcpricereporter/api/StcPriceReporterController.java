@@ -1,10 +1,7 @@
 package org.starcoin.stcpricereporter.api;
 
 import io.swagger.annotations.Api;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.starcoin.stcpricereporter.data.model.PriceFeed;
 import org.starcoin.stcpricereporter.service.PriceFeedService;
 
@@ -22,4 +19,15 @@ public class StcPriceReporterController {
     public PriceFeed getPriceFeed(@PathVariable("pairId") String pairId) {
         return priceFeedService.getPriceFeed(pairId);
     }
+
+    @GetMapping("exchangeRates/ETH_STC")
+    public @ResponseBody String getEthToStcExchangeRate() {
+        return priceFeedService.getEthToStcExchangeRate().toString();
+    }
+
+    @GetMapping("exchangeRates/WEI_NANOSTC")
+    public @ResponseBody String getWeiToNanoStcExchangeRate() {
+        return priceFeedService.getWeiToNanoStcExchangeRate().toString();
+    }
+
 }

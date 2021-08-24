@@ -73,8 +73,8 @@ public class OnChainManager {
         }
         // /////////////////////////////////////////////
         // save in database
-        String tokenPairId = priceOracleType.getStructName();
-        priceFeedService.updatePrice(tokenPairId, price);
+        String pairId = priceOracleType.getStructName(); // Pair Id. in database!
+        priceFeedService.updatePrice(pairId, price);
     }
 
     public void updateOnChain(PriceOracleType priceOracleType, BigInteger price) {

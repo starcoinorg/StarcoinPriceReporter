@@ -30,12 +30,14 @@ public class StcPriceReporterApplication {
 
 	@EventListener(ApplicationReadyEvent.class)
 	void initStcUsdPriceFeed() {
-		String tokenPairId = StcUsdOracleType.STC_USD_ORALCE_TYPE_STRUCT_NAME;
+		String pairId = PriceFeedService.PAIR_ID_STC_USD;
 		BigDecimal deviationPercentage = StcPriceAggregator.StcPriceCache.DEVIATION_PERCENTAGE;
 		BigDecimal heartbeatHours = BigDecimal.valueOf(StcPriceAggregator.StcPriceCache.HEARTBEAT_SECONDS)
 				.divide(BigDecimal.valueOf(60 * 60), 3, RoundingMode.HALF_UP);
-		priceFeedService.createPriceFeedIfNotExists(tokenPairId, "STC / USD", StcUsdOracleType.PRICE_PRECISION,
+		priceFeedService.createPriceFeedIfNotExists(pairId, "STC / USD", StcUsdOracleType.PRICE_PRECISION,
 				deviationPercentage, heartbeatHours);
+		//		System.out.println(priceFeedService.getEthToStcExchangeRate());
+		//		System.out.println(priceFeedService.getWeiToNanoStcExchangeRate());
 	}
 
 }

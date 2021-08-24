@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 import org.starcoin.bean.TypeObj;
+import org.starcoin.stcpricereporter.data.model.PriceFeed;
+import org.starcoin.stcpricereporter.data.repo.PriceFeedRepository;
 import org.starcoin.stcpricereporter.utils.JsonRpcUtils;
 import org.starcoin.stcpricereporter.utils.OnChainTransactionUtils;
 import org.starcoin.types.AccountAddress;
@@ -41,6 +43,9 @@ public class OnChainManager {
     @Autowired
     private RestTemplate restTemplate;
 
+    @Autowired
+    private PriceFeedRepository priceFeedRepository;
+
     public OnChainManager(@Value("${starcoin.stc-price-reporter.sender-address}") String senderAddressHex,
                           @Value("${starcoin.stc-price-reporter.sender-private-key}") String senderPrivateKeyHex,
                           @Value("${starcoin.rpc-url}") String starcoinRpcUrl,
@@ -67,6 +72,26 @@ public class OnChainManager {
         } else {
             updateOnChain(priceOracleType, price);
         }
+        // save in database
+        String tokenPairId = priceOracleType.getStructName();
+        PriceFeed priceFeed = priceFeedRepository.findById(tokenPairId).orElse(null);
+        if (priceFeed == null) {
+            priceFeed = new PriceFeed();
+            priceFeed.setPairId(tokenPairId);
+            //priceFeed.setPairName();
+            //priceFeed.setDecimals();//todo
+            //priceFeed.setDeviationPercentage();
+            //priceFeed.setHeartbeatHours();
+            priceFeed.setCreatedAt(System.currentTimeMillis());
+            priceFeed.setCreatedBy("ADMIN");
+            priceFeed.setUpdatedAt(priceFeed.getCreatedAt());
+            priceFeed.setUpdatedBy(priceFeed.getCreatedBy());
+        } else {
+            priceFeed.setUpdatedAt(System.currentTimeMillis());
+            priceFeed.setUpdatedBy("ADMIN");
+        }
+        priceFeed.setLatestPrice(price);
+        priceFeedRepository.save(priceFeed);
     }
 
     public void updateOnChain(PriceOracleType priceOracleType, BigInteger price) {

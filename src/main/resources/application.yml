@@ -1,0 +1,55 @@
+spring:
+  profiles:
+    active: dev
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: ${STARCOIN_MYSQL_URL}
+    username: ${STARCOIN_MYSQL_USER}
+    password: ${STARCOIN_MYSQL_PWD}
+    type: com.zaxxer.hikari.HikariDataSource
+    hikari:
+      # 不配置默认与maximum-pool-size相同
+      minimum-idle: 5 #minimum number of idle connections maintained by HikariCP in a connection pool
+      # 连接池最大连接数，默认是10
+      maximum-pool-size: 20
+      connection-test-query: SELECT 1
+      idle-timeout: 500000 #maximum idle time for connection
+      connection-timeout: 20000 #maximum number of milliseconds that a client will wait for a connection
+      max-lifetime: 1800000 # maximum lifetime in milliseconds of a connection in the pool after it is closed.
+
+  jpa:
+    show-sql: true
+    properties:
+      hibernate:
+        hbm2ddl:
+          # auto: create # 开发阶段使用
+          auto: update
+        dialect: org.hibernate.dialect.MySQL5InnoDBDialect
+
+
+starcoin:
+  chain-id: ${STARCOIN_CHAIN_ID}
+  rpc-url: ${STARCOIN_RPC_URL}
+  stc-price-reporter:
+    bixin-task-cron: 1/5 * * * * ?
+    coinex-task-cron: 1/5 * * * * ?
+    ethereum-http-service-url: https://mainnet.infura.io/v3/72637bfa15a940dcadcec25a6fe0fca1
+    gateio-task-cron: 1/10000 * * * * ?
+    oracle-scripts-address: '0x00000000000000000000000000000001'
+    sender-address: '0x07fa08a855753f0ff7292fdcbe871216'
+    sender-private-key: ${STARCOIN_SENDER_PRIVATE_KEY}
+
+#ok.http.connect-timeout=3
+#ok.http.read-timeout=6
+#ok.http.write-timeout=6
+## 连接池中整体的空闲连接的最大数量
+#ok.http.max-idle-connections=20
+## 连接空闲时间最多为 300 秒
+#ok.http.keep-alive-duration=300
+
+logging:
+  level:
+    org:
+      starcoin:
+        stcpricereporter: DEBUG
+    root: INFO

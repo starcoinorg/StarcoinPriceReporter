@@ -39,13 +39,13 @@ starcoin:
     sender-address: '0x07fa08a855753f0ff7292fdcbe871216'
     sender-private-key: ${STARCOIN_SENDER_PRIVATE_KEY}
 
-#ok.http.connect-timeout=3
-#ok.http.read-timeout=6
-#ok.http.write-timeout=6
-## 连接池中整体的空闲连接的最大数量
-#ok.http.max-idle-connections=20
-## 连接空闲时间最多为 300 秒
-#ok.http.keep-alive-duration=300
+ok:
+  http:
+    connect-timeout: 3
+    max-idle-connections: 20
+    read-timeout: 6
+    write-timeout: 6
+    keep-alive-duration: 300
 
 logging:
   level:

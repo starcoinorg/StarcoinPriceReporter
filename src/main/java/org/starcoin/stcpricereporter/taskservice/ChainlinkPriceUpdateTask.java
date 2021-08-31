@@ -73,6 +73,10 @@ public class ChainlinkPriceUpdateTask implements Runnable {
                 LOG.debug(tokenPairName + ", report on-chain...");
                 this.onChainManager.initDataSourceOrUpdateOnChain(chainlinkPriceCache, priceOracleType, price);
                 markOnChainUpdated();
+            } else {
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Not need to update {} price {} = {}", tokenPairName, chainlinkPriceCache.getPrice(), price);
+                }
             }
         });
 
@@ -139,6 +143,10 @@ public class ChainlinkPriceUpdateTask implements Runnable {
 
         public synchronized boolean isPriceEmpty() {
             return this.price == null;
+        }
+
+        public synchronized BigInteger getPrice() {
+            return price;
         }
     }
 

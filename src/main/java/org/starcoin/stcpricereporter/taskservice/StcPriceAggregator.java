@@ -22,10 +22,16 @@ public class StcPriceAggregator {
         return stcPriceCache;
     }
 
+    public BigDecimal getCachePrice() {
+        return stcPriceCache.getPrice();
+    }
+
     public boolean updatePrice(String datasourceKey, BigDecimal price, Long dateTimeInSeconds) {
         stcPriceMap.put(datasourceKey, new StcPrice(price, dateTimeInSeconds));
         BigDecimal aggregatePrice = aggregatePrices();
-        LOG.debug("Aggregated STC price: " + aggregatePrice);
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Aggregated STC price: " + aggregatePrice);
+        }
         return stcPriceCache.tryUpdate(aggregatePrice, System.currentTimeMillis() / 1000);
     }
 
@@ -121,6 +127,10 @@ public class StcPriceAggregator {
         @Override
         public synchronized boolean isFirstUpdate() {
             return firstUpdate;
+        }
+
+        public synchronized BigDecimal getPrice() {
+            return price;
         }
     }
 

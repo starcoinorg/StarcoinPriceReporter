@@ -30,6 +30,7 @@ public class OnChainManager {
     private final Logger LOG = LoggerFactory.getLogger(OnChainManager.class);
 
     private static final String FUNCTION_ID_IS_DATA_SOURCE_INITIALIZED = "0x00000000000000000000000000000001::PriceOracle::is_data_source_initialized";
+    private static final String FUNCTION_ID_PRICE_ORACLE_READ = "0x00000000000000000000000000000001::PriceOracle::read";
 
     private final String senderAddressHex;// = "0x07fa08a855753f0ff7292fdcbe871216";
     private final String senderPrivateKeyHex;
@@ -91,6 +92,13 @@ public class OnChainManager {
         return Boolean.parseBoolean(((List<Object>) resultObj).get(0).toString());
     }
 
+    public BigInteger priceOracleRead(PriceOracleType priceOracleType) {
+        Object resultObj = contractCallV2(
+                FUNCTION_ID_PRICE_ORACLE_READ,
+                Collections.singletonList(getTypeArgString(priceOracleType)),
+                Collections.singletonList(senderAddressHex));
+        return new BigInteger(((List<Object>) resultObj).get(0).toString());
+    }
 
     private String getTypeArgString(PriceOracleType priceOracleType) {
         return priceOracleType.getModuleAddress()
@@ -139,7 +147,10 @@ public class OnChainManager {
         final Ed25519PrivateKey senderPrivateKey = SignatureUtils.strToPrivateKey(senderPrivateKeyHex);
         final AccountAddress senderAddress = AccountAddressUtils.create(senderAddressHex);
         TransactionPayload transactionPayload = transactionPayloadProvider.apply(oracleTypeTag);
-        this.starcoinClient.submitTransaction(senderAddress, senderPrivateKey, transactionPayload);
+        String respBody = this.starcoinClient.submitTransaction(senderAddress, senderPrivateKey, transactionPayload);
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Submit price of " + priceOracleType.getStructName() + ", response: " + respBody);
+        }
     }
 
 }

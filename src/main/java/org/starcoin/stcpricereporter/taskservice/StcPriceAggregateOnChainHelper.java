@@ -6,7 +6,7 @@ import org.slf4j.LoggerFactory;
 import java.math.BigDecimal;
 
 public class StcPriceAggregateOnChainHelper {
-    private static Logger LOG = LoggerFactory.getLogger(StcPriceAggregateOnChainHelper.class);
+    private static final Logger LOG = LoggerFactory.getLogger(StcPriceAggregateOnChainHelper.class);
 
 
     public static boolean tryUpdateStcPriceOnChain(String datasourceKey, BigDecimal price, Long dateTimeInSeconds,
@@ -18,6 +18,10 @@ public class StcPriceAggregateOnChainHelper {
             onChainManager.initDataSourceOrUpdateOnChain(stcPriceAggregator.getStcPriceCache(), StcUsdOracleType.INSTANCE, StcUsdOracleType.toOracleIntegerPrice(price));
             stcPriceAggregator.markOnChainUpdated();
             return true;
+        } else {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Not need to update STC / USD price. Latest updated price: {}", stcPriceAggregator.getCachePrice());
+            }
         }
         return false;
     }

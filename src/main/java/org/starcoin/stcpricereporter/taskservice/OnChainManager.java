@@ -61,12 +61,17 @@ public class OnChainManager {
                                               PriceOracleType priceOracleType, BigInteger price) {
         // /////////////////////////////////////////////
         // try update in database
-        String pairId = priceOracleType.getStructName(); // Pair Id. in database!
-        if (!priceFeedService.tryUpdatePrice(pairId, price)) {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Try update database failed. Maybe another process have updated it.");
+        try {
+            String pairId = priceOracleType.getStructName(); // Pair Id. in database!
+            if (!priceFeedService.tryUpdatePrice(pairId, price)) {
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Try update database failed. Maybe another process have updated it.");
+                }
+                return;
             }
-            return;
+        } catch (RuntimeException exception) {
+            LOG.info("Update database runtime error.", exception);
+            // continue update on-chain.
         }
         // ////////////////////////////////////////////
         if (offChainPriceCache.isFirstUpdate()) {

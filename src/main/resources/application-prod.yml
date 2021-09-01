@@ -5,11 +5,11 @@ starcoin:
     # bixin-task-cron: 1/5 * * * * ?
     # coinex-task-cron: 1/5 * * * * ?
     # gateio-task-cron: 1/10 * * * * ?
-    bixin-task-fixed-delay: 10000
-    coinex-task-fixed-delay: 10000
-    gateio-task-fixed-delay: 10000
+    bixin-task-fixed-delay: 30000
+    coinex-task-fixed-delay: 30000
+    gateio-task-fixed-delay: 30000
     ethereum-http-service-url: https://mainnet.infura.io/v3/72637bfa15a940dcadcec25a6fe0fca1
-    oracle-scripts-address: '0x00000000000000000000000000000001'
+#    oracle-scripts-address: '0x00000000000000000000000000000001'
     sender-address: '0x07fa08a855753f0ff7292fdcbe871216'
     sender-private-key: ${STARCOIN_SENDER_PRIVATE_KEY}
 

@@ -27,11 +27,9 @@ import java.util.Map;
 
 @Component
 public class OnChainManager {
-    private final Logger LOG = LoggerFactory.getLogger(OnChainManager.class);
-
     private static final String FUNCTION_ID_IS_DATA_SOURCE_INITIALIZED = "0x00000000000000000000000000000001::PriceOracle::is_data_source_initialized";
     private static final String FUNCTION_ID_PRICE_ORACLE_READ = "0x00000000000000000000000000000001::PriceOracle::read";
-
+    private final Logger LOG = LoggerFactory.getLogger(OnChainManager.class);
     private final String senderAddressHex;// = "0x07fa08a855753f0ff7292fdcbe871216";
     private final String senderPrivateKeyHex;
     private final String starcoinRpcUrl;
@@ -61,24 +59,29 @@ public class OnChainManager {
 
     public void initDataSourceOrUpdateOnChain(OffChainPriceCache<?> offChainPriceCache,
                                               PriceOracleType priceOracleType, BigInteger price) {
+        // /////////////////////////////////////////////
+        // try update in database
+        String pairId = priceOracleType.getStructName(); // Pair Id. in database!
+        if (!priceFeedService.tryUpdatePrice(pairId, price)) {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Try update database failed. Maybe another process have updated it.");
+            }
+            return;
+        }
+        // ////////////////////////////////////////////
         if (offChainPriceCache.isFirstUpdate()) {
             if (!isDataSourceInitialize(priceOracleType)) {
                 LOG.debug("Init data-source first.");
-                initDataSource(priceOracleType, price);
-                //updateOnChain(priceOracleType, price);
+                initDataSource(priceOracleType, price); //updateOnChain(priceOracleType, price);
             } else {
                 updateOnChain(priceOracleType, price);
             }
         } else {
             updateOnChain(priceOracleType, price);
         }
-        // /////////////////////////////////////////////
-        // save in database
-        String pairId = priceOracleType.getStructName(); // Pair Id. in database!
-        priceFeedService.updatePrice(pairId, price);
     }
 
-    public void updateOnChain(PriceOracleType priceOracleType, BigInteger price) {
+    private void updateOnChain(PriceOracleType priceOracleType, BigInteger price) {
         submitOracleTransaction(priceOracleType, oracleTypeTag ->
                 OnChainTransactionUtils.encodePriceOracleUpdateScriptFunction(oracleTypeTag,
                         price, oracleScriptsAddressHex));
@@ -130,7 +133,7 @@ public class OnChainManager {
         return resultObj;
     }
 
-    public void initDataSource(PriceOracleType priceOracleType, BigInteger price) {
+    private void initDataSource(PriceOracleType priceOracleType, BigInteger price) {
         submitOracleTransaction(priceOracleType, oracleTypeTag ->
                 OnChainTransactionUtils.encodePriceOracleInitDataSourceScriptFunction(oracleTypeTag,
                         price, oracleScriptsAddressHex));

@@ -12,6 +12,9 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.RoundingMode;
 
+/**
+ * Price feed service using database.
+ */
 @Service
 public class PriceFeedService {
     public static final String PAIR_ID_STC_USD = StcUsdOracleType.STC_USD_ORALCE_TYPE_STRUCT_NAME;
@@ -26,16 +29,30 @@ public class PriceFeedService {
         return priceFeedRepository.findById(pairId).orElse(null);
     }
 
-    public void updatePrice(String pairId, BigInteger price) {
+    public boolean tryUpdatePrice(String pairId, BigInteger price) {
         PriceFeed priceFeed = priceFeedRepository.findById(pairId).orElse(null);
         if (priceFeed == null) {
-            LOG.error("CANNOT find price feed by Id: " + pairId);
-            return;
+            String msg = "CANNOT find price feed in database by pairId: " + pairId;
+            LOG.error(msg);
+            throw new RuntimeException(msg);
         }
-        priceFeed.setLatestPrice(price);
-        priceFeed.setUpdatedAt(System.currentTimeMillis());
-        priceFeed.setUpdatedBy("ADMIN");
-        priceFeedRepository.save(priceFeed);
+        int DATABASE_HEARTBEAT_SECONDS = 60;
+        if (priceFeed.getLatestPrice() == null
+                || priceFeed.getLatestPrice().compareTo(price) != 0
+                || priceFeed.getUpdatedAt() != null && System.currentTimeMillis() - priceFeed.getUpdatedAt() > 1000 * DATABASE_HEARTBEAT_SECONDS) {
+            priceFeed.setLatestPrice(price);
+            priceFeed.setUpdatedAt(System.currentTimeMillis());
+            priceFeed.setUpdatedBy("ADMIN");
+            priceFeedRepository.save(priceFeed);
+            priceFeedRepository.flush();
+            //todo set status in database to needing-update-On-Chain...
+            return true;
+        } else {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Price in database NOT need to update. PairId: " + pairId + ", current price: " + price);
+            }
+            return false;
+        }
     }
 
     public void createPriceFeedIfNotExists(String pairId, String name, Integer decimals,

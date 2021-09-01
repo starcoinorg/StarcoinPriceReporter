@@ -1,5 +1,8 @@
 package org.starcoin.stcpricereporter.taskservice;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,6 +58,10 @@ public class OnChainManager {
         this.starcoinChainId = starcoinChainId;
         this.oracleScriptsAddressHex = oracleScriptsAddressHex;
         this.starcoinClient = new StarcoinClient(this.starcoinRpcUrl, this.starcoinChainId);
+    }
+
+    private static boolean indicatesSuccess(Map<String, Object> responseObj) {
+        return !responseObj.containsKey("error");// && (responseObj.containsKey("result") && null != responseObj.getJSONObject("result"));
     }
 
     public void initDataSourceOrUpdateOnChain(OffChainPriceCache<?> offChainPriceCache,
@@ -174,6 +181,15 @@ public class OnChainManager {
         String respBody = this.starcoinClient.submitTransaction(senderAddress, senderPrivateKey, transactionPayload);
         if (LOG.isDebugEnabled()) {
             LOG.debug("Submit price of " + priceOracleType.getStructName() + ", response: " + respBody);
+        }
+        try {
+            if (!indicatesSuccess(new ObjectMapper().readValue(respBody, new TypeReference<Map<String, Object>>() {
+            }))) {
+                LOG.error("Submit update {} price transaction error. {}", priceOracleType.getStructName(), respBody);
+                throw new RuntimeException("Submit transaction error. " + respBody);
+            }
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
         }
     }
 

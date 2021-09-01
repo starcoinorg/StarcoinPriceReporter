@@ -41,7 +41,6 @@ public class PriceFeedService {
             priceFeed.setUpdatedBy("ADMIN");
             priceFeedRepository.save(priceFeed);
             priceFeedRepository.flush();
-            //todo set status in database to needing-update-On-Chain...
             return true;
         } else {
             if (LOG.isDebugEnabled()) {

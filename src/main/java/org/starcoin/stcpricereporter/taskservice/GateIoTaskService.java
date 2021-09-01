@@ -30,7 +30,8 @@ public class GateIoTaskService {
     @Autowired
     private OnChainManager onChainManager;
 
-    @Scheduled(cron = "${starcoin.stc-price-reporter.gateio-task-cron}")
+    //@Scheduled(cron = "${starcoin.stc-price-reporter.gateio-task-cron}")
+    @Scheduled(fixedDelayString = "${starcoin.stc-price-reporter.gateio-task-fixed-delay}")
     public void task() {
         ApiClient apiClient = Configuration.getDefaultApiClient();
         //defaultClient.setBasePath("https://api.gateio.ws/api/v4");

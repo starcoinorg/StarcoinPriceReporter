@@ -32,7 +32,8 @@ public class BixinTaskService {
     @Autowired
     OnChainManager onChainManager;
 
-    @Scheduled(cron = "${starcoin.stc-price-reporter.bixin-task-cron}")
+    //@Scheduled(cron = "${starcoin.stc-price-reporter.bixin-task-cron}")
+    @Scheduled(fixedDelayString = "${starcoin.stc-price-reporter.bixin-task-fixed-delay}")
     public void task() {
 
         String url = String.format(GET_TICKS_URL_FORMAT, STC_USDT_TOKEN_PAIR);

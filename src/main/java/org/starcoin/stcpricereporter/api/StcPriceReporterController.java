@@ -7,7 +7,7 @@ import org.starcoin.stcpricereporter.service.PriceFeedService;
 
 import javax.annotation.Resource;
 
-@Api(tags = {"STC-Price-Reporter RESTful API"})
+@Api(tags = {"Starcoin-Price-Reporter RESTful API"})
 @RestController
 @RequestMapping("v1")
 public class StcPriceReporterController {

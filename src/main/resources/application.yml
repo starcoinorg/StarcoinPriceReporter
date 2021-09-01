@@ -1,3 +1,11 @@
+server:
+  port: 8686
+  max-http-header-size: 102400
+  compression:
+    enabled: true
+    min-response-size: 20480  #20K 以上开启gzip
+    mime-types: text/html,text/xml,text/plain,text/css,text/javascript,application/javascript,application/json,application/xml
+
 spring:
   profiles:
     active: dev
@@ -31,10 +39,13 @@ starcoin:
   chain-id: ${STARCOIN_CHAIN_ID}
   rpc-url: ${STARCOIN_RPC_URL}
   stc-price-reporter:
-    bixin-task-cron: 1/5 * * * * ?
-    coinex-task-cron: 1/5 * * * * ?
+    # bixin-task-cron: 1/5 * * * * ?
+    # coinex-task-cron: 1/5 * * * * ?
+    # gateio-task-cron: 1/10 * * * * ?
+    bixin-task-fixed-delay: 10000
+    coinex-task-fixed-delay: 10000
+    gateio-task-fixed-delay: 10000
     ethereum-http-service-url: https://mainnet.infura.io/v3/72637bfa15a940dcadcec25a6fe0fca1
-    gateio-task-cron: 1/10000 * * * * ?
     oracle-scripts-address: '0x00000000000000000000000000000001'
     sender-address: '0x07fa08a855753f0ff7292fdcbe871216'
     sender-private-key: ${STARCOIN_SENDER_PRIVATE_KEY}
@@ -51,5 +62,5 @@ logging:
   level:
     org:
       starcoin:
-        stcpricereporter: DEBUG
+        stcpricereporter: INFO
     root: INFO

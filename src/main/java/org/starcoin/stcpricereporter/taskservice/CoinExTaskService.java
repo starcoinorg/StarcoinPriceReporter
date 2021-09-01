@@ -32,7 +32,8 @@ public class CoinExTaskService {
     @Autowired
     OnChainManager onChainManager;
 
-    @Scheduled(cron = "${starcoin.stc-price-reporter.coinex-task-cron}")
+    //@Scheduled(cron = "${starcoin.stc-price-reporter.coinex-task-cron}")
+    @Scheduled(fixedDelayString = "${starcoin.stc-price-reporter.coinex-task-fixed-delay}")
     public void task() {
 //        System.out.println("Thread Name : "
 //                + Thread.currentThread().getName() + "  i am a task : date ->  "

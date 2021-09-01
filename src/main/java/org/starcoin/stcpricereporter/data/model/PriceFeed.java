@@ -7,10 +7,13 @@ import javax.persistence.Id;
 import javax.persistence.Version;
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.util.Arrays;
 
 @Entity
 public class PriceFeed {
+    public static final String ON_CHAIN_STATUS_CREATED = "CREATED";
+    public static final String ON_CHAIN_STATUS_UPDATING = "UPDATING";
+    public static final String ON_CHAIN_STATUS_UPDATED = "UPDATED";
+
     @Id
     @Column(length = 50)
     private String pairId;
@@ -30,6 +33,8 @@ public class PriceFeed {
     @Column(precision = 50, scale = 0)
     private BigInteger latestPrice;
 
+    @Column(length = 20)
+    private String onChainStatus = ON_CHAIN_STATUS_CREATED;
 
     @Column(length = 70, nullable = false)
     private String createdBy;
@@ -45,7 +50,7 @@ public class PriceFeed {
 
     @Version
     private Long version;
-    
+
     public String getPairId() {
         return pairId;
     }
@@ -94,6 +99,30 @@ public class PriceFeed {
         this.latestPrice = latestPrice;
     }
 
+    public String getOnChainStatus() {
+        return onChainStatus;
+    }
+
+    protected void setOnChainStatus(String onChainStatus) {
+        this.onChainStatus = onChainStatus;
+    }
+
+    public void onChainStatusUpdating() {
+        this.onChainStatus = ON_CHAIN_STATUS_UPDATING;
+    }
+
+    public void onChainStatusUpdated() {
+        this.onChainStatus = ON_CHAIN_STATUS_UPDATED;
+    }
+
+    public Long getVersion() {
+        return version;
+    }
+
+    public void setVersion(Long version) {
+        this.version = version;
+    }
+
     public String getCreatedBy() {
         return createdBy;
     }
@@ -125,4 +154,6 @@ public class PriceFeed {
     public void setUpdatedAt(Long updatedAt) {
         this.updatedAt = updatedAt;
     }
+
+
 }

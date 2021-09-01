@@ -59,9 +59,10 @@ public class OnChainManager {
 
     public void initDataSourceOrUpdateOnChain(OffChainPriceCache<?> offChainPriceCache,
                                               PriceOracleType priceOracleType, BigInteger price) {
+        String pairId = priceOracleType.getStructName(); // Pair Id. in database!
         // /////////////////////////////////////////////
         // try update in database
-        if (!tryUpdatePriceInDatabase(priceOracleType, price)) return;
+        if (!tryUpdatePriceInDatabase(pairId, price)) return;
         // ////////////////////////////////////////////
         if (offChainPriceCache.isFirstUpdate()) {
             if (!isDataSourceInitialize(priceOracleType)) {
@@ -73,14 +74,18 @@ public class OnChainManager {
         } else {
             updateOnChain(priceOracleType, price);
         }
+        try {
+            priceFeedService.setOnChainStatusUpdated(pairId);
+        } catch (RuntimeException runtimeException) {
+            LOG.info("Update on-chain status in database caught runtime error. PairId: " + pairId, runtimeException);
+        }
     }
 
-    private boolean tryUpdatePriceInDatabase(PriceOracleType priceOracleType, BigInteger price) {
+    private boolean tryUpdatePriceInDatabase(String pairId, BigInteger price) {
         try {
-            String pairId = priceOracleType.getStructName(); // Pair Id. in database!
             if (!priceFeedService.tryUpdatePrice(pairId, price)) {
                 if (LOG.isDebugEnabled()) {
-                    LOG.debug("Try update database failed. Maybe another process have updated it." + priceOracleType.getStructName() + ": " + price);
+                    LOG.debug("Try update database failed. Maybe another process have updated it." + pairId + ": " + price);
                 }
                 return false;
             } else {
@@ -88,11 +93,11 @@ public class OnChainManager {
             }
         } catch (org.springframework.orm.ObjectOptimisticLockingFailureException optimisticLockingFailureException) {
             if (LOG.isDebugEnabled()) {
-                LOG.debug("Try update database failed, cause of ObjectOptimisticLockingFailureException." + priceOracleType.getStructName() + ": " + price);
+                LOG.debug("Try update database failed, cause of ObjectOptimisticLockingFailureException." + pairId + ": " + price);
             }
             return false;
         } catch (RuntimeException exception) {
-            LOG.info("Update price database caught runtime error. " + priceOracleType.getStructName() + ": " + price, exception);
+            LOG.info("Update price in database caught runtime error. " + pairId + ": " + price, exception);
             return true;// continue update on-chain.
         }
     }

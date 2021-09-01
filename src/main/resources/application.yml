@@ -31,7 +31,7 @@ spring:
       hibernate:
         hbm2ddl:
           # auto: create # 开发阶段使用
-          auto: none
+          auto: update
         dialect: org.hibernate.dialect.MySQL5InnoDBDialect
 
   flyway:

@@ -21,6 +21,7 @@ public class PriceFeedService {
     public static final String PAIR_ID_ETH_USD = "ETH_USD";
     private static final BigDecimal ETH_TO_WEI = BigDecimal.TEN.pow(18);
     private static final BigDecimal STC_TO_NANOSTC = BigDecimal.TEN.pow(9);
+    private static final int DATABASE_HEARTBEAT_SECONDS = 60;
     private final Logger LOG = LoggerFactory.getLogger(PriceFeedService.class);
     @Autowired
     private PriceFeedRepository priceFeedRepository;
@@ -30,17 +31,12 @@ public class PriceFeedService {
     }
 
     public boolean tryUpdatePrice(String pairId, BigInteger price) {
-        PriceFeed priceFeed = priceFeedRepository.findById(pairId).orElse(null);
-        if (priceFeed == null) {
-            String msg = "CANNOT find price feed in database by pairId: " + pairId;
-            LOG.error(msg);
-            throw new RuntimeException(msg);
-        }
-        int DATABASE_HEARTBEAT_SECONDS = 60;
+        PriceFeed priceFeed = assertPriceFeed(pairId);
         if (priceFeed.getLatestPrice() == null
                 || priceFeed.getLatestPrice().compareTo(price) != 0
                 || priceFeed.getUpdatedAt() != null && System.currentTimeMillis() - priceFeed.getUpdatedAt() > 1000 * DATABASE_HEARTBEAT_SECONDS) {
             priceFeed.setLatestPrice(price);
+            priceFeed.onChainStatusUpdating();
             priceFeed.setUpdatedAt(System.currentTimeMillis());
             priceFeed.setUpdatedBy("ADMIN");
             priceFeedRepository.save(priceFeed);
@@ -53,6 +49,24 @@ public class PriceFeedService {
             }
             return false;
         }
+    }
+
+    public void setOnChainStatusUpdated(String pairId) {
+        PriceFeed priceFeed = assertPriceFeed(pairId);
+        priceFeed.onChainStatusUpdated();
+        priceFeed.setUpdatedAt(System.currentTimeMillis());
+        priceFeed.setUpdatedBy("ADMIN");
+        priceFeedRepository.save(priceFeed);
+    }
+
+    private PriceFeed assertPriceFeed(String pairId) {
+        PriceFeed priceFeed = priceFeedRepository.findById(pairId).orElse(null);
+        if (priceFeed == null) {
+            String msg = "CANNOT find price feed in database by pairId: " + pairId;
+            LOG.error(msg);
+            throw new RuntimeException(msg);
+        }
+        return priceFeed;
     }
 
     public void createPriceFeedIfNotExists(String pairId, String name, Integer decimals,

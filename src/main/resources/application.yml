@@ -31,8 +31,24 @@ spring:
       hibernate:
         hbm2ddl:
           # auto: create # 开发阶段使用
-          auto: update
+          auto: none
         dialect: org.hibernate.dialect.MySQL5InnoDBDialect
+
+  flyway:
+    baselineOnMigrate: true
+    # 如果指定 schema 包含了其他表但没有 flyway schema history 表的话，在执行 flyway migrate 命令之前须先执行 flyway baseline 命令。
+    # 设置 spring.flyway.baseline-on-migrate 为 true 后，flyway 将在需要 baseline 的时候, 自动执行一次 baseline。
+    baselineVersion: 0.0.0
+    cleanDisabled: true # flyway 的 clean 命令会删除指定 schema 下的所有 table，应该禁掉
+    enabled: true # 启用或禁用 flyway
+    locations: classpath:db/migration # 设定 SQL 脚本的目录，比如取值为 classpath:db/migration,filesystem:/sql-migrations
+    outOfOrder: false # 生产环境关闭 outOfOrder
+    #spring.flyway.encoding=
+    # Encoding of SQL migrations (default: UTF-8)
+    #spring.flyway.schemas=
+    # 需要 flyway 管控的 schema list，缺省的使用 dbsource.connection 直连上的那个 schema，
+    # 可以指定多个schema，但仅会在第一个 schema 下建立 metadata 表，也仅在第一个 schema 应用 migration sql 脚本，
+    # 但 flyway clean 命令会依次在这些 schema 下都执行一遍。
 
 
 starcoin:

@@ -1,0 +1,2 @@
+-- CREATE DATABASE  IF NOT EXISTS `price_oracle` /*!40100 DEFAULT CHARACTER SET utf8mb4 */;
+-- USE `price_oracle`;

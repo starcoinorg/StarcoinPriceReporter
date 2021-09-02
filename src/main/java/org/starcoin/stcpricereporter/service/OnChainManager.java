@@ -81,11 +81,11 @@ public class OnChainManager {
         // ////////////////////////////////////////////
         String transactionHash;
         //if (offChainPriceCache.isFirstUpdate()) {
-        if (!isDataSourceInitialize(priceOracleType)) {
-            LOG.debug("Init data-source first.");
-            transactionHash = initDataSource(priceOracleType, price); //updateOnChain(priceOracleType, price);
+        if (!isDataSourceInitialized(priceOracleType)) {
+            LOG.debug("Datasource is NOT initialized. Init data-source first.");
+            transactionHash = doInitDataSource(priceOracleType, price); //updateOnChain(priceOracleType, price);
         } else {
-            transactionHash = updateOnChain(priceOracleType, price);
+            transactionHash = doUpdateOnChain(priceOracleType, price);
         }
         //} else {
         //    updateOnChain(priceOracleType, price);
@@ -121,7 +121,7 @@ public class OnChainManager {
     /**
      * @throws RuntimeException if submit transaction error, throw runtime exception.
      */
-    public String updateOnChain(PriceOracleType priceOracleType, BigInteger price) {
+    protected String doUpdateOnChain(PriceOracleType priceOracleType, BigInteger price) {
         if (LOG.isDebugEnabled()) {
             LOG.debug("Update on-chain price of oracle: " + priceOracleType.getStructName() + ", price: " + price);
         }
@@ -130,7 +130,7 @@ public class OnChainManager {
                         price, oracleScriptsAddressHex));
     }
 
-    public boolean isDataSourceInitialize(PriceOracleType priceOracleType) {
+    public boolean isDataSourceInitialized(PriceOracleType priceOracleType) {
         Object resultObj = contractCallV2(
                 FUNCTION_ID_IS_DATA_SOURCE_INITIALIZED,
                 Collections.singletonList(getTypeArgString(priceOracleType)),
@@ -227,11 +227,12 @@ public class OnChainManager {
 
     /**
      * Init oracle datasource on-chain.
+     *
      * @param priceOracleType
      * @param price
      * @throws RuntimeException if submit transaction error, throw runtime exception.
      */
-    public String initDataSource(PriceOracleType priceOracleType, BigInteger price) {
+    protected String doInitDataSource(PriceOracleType priceOracleType, BigInteger price) {
         if (LOG.isDebugEnabled()) {
             LOG.debug("Init datasource of price oracle: " + priceOracleType.getStructName() + ", price: " + price);
         }
@@ -241,7 +242,7 @@ public class OnChainManager {
     }
 
     private String submitOracleTransaction(PriceOracleType priceOracleType,
-                                         java.util.function.Function<TypeTag, TransactionPayload> transactionPayloadProvider) {
+                                           java.util.function.Function<TypeTag, TransactionPayload> transactionPayloadProvider) {
         TypeTag oracleTypeTag = toTypeTag(priceOracleType);
 
         final Ed25519PrivateKey senderPrivateKey = SignatureUtils.strToPrivateKey(senderPrivateKeyHex);
@@ -259,7 +260,7 @@ public class OnChainManager {
                 LOG.error("Submit oracle transaction about {} caught error. {}", priceOracleType.getStructName(), respBody);
                 throw new RuntimeException("Submit transaction error. " + respBody);
             }
-            return (String)responseMap.get("result");
+            return (String) responseMap.get("result");
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }

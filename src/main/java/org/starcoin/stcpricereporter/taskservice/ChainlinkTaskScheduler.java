@@ -29,11 +29,12 @@ import static org.starcoin.stcpricereporter.chainlink.utils.CsvUtils.readCsvPric
 @Service
 public class ChainlinkTaskScheduler implements SchedulingConfigurer {
 
-    private static Logger LOG = LoggerFactory.getLogger(ChainlinkTaskScheduler.class);
-
-    private static final String ORACLE_TYPE_MODULE_ADDRESS = "0x07fa08a855753f0ff7292fdcbe871216";
-
     private static final int FIXED_DELAY_SECONDS = 7;
+
+    private static final Logger LOG = LoggerFactory.getLogger(ChainlinkTaskScheduler.class);
+
+    @Value("${starcoin.price-oracle-type-module-address}")
+    private String oracleTypeModuleAddress; // = "0x07fa08a855753f0ff7292fdcbe871216"
 
     @Value("${starcoin.stc-price-reporter.ethereum-http-service-url}")
     private String ethereumHttpServiceUrl;
@@ -81,7 +82,7 @@ public class ChainlinkTaskScheduler implements SchedulingConfigurer {
             ChainlinkPriceUpdateTask chainlinkPriceUpdateTask = new ChainlinkPriceUpdateTask(ethereumHttpServiceUrl, p.getPair(), p.getProxy(),
                     p.getDecimals(),
                     this.onChainManager,
-                    new PriceOracleType(ORACLE_TYPE_MODULE_ADDRESS, p.getMoveTokenPairName(), p.getMoveTokenPairName()));
+                    getPriceOracleType(p.getMoveTokenPairName()));
             taskRegistrar.getScheduler().schedule(chainlinkPriceUpdateTask,//() -> scheduleFixed(),
                     t -> {
                         Calendar nextExecutionTime = new GregorianCalendar();
@@ -99,6 +100,11 @@ public class ChainlinkTaskScheduler implements SchedulingConfigurer {
 //            return crontrigger.nextExecutionTime(t);
 //        });
     }
+
+    public PriceOracleType getPriceOracleType(String pairId) {
+        return new PriceOracleType(oracleTypeModuleAddress, pairId, pairId);
+    }
+
 
 //    public void scheduleFixed() {
 //        LOGGER.info("scheduleFixed: Next execution time of this will always be 5 seconds");

@@ -65,6 +65,10 @@ starcoin:
     oracle-scripts-address: '0x00000000000000000000000000000001'
     sender-address: '0x07fa08a855753f0ff7292fdcbe871216'
     sender-private-key: ${STARCOIN_SENDER_PRIVATE_KEY}
+  transaction-confirm-task-service:
+    fixed-delay: 10000
+    confirm-Transaction-created-before-seconds: 30
+
 
 ok:
   http:

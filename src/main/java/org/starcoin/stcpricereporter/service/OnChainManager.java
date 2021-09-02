@@ -206,6 +206,17 @@ public class OnChainManager {
         return (Map<String, Object>) resultObj;
     }
 
+
+    public Map<String, Object> getTransaction(String transactionHash) {
+        String method = "chain.get_transaction";
+        List<Object> params = Collections.singletonList(transactionHash);
+        Object resultObj = JsonRpcUtils.invoke(restTemplate, starcoinRpcUrl, method, params);
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("chain.get_transaction {}, return result: {}", transactionHash, resultObj);
+        }
+        return (Map<String, Object>) resultObj;
+    }
+
     public void registerOracle(PriceOracleType priceOracleType, Byte precision) {
         if (LOG.isDebugEnabled()) {
             LOG.debug("Register price oracle: " + priceOracleType.getStructName() + ", precision: " + precision);

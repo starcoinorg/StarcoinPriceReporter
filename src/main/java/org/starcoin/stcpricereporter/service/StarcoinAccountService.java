@@ -25,7 +25,7 @@ public class StarcoinAccountService {
             starcoinAccount.setCreatedBy("ADMIN");
             starcoinAccount.setCreatedAt(System.currentTimeMillis());
         }
-        starcoinAccount.setConfirmedSequenceNumber(txnCount);
+        starcoinAccount.setConfirmedSequenceNumber(txnCount.subtract(BigInteger.ONE));
         starcoinAccount.setSequenceNumber(txnCount);
         starcoinAccount.setUpdatedBy("ADMIN");
         starcoinAccount.setUpdatedAt(System.currentTimeMillis());

@@ -11,6 +11,7 @@ import org.starcoin.stcpricereporter.taskservice.StcUsdOracleType;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.RoundingMode;
+import java.util.List;
 
 /**
  * Price feed service using database.
@@ -25,6 +26,10 @@ public class PriceFeedService {
     private final Logger LOG = LoggerFactory.getLogger(PriceFeedService.class);
     @Autowired
     private PriceFeedRepository priceFeedRepository;
+
+    public List<PriceFeed> getPriceFeeds() {
+        return priceFeedRepository.findAll();
+    }
 
     public PriceFeed getPriceFeed(String pairId) {
         return priceFeedRepository.findById(pairId).orElse(null);

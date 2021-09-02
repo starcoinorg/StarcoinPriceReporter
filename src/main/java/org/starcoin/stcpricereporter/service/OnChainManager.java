@@ -79,18 +79,19 @@ public class OnChainManager {
         // try update in database
         if (!tryUpdatePriceInDatabase(pairId, price)) return;
         // ////////////////////////////////////////////
+        String transactionHash;
         //if (offChainPriceCache.isFirstUpdate()) {
         if (!isDataSourceInitialize(priceOracleType)) {
             LOG.debug("Init data-source first.");
-            initDataSource(priceOracleType, price); //updateOnChain(priceOracleType, price);
+            transactionHash = initDataSource(priceOracleType, price); //updateOnChain(priceOracleType, price);
         } else {
-            updateOnChain(priceOracleType, price);
+            transactionHash = updateOnChain(priceOracleType, price);
         }
         //} else {
         //    updateOnChain(priceOracleType, price);
         //}
         try {
-            priceFeedService.setOnChainStatusUpdated(pairId);
+            priceFeedService.setOnChainStatusSubmitted(pairId, transactionHash);
         } catch (RuntimeException runtimeException) {
             LOG.info("Update on-chain status in database caught runtime error. PairId: " + pairId, runtimeException);
         }
@@ -117,11 +118,14 @@ public class OnChainManager {
         }
     }
 
-    public void updateOnChain(PriceOracleType priceOracleType, BigInteger price) {
+    /**
+     * @throws RuntimeException if submit transaction error, throw runtime exception.
+     */
+    public String updateOnChain(PriceOracleType priceOracleType, BigInteger price) {
         if (LOG.isDebugEnabled()) {
             LOG.debug("Update on-chain price of oracle: " + priceOracleType.getStructName() + ", price: " + price);
         }
-        submitOracleTransaction(priceOracleType, oracleTypeTag ->
+        return submitOracleTransaction(priceOracleType, oracleTypeTag ->
                 OnChainTransactionUtils.buildPriceOracleUpdateTransaction(oracleTypeTag,
                         price, oracleScriptsAddressHex));
     }
@@ -199,7 +203,7 @@ public class OnChainManager {
         if (LOG.isDebugEnabled()) {
             LOG.debug("chain.get_transaction_info {}, return result: {}", transactionHash, resultObj);
         }
-        return (Map<String, Object>)resultObj;
+        return (Map<String, Object>) resultObj;
     }
 
     public void registerOracle(PriceOracleType priceOracleType, Byte precision) {
@@ -210,16 +214,22 @@ public class OnChainManager {
                 OnChainTransactionUtils.buildPriceOracleRegisterTransaction(oracleTypeTag, precision, oracleScriptsAddressHex));
     }
 
-    public void initDataSource(PriceOracleType priceOracleType, BigInteger price) {
+    /**
+     * Init oracle datasource on-chain.
+     * @param priceOracleType
+     * @param price
+     * @throws RuntimeException if submit transaction error, throw runtime exception.
+     */
+    public String initDataSource(PriceOracleType priceOracleType, BigInteger price) {
         if (LOG.isDebugEnabled()) {
             LOG.debug("Init datasource of price oracle: " + priceOracleType.getStructName() + ", price: " + price);
         }
-        submitOracleTransaction(priceOracleType, oracleTypeTag ->
+        return submitOracleTransaction(priceOracleType, oracleTypeTag ->
                 OnChainTransactionUtils.buildPriceOracleInitDataSourceTransaction(oracleTypeTag,
                         price, oracleScriptsAddressHex));
     }
 
-    private void submitOracleTransaction(PriceOracleType priceOracleType,
+    private String submitOracleTransaction(PriceOracleType priceOracleType,
                                          java.util.function.Function<TypeTag, TransactionPayload> transactionPayloadProvider) {
         TypeTag oracleTypeTag = toTypeTag(priceOracleType);
 
@@ -232,11 +242,13 @@ public class OnChainManager {
             LOG.debug("Submit oracle transaction about: " + priceOracleType.getStructName() + ", response: " + respBody);
         }
         try {
-            if (!indicatesSuccess(new ObjectMapper().readValue(respBody, new TypeReference<Map<String, Object>>() {
-            }))) {
+            Map<String, Object> responseMap = new ObjectMapper().readValue(respBody, new TypeReference<Map<String, Object>>() {
+            });
+            if (!indicatesSuccess(responseMap)) {
                 LOG.error("Submit oracle transaction about {} caught error. {}", priceOracleType.getStructName(), respBody);
                 throw new RuntimeException("Submit transaction error. " + respBody);
             }
+            return (String)responseMap.get("result");
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }

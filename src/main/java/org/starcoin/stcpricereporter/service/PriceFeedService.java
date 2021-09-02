@@ -50,9 +50,9 @@ public class PriceFeedService {
         }
     }
 
-    public void setOnChainStatusUpdated(String pairId) {
+    public void setOnChainStatusSubmitted(String pairId, String onChainTransactionHash) {
         PriceFeed priceFeed = assertPriceFeed(pairId);
-        priceFeed.onChainStatusUpdated();
+        priceFeed.onChainStatusSubmitted(onChainTransactionHash);
         priceFeed.setUpdatedAt(System.currentTimeMillis());
         priceFeed.setUpdatedBy("ADMIN");
         priceFeedRepository.save(priceFeed);

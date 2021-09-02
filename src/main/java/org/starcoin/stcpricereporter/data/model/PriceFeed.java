@@ -12,7 +12,7 @@ import java.math.BigInteger;
 public class PriceFeed {
     public static final String ON_CHAIN_STATUS_CREATED = "CREATED";
     public static final String ON_CHAIN_STATUS_UPDATING = "UPDATING";
-    public static final String ON_CHAIN_STATUS_UPDATED = "UPDATED";
+    public static final String ON_CHAIN_STATUS_SUBMITTED = "SUBMITTED";
 
     @Id
     @Column(length = 50)
@@ -35,6 +35,9 @@ public class PriceFeed {
 
     @Column(length = 20)
     private String onChainStatus = ON_CHAIN_STATUS_CREATED;
+
+    @Column(length = 66)
+    private String onChainTransactionHash;
 
     @Column(length = 70, nullable = false)
     private String createdBy;
@@ -107,12 +110,21 @@ public class PriceFeed {
         this.onChainStatus = onChainStatus;
     }
 
+    public String getOnChainTransactionHash() {
+        return onChainTransactionHash;
+    }
+
+    public void setOnChainTransactionHash(String onChainTransactionHash) {
+        this.onChainTransactionHash = onChainTransactionHash;
+    }
+
     public void onChainStatusUpdating() {
         this.onChainStatus = ON_CHAIN_STATUS_UPDATING;
     }
 
-    public void onChainStatusUpdated() {
-        this.onChainStatus = ON_CHAIN_STATUS_UPDATED;
+    public void onChainStatusSubmitted(String onChainTransactionHash) {
+        this.onChainTransactionHash = onChainTransactionHash;
+        this.onChainStatus = ON_CHAIN_STATUS_SUBMITTED;
     }
 
     public Long getVersion() {

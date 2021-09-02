@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.scheduling.TaskScheduler;
 import org.springframework.scheduling.annotation.SchedulingConfigurer;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
@@ -14,9 +15,10 @@ import org.starcoin.stcpricereporter.chainlink.PriceFeedRecord;
 import org.starcoin.stcpricereporter.service.OnChainManager;
 import org.starcoin.stcpricereporter.service.PriceFeedService;
 
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.Reader;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.URL;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -62,13 +64,29 @@ public class ChainlinkTaskScheduler implements SchedulingConfigurer {
 
         //String csvFilePath = "src/main/resources/EthereumPriceFeeds-Mainnet.csv";
         String csvFileName = "EthereumPriceFeeds-Mainnet.csv";
-        Reader in;
+        //        Reader in;
+//        try {
+//            in = new FileReader(getClass().getClassLoader().getResource(csvFileName).getFile());
+//        } catch (FileNotFoundException e) {
+//            e.printStackTrace();
+//            throw new RuntimeException(e);
+//        }
+        ClassPathResource cl = new ClassPathResource(csvFileName);
+        URL url;
         try {
-            in = new FileReader(getClass().getClassLoader().getResource(csvFileName).getFile());
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-            throw new RuntimeException(e);
+            url = cl.getURL();
+        } catch (IOException exception) {
+            exception.printStackTrace();//todo?
+            throw new RuntimeException(exception);
         }
+        BufferedReader in = null;
+        try {
+            in = new BufferedReader(new InputStreamReader(url.openStream()));
+        } catch (IOException exception) {
+            exception.printStackTrace();
+            throw new RuntimeException(exception);
+        }
+
         List<PriceFeedRecord> priceFeedRecords = readCsvPriceFeedRecords(in)
                 .stream().filter(f -> f.getEnabled() != null && f.getEnabled()).collect(Collectors.toList());
         LOG.debug(priceFeedRecords.toString());

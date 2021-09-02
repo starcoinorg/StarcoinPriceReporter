@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.starcoin.stcpricereporter.data.model.PriceFeed;
+import org.starcoin.stcpricereporter.data.model.StarcoinAccount;
 import org.starcoin.stcpricereporter.data.repo.PriceFeedRepository;
 import org.starcoin.stcpricereporter.service.OnChainManager;
 import org.starcoin.stcpricereporter.service.StarcoinAccountService;
@@ -19,7 +20,7 @@ import java.util.Map;
 @Component
 public class StarcoinTransactionConfirmTaskService {
     private static final Logger LOG = LoggerFactory.getLogger(StarcoinTransactionConfirmTaskService.class);
-
+    private static final int ACCOUNT_SEQUENCE_NUMBER_RESET_GAP = 2;
     //private static final int NEEDED_BLOCK_CONFIRMATIONS = 1;
 
     @Value("${starcoin.transaction-confirm-task-service.confirm-Transaction-created-before-seconds}")
@@ -74,7 +75,9 @@ public class StarcoinTransactionConfirmTaskService {
                 LOG.error("Update starcoin transaction error.", exception);
                 //continue;
             }
-        }
+        } // end for
+        // -----------------------------------------------
+        resetAccountSequenceNumberIfNecessary();
     }
 
     private void updateTransactionAndAccountSequenceNumber(PriceFeed t) {
@@ -91,6 +94,24 @@ public class StarcoinTransactionConfirmTaskService {
         Map<String, Object> rawTransaction = (Map<String, Object>) userTransaction.get("raw_txn");
         // Update account sequence number(transaction counter) ...
         starcoinAccountService.confirmSequenceNumberOnChain((String) rawTransaction.get("sender"), new BigInteger(rawTransaction.get("sequence_number").toString()));
+    }
 
+    private void resetAccountSequenceNumberIfNecessary() {
+        StarcoinAccount account = starcoinAccountService.getStarcoinAccountOrElseNull(onChainManager.getSenderAddress());
+        if (account == null) {
+            LOG.error("Cannot find sender account.");
+            return;
+        }
+        try {
+            int submittedTxnCount = priceFeedRepository.countByOnChainStatusIn(new String[]{PriceFeed.ON_CHAIN_STATUS_SUBMITTED});
+            if (account.getConfirmedSequenceNumber().add(BigInteger.valueOf(submittedTxnCount)).add(BigInteger.ONE)
+                    .add(BigInteger.valueOf(ACCOUNT_SEQUENCE_NUMBER_RESET_GAP))
+                    .compareTo(account.getSequenceNumber()) < 0) {
+                LOG.info("Local Account sequence number run TOO FAST! RESET it by on-chain sequence number.");
+                onChainManager.resetByOnChainSequenceNumber(onChainManager.getSenderAddress());
+            }
+        } catch (RuntimeException runtimeException) {
+            LOG.error("resetAccountSequenceNumberIfNecessary error.", runtimeException);
+        }
     }
 }

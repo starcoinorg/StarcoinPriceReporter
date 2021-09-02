@@ -13,7 +13,7 @@ public class PriceFeed {
     public static final String ON_CHAIN_STATUS_CREATED = "CREATED";
     public static final String ON_CHAIN_STATUS_UPDATING = "UPDATING";
     public static final String ON_CHAIN_STATUS_SUBMITTED = "SUBMITTED";
-    private static final String ON_CHAIN_STATUS_CONFIRMED = "CONFIRMED";
+    public static final String ON_CHAIN_STATUS_CONFIRMED = "CONFIRMED";
 
     @Id
     @Column(length = 50)
@@ -121,13 +121,13 @@ public class PriceFeed {
 
     public void onChainStatusUpdating() {
         this.onChainStatus = ON_CHAIN_STATUS_UPDATING;
+        this.onChainTransactionHash = null;
     }
 
     public void onChainStatusSubmitted(String onChainTransactionHash) {
         this.onChainTransactionHash = onChainTransactionHash;
         this.onChainStatus = ON_CHAIN_STATUS_SUBMITTED;
     }
-
 
     public void onChainStatusConfirmed() {
         this.onChainStatus = ON_CHAIN_STATUS_CONFIRMED;

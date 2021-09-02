@@ -1,5 +1,7 @@
 package org.starcoin.stcpricereporter;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -8,6 +10,7 @@ import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.starcoin.stcpricereporter.service.PriceFeedService;
+import org.starcoin.stcpricereporter.service.OnChainManager;
 import org.starcoin.stcpricereporter.taskservice.StcPriceAggregator;
 import org.starcoin.stcpricereporter.taskservice.StcUsdOracleType;
 import springfox.documentation.oas.annotations.EnableOpenApi;
@@ -20,9 +23,13 @@ import java.math.RoundingMode;
 @EnableScheduling
 @EnableAsync
 public class StcPriceReporterApplication {
+	private static final Logger LOG = LoggerFactory.getLogger(StcPriceReporterApplication.class);
 
 	@Autowired
 	private PriceFeedService priceFeedService;
+
+	@Autowired
+	private OnChainManager onChainManager;
 
 	public static void main(String[] args) {
 		SpringApplication.run(StcPriceReporterApplication.class, args);
@@ -38,6 +45,16 @@ public class StcPriceReporterApplication {
 				deviationPercentage, heartbeatHours);
 		//		System.out.println(priceFeedService.getEthToStcExchangeRate());
 		//		System.out.println(priceFeedService.getWeiToNanoStcExchangeRate());
+	}
+
+
+	@EventListener(ApplicationReadyEvent.class)
+	void initStarcoinTransactionSenderAccount() {
+		try {
+			onChainManager.createSenderAccountIfNoExists();
+		} catch (RuntimeException e) {
+			LOG.error("Create starcoin sender account error.", e);
+		}
 	}
 
 }

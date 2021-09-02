@@ -16,11 +16,16 @@ public class JsonRpcUtils {
 
     public static Object invoke(RestTemplate restTemplate, String url, String method, List<Object> params) {
         HttpEntity<Map<String, Object>> entity = createRequestEntity(method, params);
-        String resultStr = restTemplate.postForObject(url, entity, String.class);
+        String responseStr = restTemplate.postForObject(url, entity, String.class);
+        return getResultFromResponseBody(responseStr);
+    }
+
+    public static Object getResultFromResponseBody(String responseStr) {
         ObjectMapper objectMapper = new ObjectMapper();
-        Map<String, Object> responseMap = null;
+        Map<String, Object> responseMap;
         try {
-            responseMap = objectMapper.readValue(resultStr, new TypeReference<Map<String, Object>>() {});
+            responseMap = objectMapper.readValue(responseStr, new TypeReference<Map<String, Object>>() {
+            });
         } catch (JsonProcessingException e) {
             throw new RuntimeException("JSON RPC read value error.", e);
         }
@@ -28,6 +33,10 @@ public class JsonRpcUtils {
             throw new RuntimeException("JSON RPC invoke error." + responseMap.get("error"));
         }
         return responseMap.get("result");
+    }
+
+    public static String getStringResultFromResponseBody(String rspBody) {
+        return (String) getResultFromResponseBody(rspBody);
     }
 
     private static boolean indicatesSuccess(Map<String, Object> responseMap) {

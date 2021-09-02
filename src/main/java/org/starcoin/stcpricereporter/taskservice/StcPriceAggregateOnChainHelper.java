@@ -2,6 +2,7 @@ package org.starcoin.stcpricereporter.taskservice;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.starcoin.stcpricereporter.service.OnChainManager;
 
 import java.math.BigDecimal;
 
@@ -15,7 +16,12 @@ public class StcPriceAggregateOnChainHelper {
         boolean needReport = stcPriceAggregator.updatePrice(datasourceKey, price, dateTimeInSeconds);
         if (needReport) {
             LOG.debug("STC / USD, report on-chain...");
-            onChainManager.initDataSourceOrUpdateOnChain(stcPriceAggregator.getStcPriceCache(), StcUsdOracleType.INSTANCE, StcUsdOracleType.toOracleIntegerPrice(price));
+            try {
+                onChainManager.initDataSourceOrUpdateOnChain(StcUsdOracleType.INSTANCE, StcUsdOracleType.toOracleIntegerPrice(price));
+            } catch (RuntimeException runtimeException) {
+                LOG.error("Update " + "STCUSD" + " on-chain price error.", runtimeException);
+                return false;
+            }
             stcPriceAggregator.markOnChainUpdated();
             return true;
         } else {

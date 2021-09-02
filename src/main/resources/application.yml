@@ -68,11 +68,11 @@ starcoin:
 
 ok:
   http:
-    connect-timeout: 3
-    max-idle-connections: 20
-    read-timeout: 6
-    write-timeout: 6
-    keep-alive-duration: 300
+    connect-timeout: 10
+    max-idle-connections: 60
+    read-timeout: 10
+    write-timeout: 10
+    keep-alive-duration: 600
 
 logging:
   level:

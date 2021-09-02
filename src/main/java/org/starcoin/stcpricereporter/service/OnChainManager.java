@@ -1,4 +1,4 @@
-package org.starcoin.stcpricereporter.taskservice;
+package org.starcoin.stcpricereporter.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -9,8 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
-import org.starcoin.bean.TypeObj;
-import org.starcoin.stcpricereporter.service.PriceFeedService;
+import org.starcoin.stcpricereporter.taskservice.PriceOracleType;
 import org.starcoin.stcpricereporter.utils.JsonRpcUtils;
 import org.starcoin.stcpricereporter.utils.OnChainTransactionUtils;
 import org.starcoin.types.AccountAddress;
@@ -26,6 +25,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import static org.starcoin.stcpricereporter.utils.OnChainTransactionUtils.toTypeTag;
 
 
 @Component
@@ -47,6 +48,9 @@ public class OnChainManager {
     @Autowired
     private PriceFeedService priceFeedService;
 
+    @Autowired
+    private StarcoinAccountService starcoinAccountService;
+
     public OnChainManager(@Value("${starcoin.stc-price-reporter.sender-address}") String senderAddressHex,
                           @Value("${starcoin.stc-price-reporter.sender-private-key}") String senderPrivateKeyHex,
                           @Value("${starcoin.rpc-url}") String starcoinRpcUrl,
@@ -64,23 +68,27 @@ public class OnChainManager {
         return !responseObj.containsKey("error");// && (responseObj.containsKey("result") && null != responseObj.getJSONObject("result"));
     }
 
-    public void initDataSourceOrUpdateOnChain(OffChainPriceCache<?> offChainPriceCache,
-                                              PriceOracleType priceOracleType, BigInteger price) {
+    public void initDataSourceOrUpdateOnChain(PriceOracleType priceOracleType, BigInteger price) {
+//        try {
+//            Thread.sleep(Long.MAX_VALUE);//sleep forever now...
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
         String pairId = priceOracleType.getStructName(); // Pair Id. in database!
         // /////////////////////////////////////////////
         // try update in database
         if (!tryUpdatePriceInDatabase(pairId, price)) return;
         // ////////////////////////////////////////////
-        if (offChainPriceCache.isFirstUpdate()) {
-            if (!isDataSourceInitialize(priceOracleType)) {
-                LOG.debug("Init data-source first.");
-                initDataSource(priceOracleType, price); //updateOnChain(priceOracleType, price);
-            } else {
-                updateOnChain(priceOracleType, price);
-            }
+        //if (offChainPriceCache.isFirstUpdate()) {
+        if (!isDataSourceInitialize(priceOracleType)) {
+            LOG.debug("Init data-source first.");
+            initDataSource(priceOracleType, price); //updateOnChain(priceOracleType, price);
         } else {
             updateOnChain(priceOracleType, price);
         }
+        //} else {
+        //    updateOnChain(priceOracleType, price);
+        //}
         try {
             priceFeedService.setOnChainStatusUpdated(pairId);
         } catch (RuntimeException runtimeException) {
@@ -109,9 +117,12 @@ public class OnChainManager {
         }
     }
 
-    private void updateOnChain(PriceOracleType priceOracleType, BigInteger price) {
+    public void updateOnChain(PriceOracleType priceOracleType, BigInteger price) {
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Update on-chain price of oracle: " + priceOracleType.getStructName() + ", price: " + price);
+        }
         submitOracleTransaction(priceOracleType, oracleTypeTag ->
-                OnChainTransactionUtils.encodePriceOracleUpdateScriptFunction(oracleTypeTag,
+                OnChainTransactionUtils.buildPriceOracleUpdateTransaction(oracleTypeTag,
                         price, oracleScriptsAddressHex));
     }
 
@@ -161,35 +172,94 @@ public class OnChainManager {
         return resultObj;
     }
 
-    private void initDataSource(PriceOracleType priceOracleType, BigInteger price) {
+    /**
+     * curl --location --request POST 'https://barnard-seed.starcoin.org' \
+     * --header 'Content-Type: application/json' \
+     * --data-raw '{
+     * "id":101,
+     * "jsonrpc":"2.0",
+     * "method":"contract.resolve_module",
+     * "params":["0x07fa08a855753f0ff7292fdcbe871216::BTC_USD"]
+     * }'
+     */
+    public Object resolveModule(String moduleTag) {
+        String method = "contract.resolve_module";
+        List<Object> params = Collections.singletonList(moduleTag);
+        Object resultObj = JsonRpcUtils.invoke(restTemplate, starcoinRpcUrl, method, params);
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("contract.resolve_module {}, return result: {}", moduleTag, resultObj);
+        }
+        return resultObj;
+    }
+
+    public Map<String, Object> getTransactionInfo(String transactionHash) {
+        String method = "chain.get_transaction_info";
+        List<Object> params = Collections.singletonList(transactionHash);
+        Object resultObj = JsonRpcUtils.invoke(restTemplate, starcoinRpcUrl, method, params);
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("chain.get_transaction_info {}, return result: {}", transactionHash, resultObj);
+        }
+        return (Map<String, Object>)resultObj;
+    }
+
+    public void registerOracle(PriceOracleType priceOracleType, Byte precision) {
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Register price oracle: " + priceOracleType.getStructName() + ", precision: " + precision);
+        }
         submitOracleTransaction(priceOracleType, oracleTypeTag ->
-                OnChainTransactionUtils.encodePriceOracleInitDataSourceScriptFunction(oracleTypeTag,
+                OnChainTransactionUtils.buildPriceOracleRegisterTransaction(oracleTypeTag, precision, oracleScriptsAddressHex));
+    }
+
+    public void initDataSource(PriceOracleType priceOracleType, BigInteger price) {
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Init datasource of price oracle: " + priceOracleType.getStructName() + ", price: " + price);
+        }
+        submitOracleTransaction(priceOracleType, oracleTypeTag ->
+                OnChainTransactionUtils.buildPriceOracleInitDataSourceTransaction(oracleTypeTag,
                         price, oracleScriptsAddressHex));
     }
 
     private void submitOracleTransaction(PriceOracleType priceOracleType,
                                          java.util.function.Function<TypeTag, TransactionPayload> transactionPayloadProvider) {
-        TypeObj oracleTypeObject = TypeObj.builder()
-                .moduleName(priceOracleType.getModuleName())
-                .moduleAddress(priceOracleType.getModuleAddress())
-                .name(priceOracleType.getStructName()).build();
-        TypeTag oracleTypeTag = oracleTypeObject.toTypeTag();
+        TypeTag oracleTypeTag = toTypeTag(priceOracleType);
 
         final Ed25519PrivateKey senderPrivateKey = SignatureUtils.strToPrivateKey(senderPrivateKeyHex);
         final AccountAddress senderAddress = AccountAddressUtils.create(senderAddressHex);
+        BigInteger seqNumber = starcoinAccountService.getSequenceNumberAndIncrease(this.getSenderAddress());
         TransactionPayload transactionPayload = transactionPayloadProvider.apply(oracleTypeTag);
-        String respBody = this.starcoinClient.submitTransaction(senderAddress, senderPrivateKey, transactionPayload);
+        String respBody = this.starcoinClient.submitTransaction(senderAddress, seqNumber.longValue(), senderPrivateKey, transactionPayload);
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Submit price of " + priceOracleType.getStructName() + ", response: " + respBody);
+            LOG.debug("Submit oracle transaction about: " + priceOracleType.getStructName() + ", response: " + respBody);
         }
         try {
             if (!indicatesSuccess(new ObjectMapper().readValue(respBody, new TypeReference<Map<String, Object>>() {
             }))) {
-                LOG.error("Submit update {} price transaction error. {}", priceOracleType.getStructName(), respBody);
+                LOG.error("Submit oracle transaction about {} caught error. {}", priceOracleType.getStructName(), respBody);
                 throw new RuntimeException("Submit transaction error. " + respBody);
             }
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    public BigInteger getSenderSequenceNumber(String address) {
+        long seqNumber = this.starcoinClient.getAccountSequenceNumber(AccountAddressUtils.create(address));
+        return BigInteger.valueOf(seqNumber);
+    }
+
+    public String getSenderAddress() {
+        return this.senderAddressHex;
+    }
+
+    public void resetByOnChainSequenceNumber(String address) {
+        BigInteger seqNumber = getSenderSequenceNumber(address);
+        starcoinAccountService.resetSequenceNumber(address, seqNumber);
+    }
+
+    public void createSenderAccountIfNoExists() {
+        String address = getSenderAddress();
+        if (starcoinAccountService.getStarcoinAccountOrElseNull(address) == null) {
+            this.resetByOnChainSequenceNumber(address);
         }
     }
 

@@ -11,6 +11,7 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.scheduling.config.ScheduledTaskRegistrar;
 import org.springframework.stereotype.Service;
 import org.starcoin.stcpricereporter.chainlink.PriceFeedRecord;
+import org.starcoin.stcpricereporter.service.OnChainManager;
 import org.starcoin.stcpricereporter.service.PriceFeedService;
 
 import java.io.FileNotFoundException;

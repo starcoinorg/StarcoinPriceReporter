@@ -3,6 +3,7 @@ package org.starcoin.stcpricereporter.taskservice;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.starcoin.stcpricereporter.model.AggregatorV3Interface;
+import org.starcoin.stcpricereporter.service.OnChainManager;
 import org.starcoin.stcpricereporter.utils.DateTimeUtils;
 import org.web3j.crypto.Credentials;
 import org.web3j.protocol.Web3j;
@@ -13,18 +14,15 @@ import java.math.BigInteger;
 
 
 public class ChainlinkPriceUpdateTask implements Runnable {
-    private Logger LOG = LoggerFactory.getLogger(ChainlinkPriceUpdateTask.class);
-
     private static final Credentials NO_CREDENTIALS = Credentials.create("0x99");
-
     private final String ethereumHttpServiceUrl;
     private final String contractAddress;//= "0x5f4eC3Df9cbd43714FE2740f5E3616155c5b8419";
     private final String tokenPairName;
     private final int decimals;
     private final OnChainManager onChainManager;
     private final PriceOracleType priceOracleType;
-
     private final ChainlinkPriceCache chainlinkPriceCache = new ChainlinkPriceCache();
+    private final Logger LOG = LoggerFactory.getLogger(ChainlinkPriceUpdateTask.class);
 
     public ChainlinkPriceUpdateTask(String ethereumHttpServiceUrl,
                                     String tokenPairName,
@@ -71,13 +69,19 @@ public class ChainlinkPriceUpdateTask implements Runnable {
             boolean needReport = chainlinkPriceCache.tryUpdate(price, timeStamp.divide(BigInteger.valueOf(1000)).longValue());
             if (needReport) {
                 LOG.debug(tokenPairName + ", report on-chain...");
-                this.onChainManager.initDataSourceOrUpdateOnChain(chainlinkPriceCache, priceOracleType, price);
+                try {
+                    this.onChainManager.initDataSourceOrUpdateOnChain(priceOracleType, price);
+                } catch (RuntimeException runtimeException) {
+                    LOG.error("Update " + tokenPairName + " on-chain price error.", runtimeException);
+                }
                 markOnChainUpdated();
             } else {
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("Not need to update {} price {} = {}", tokenPairName, chainlinkPriceCache.getPrice(), price);
                 }
             }
+        }, error -> {
+            LOG.error("Chainlink aggregatorV3Interface.latestRoundData error.", error);
         });
 
     }

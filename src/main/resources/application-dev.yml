@@ -15,6 +15,10 @@ starcoin:
     sender-address: '0x07fa08a855753f0ff7292fdcbe871216'
     sender-private-key: ${STARCOIN_SENDER_PRIVATE_KEY}
 
+spring:
+  flyway:
+    enabled: false # 启用或禁用 flyway
+
 logging:
   level:
     org:

@@ -1,0 +1,56 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: starcoin-pricereporter-deployment-barnard
+  labels:
+    app: starcoin-pricereporter-barnard
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: starcoin-pricereporter-barnard
+  template:
+    metadata:
+      labels:
+        app: starcoin-pricereporter-barnard
+    spec:
+      containers:
+      - name: starcoin-pricereporter-barnard
+        image: ghcr.io/starcoinorg/starcoin_pricereporter:sha-b084bdf
+        ports:
+        - containerPort: 8686
+        env:
+        - name: STARCOIN_MYSQL_URL
+          value: "jdbc:mysql://starcoin-db-2.c0bz9kehdvnb.ap-northeast-1.rds.amazonaws.com:3306/price_oracle_barnard?useUnicode=true&characterEncoding=utf-8&serverTimezone=UTC"
+        - name: STARCOIN_MYSQL_USER
+          value: "starcoin"
+        - name: STARCOIN_MYSQL_PWD
+          valueFrom:
+            secretKeyRef:
+              name: mysql-pwd
+              key: password
+        - name: STARCOIN_NETWORK
+          value: "barnard"
+        - name: STARCOIN_RPC_URL
+          value: "https://barnard-seed.starcoin.org"
+        - name: STARCOIN_CHAIN_ID
+          value: "251"
+        - name: STARCOIN_SENDER_PRIVATE_KEY
+          valueFrom:
+            secretKeyRef:
+              name: barnard-pricereporter-sender-secret
+              key: privatekey
+
+#        - name: STARCOIN_ES_URL
+#          value: "search-starcoin-es2-47avtmhexhbg7qtynzebcnnu64.ap-northeast-1.es.amazonaws.com"
+#        - name: STARCOIN_ES_PROTOCOL
+#          value: "https"
+#        - name: STARCOIN_ES_PORT
+#          value: "443"
+#        - name: STARCOIN_ES_USER
+#          value: elastic
+#        - name: STARCOIN_ES_PWD
+#          valueFrom:
+#            secretKeyRef:
+#              name: elasticsearch-pw-elastic
+#              key: password

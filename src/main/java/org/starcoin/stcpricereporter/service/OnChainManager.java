@@ -51,11 +51,11 @@ public class OnChainManager {
     @Autowired
     private StarcoinAccountService starcoinAccountService;
 
-    public OnChainManager(@Value("${starcoin.stc-price-reporter.sender-address}") String senderAddressHex,
-                          @Value("${starcoin.stc-price-reporter.sender-private-key}") String senderPrivateKeyHex,
+    public OnChainManager(@Value("${starcoin.sender-address}") String senderAddressHex,
+                          @Value("${starcoin.sender-private-key}") String senderPrivateKeyHex,
                           @Value("${starcoin.rpc-url}") String starcoinRpcUrl,
                           @Value("${starcoin.chain-id}") Integer starcoinChainId,
-                          @Value("${starcoin.stc-price-reporter.oracle-scripts-address}") String oracleScriptsAddressHex) {
+                          @Value("${starcoin.oracle-scripts-address}") String oracleScriptsAddressHex) {
         this.senderAddressHex = senderAddressHex;
         this.senderPrivateKeyHex = senderPrivateKeyHex;
         this.starcoinRpcUrl = starcoinRpcUrl;

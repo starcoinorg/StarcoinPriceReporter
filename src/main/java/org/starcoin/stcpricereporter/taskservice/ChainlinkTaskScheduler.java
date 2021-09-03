@@ -38,8 +38,11 @@ public class ChainlinkTaskScheduler implements SchedulingConfigurer {
     @Value("${starcoin.price-oracle-type-module-address}")
     private String oracleTypeModuleAddress; // = "0x07fa08a855753f0ff7292fdcbe871216"
 
-    @Value("${starcoin.stc-price-reporter.ethereum-http-service-url}")
+    @Value("${ethereum.http-service-url}")
     private String ethereumHttpServiceUrl;
+
+    @Value("${ethereum.chainlink-price-feeds.csv-filename}")
+    private String chainlinkPriceFeedsCsvFileName;// = "EthereumPriceFeeds-Mainnet.csv";
 
     @Autowired
     private OnChainManager onChainManager;
@@ -63,7 +66,7 @@ public class ChainlinkTaskScheduler implements SchedulingConfigurer {
         }
 
         //String csvFilePath = "src/main/resources/EthereumPriceFeeds-Mainnet.csv";
-        String csvFileName = "EthereumPriceFeeds-Mainnet.csv";
+        String csvFileName = chainlinkPriceFeedsCsvFileName;
         //        Reader re;
 //        try {
 //            re = new FileReader(getClass().getClassLoader().getResource(csvFileName).getFile());

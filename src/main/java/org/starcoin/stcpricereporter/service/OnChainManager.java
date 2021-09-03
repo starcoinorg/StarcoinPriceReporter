@@ -97,6 +97,13 @@ public class OnChainManager {
         }
     }
 
+    /**
+     * Try update price in database.
+     *
+     * @param pairId
+     * @param price
+     * @return If price updated, return ture, else return false. If unexpected runtime error caught, return TRUE!
+     */
     private boolean tryUpdatePriceInDatabase(String pairId, BigInteger price) {
         try {
             if (!priceFeedService.tryUpdatePrice(pairId, price)) {
@@ -244,14 +251,20 @@ public class OnChainManager {
     private String submitOracleTransaction(PriceOracleType priceOracleType,
                                            java.util.function.Function<TypeTag, TransactionPayload> transactionPayloadProvider) {
         TypeTag oracleTypeTag = toTypeTag(priceOracleType);
-
+        BigInteger seqNumber = getSenderSequenceNumberFromDatabase();
         final Ed25519PrivateKey senderPrivateKey = SignatureUtils.strToPrivateKey(senderPrivateKeyHex);
         final AccountAddress senderAddress = AccountAddressUtils.create(senderAddressHex);
-        BigInteger seqNumber = starcoinAccountService.getSequenceNumberAndIncrease(this.getSenderAddress());
         TransactionPayload transactionPayload = transactionPayloadProvider.apply(oracleTypeTag);
-        String respBody = this.starcoinClient.submitTransaction(senderAddress, seqNumber.longValue(), senderPrivateKey, transactionPayload);
+        String respBody;
+        if (seqNumber != null) {
+            respBody = this.starcoinClient.submitTransaction(senderAddress, seqNumber.longValue(), senderPrivateKey, transactionPayload);
+        } else {
+            respBody = this.starcoinClient.submitTransaction(senderAddress, senderPrivateKey, transactionPayload);
+        }
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Submit oracle transaction about: " + priceOracleType.getStructName() + ", response: " + respBody);
+            LOG.debug("Submit oracle transaction about: " + priceOracleType.getStructName()
+                    + ", account sequence number: " + (seqNumber == null ? "<NULL>" : seqNumber)
+                    + ", response: " + respBody);
         }
         try {
             Map<String, Object> responseMap = new ObjectMapper().readValue(respBody, new TypeReference<Map<String, Object>>() {
@@ -264,6 +277,28 @@ public class OnChainManager {
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    /**
+     * Get Sender Sequence Number From Database.
+     *
+     * @return Sender Sequence Number. If unexpected runtime error caught, return null.
+     * @throws org.springframework.orm.ObjectOptimisticLockingFailureException Throw if database update conflicted.
+     */
+    private BigInteger getSenderSequenceNumberFromDatabase() {
+        BigInteger seqNumber;
+        try {
+            seqNumber = starcoinAccountService.getSequenceNumberAndIncrease(this.getSenderAddress());
+        } catch (org.springframework.orm.ObjectOptimisticLockingFailureException optimisticLockingFailureException) {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Get account sequence number from database error, cause of ObjectOptimisticLockingFailureException.");
+            }
+            throw optimisticLockingFailureException;
+        } catch (RuntimeException e) {
+            seqNumber = null;
+            LOG.error("Get account sequence number from database error.", e);
+        }
+        return seqNumber;
     }
 
     public BigInteger getSenderSequenceNumber(String address) {

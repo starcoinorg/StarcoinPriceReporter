@@ -35,6 +35,12 @@ public class PriceFeedService {
         return priceFeedRepository.findById(pairId).orElse(null);
     }
 
+    /**
+     * Try update price in database.
+     * @param pairId
+     * @param price
+     * @return If database not need to update, return false. Else return true.
+     */
     public boolean tryUpdatePrice(String pairId, BigInteger price) {
         PriceFeed priceFeed = assertPriceFeed(pairId);
         if (priceFeed.getLatestPrice() == null

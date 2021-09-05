@@ -31,9 +31,10 @@ import static org.starcoin.stcpricereporter.chainlink.utils.CsvUtils.readCsvPric
 @Service
 public class ChainlinkTaskScheduler implements SchedulingConfigurer {
 
-    private static final int FIXED_DELAY_SECONDS = 7;
-
     private static final Logger LOG = LoggerFactory.getLogger(ChainlinkTaskScheduler.class);
+
+    @Value("${ethereum.chainlink-task-scheduler.fixed-delay-seconds}")
+    private final int fixedDelaySeconds = 60;
 
     @Value("${starcoin.price-oracle-type-module-address}")
     private String oracleTypeModuleAddress; // = "0x07fa08a855753f0ff7292fdcbe871216"
@@ -109,7 +110,7 @@ public class ChainlinkTaskScheduler implements SchedulingConfigurer {
                         Calendar nextExecutionTime = new GregorianCalendar();
                         Date lastActualExecutionTime = t.lastActualExecutionTime();
                         nextExecutionTime.setTime(lastActualExecutionTime != null ? lastActualExecutionTime : new Date());
-                        nextExecutionTime.add(Calendar.SECOND, FIXED_DELAY_SECONDS);
+                        nextExecutionTime.add(Calendar.SECOND, fixedDelaySeconds);
                         return nextExecutionTime.getTime();
                     });
             LOG.info("Task scheduled, " + chainlinkPriceUpdateTask);

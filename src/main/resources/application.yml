@@ -65,10 +65,10 @@ starcoin:
   sender-address: "0x07fa08a855753f0ff7292fdcbe871216"
   sender-private-key: ${STARCOIN_SENDER_PRIVATE_KEY}
   transaction-confirm-task-service:
-    fixed-delay: 10000
+    fixed-delay: 30000
     confirm-Transaction-created-before-seconds: 30
   transaction-resend-task-service:
-    fixed-delay: 10000
+    fixed-delay: 30000
     resend-updated-before-seconds: 180
   price-oracle-type-module-address: "0x07fa08a855753f0ff7292fdcbe871216"
 
@@ -76,6 +76,8 @@ ethereum:
   http-service-url: https://mainnet.infura.io/v3/72637bfa15a940dcadcec25a6fe0fca1
   chainlink-price-feeds:
     csv-filename: "EthereumPriceFeeds-Mainnet.csv"
+  chainlink-task-scheduler:
+    fixed-delay-seconds: 120
 
 ok:
   http:

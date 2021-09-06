@@ -14,7 +14,7 @@ public class HttpRequestUriFilter implements Filter {
 
     private static final Logger LOG = LoggerFactory.getLogger(HttpRequestUriFilter.class);
 
-    private final static String[] URI_NOT_FILTER = new String[]{"/v1/priceFeeds", "/v1/exchangeRates",
+    private final static String[] ALLOWED_PATHS = new String[]{"/v1/priceFeeds", "/v1/exchangeRates",
             "/swagger", "/v3/api-docs", "/favicon.ico"};
 
     @Override
@@ -38,7 +38,7 @@ public class HttpRequestUriFilter implements Filter {
     }
 
     private boolean isLegalUri(String contextPath, String uri) {
-        for (String allowedPath : URI_NOT_FILTER) {
+        for (String allowedPath : ALLOWED_PATHS) {
             if (uri.indexOf(contextPath + allowedPath) == 0) {
                 return true;
             }

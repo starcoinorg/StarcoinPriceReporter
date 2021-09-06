@@ -24,7 +24,8 @@ public class HttpRequestUriFilter implements Filter {
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
         String uri = ((HttpServletRequest) request).getRequestURI();
-        if (isLegalUri(uri)) {
+        String contextPath = ((HttpServletRequest) request).getContextPath();
+        if (isLegalUri(contextPath, uri)) {
             chain.doFilter(request, response);
         } else {
             LOG.info("Intercepted URI：{}", uri);
@@ -36,9 +37,9 @@ public class HttpRequestUriFilter implements Filter {
     public void destroy() {
     }
 
-    private boolean isLegalUri(String uri) {
-        for (String str : URI_NOT_FILTER) {
-            if (uri.indexOf(str) == 0) {
+    private boolean isLegalUri(String contextPath, String uri) {
+        for (String allowedPath : URI_NOT_FILTER) {
+            if (uri.indexOf(contextPath + allowedPath) == 0) {
                 return true;
             }
         }

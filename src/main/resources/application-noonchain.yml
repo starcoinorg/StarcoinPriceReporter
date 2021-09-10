@@ -1,0 +1,25 @@
+starcoin:
+  chain-id: ${STARCOIN_CHAIN_ID}
+  rpc-url: ${STARCOIN_RPC_URL}
+  stc-price-reporter:
+    bixin-task-fixed-delay: 10000
+    coinex-task-fixed-delay: 10000
+    gateio-task-fixed-delay: 10000
+  on-chain-disabled: true
+  transaction-confirm-task-service:
+    fixed-delay: 3000000
+    confirm-Transaction-created-before-seconds: 30
+  transaction-resend-task-service:
+    fixed-delay: 3000000
+    resend-updated-before-seconds: 180
+
+spring:
+  flyway:
+    enabled: false # 启用或禁用 flyway
+
+logging:
+  level:
+    org:
+      starcoin:
+        stcpricereporter: DEBUG
+    root: INFO

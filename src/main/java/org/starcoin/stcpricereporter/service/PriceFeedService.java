@@ -37,6 +37,7 @@ public class PriceFeedService {
 
     /**
      * Try update price in database.
+     *
      * @param pairId
      * @param price
      * @return If database not need to update, return false. Else return true.
@@ -64,6 +65,15 @@ public class PriceFeedService {
     public void setOnChainStatusSubmitted(String pairId, String onChainTransactionHash) {
         PriceFeed priceFeed = assertPriceFeed(pairId);
         priceFeed.onChainStatusSubmitted(onChainTransactionHash);
+        priceFeed.setUpdatedAt(System.currentTimeMillis());
+        priceFeed.setUpdatedBy("ADMIN");
+        priceFeedRepository.save(priceFeed);
+    }
+
+
+    public void setOnChainStatusNoOnChain(String pairId) {
+        PriceFeed priceFeed = assertPriceFeed(pairId);
+        priceFeed.onChainStatusNoOnChain();
         priceFeed.setUpdatedAt(System.currentTimeMillis());
         priceFeed.setUpdatedBy("ADMIN");
         priceFeedRepository.save(priceFeed);

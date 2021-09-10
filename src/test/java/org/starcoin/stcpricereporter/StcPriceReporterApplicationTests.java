@@ -49,7 +49,7 @@ class StcPriceReporterApplicationTests {
             }
             i++;
         }
-        if (true) return;
+        //if (true) return;
 
         // ---------------------------------------
         // read ETH price...

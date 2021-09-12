@@ -15,7 +15,9 @@ public class StarcoinAccountService {
     @Autowired
     private StarcoinAccountRepository starcoinAccountRepository;
 
-
+    /**
+     * Reset account sequence number in database. If account is not existed in database, create it.
+     */
     @Transactional
     public void resetSequenceNumber(String address, BigInteger txnCount) {
         StarcoinAccount starcoinAccount = starcoinAccountRepository.findById(address).orElse(null);

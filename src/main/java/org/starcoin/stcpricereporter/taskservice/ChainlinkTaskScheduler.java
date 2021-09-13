@@ -65,39 +65,10 @@ public class ChainlinkTaskScheduler implements SchedulingConfigurer {
         if (taskRegistrar.getScheduler() == null) {
             taskRegistrar.setScheduler(poolScheduler());
         }
-
-        //String csvFilePath = "src/main/resources/EthereumPriceFeeds-Mainnet.csv";
-        String csvFileName = chainlinkPriceFeedsCsvFileName;
-        //        Reader re;
-//        try {
-//            re = new FileReader(getClass().getClassLoader().getResource(csvFileName).getFile());
-//        } catch (FileNotFoundException e) {
-//            e.printStackTrace();
-//            throw new RuntimeException(e);
-//        }
-        ClassPathResource cl = new ClassPathResource(csvFileName);
-        URL url;
-        try {
-            url = cl.getURL();
-        } catch (IOException exception) {
-            LOG.error("ClassPathResource getURL error.", exception);
-            throw new RuntimeException(exception);
-        }
-        BufferedReader reader;
-        try {
-            reader = new BufferedReader(new InputStreamReader(url.openStream()));
-        } catch (IOException exception) {
-            LOG.error("Create buffered reader error.", exception);
-            throw new RuntimeException(exception);
-        }
-
-        List<PriceFeedRecord> priceFeedRecords = readCsvPriceFeedRecords(reader)
-                .stream().filter(f -> f.getEnabled() != null && f.getEnabled()).collect(Collectors.toList());
-        LOG.debug(priceFeedRecords.toString());
-
+        List<PriceFeedRecord> priceFeedRecords = getPriceFeedRecordsFromFile();
         for (PriceFeedRecord p : priceFeedRecords) {
             // ///////////////////////////////
-            String pairId = p.getMoveTokenPairName(); // Pair Id. re database!
+            String pairId = p.getMoveTokenPairName(); // Pair Id. in database!
             priceFeedService.createPriceFeedIfNotExists(pairId, p.getPair(), p.getDecimals(),
                     p.getDeviationPercentage(), p.getHeartbeatHours());
             // ///////////////////////////////
@@ -122,11 +93,44 @@ public class ChainlinkTaskScheduler implements SchedulingConfigurer {
 //            return crontrigger.nextExecutionTime(t);
 //        });
 
+    }
+
+    private List<PriceFeedRecord> getPriceFeedRecordsFromFile() {
+        //String csvFilePath = "src/main/resources/EthereumPriceFeeds-Mainnet.csv";
+        String csvFileName = chainlinkPriceFeedsCsvFileName;
+        //        Reader re;
+        //        try {
+        //            re = new FileReader(getClass().getClassLoader().getResource(csvFileName).getFile());
+        //        } catch (FileNotFoundException e) {
+        //            e.printStackTrace();
+        //            throw new RuntimeException(e);
+        //        }
+        ClassPathResource cl = new ClassPathResource(csvFileName);
+        URL url;
+        try {
+            url = cl.getURL();
+        } catch (IOException exception) {
+            LOG.error("ClassPathResource getURL error.", exception);
+            throw new RuntimeException(exception);
+        }
+        BufferedReader reader;
+        try {
+            reader = new BufferedReader(new InputStreamReader(url.openStream()));
+        } catch (IOException exception) {
+            LOG.error("Create buffered reader error.", exception);
+            throw new RuntimeException(exception);
+        }
+        List<PriceFeedRecord> priceFeedRecords = readCsvPriceFeedRecords(reader)
+                .stream().filter(f -> f.getEnabled() != null && f.getEnabled()).collect(Collectors.toList());
         try {
             reader.close();
         } catch (IOException exception) {
             LOG.info("Close reader error.", exception);
         }
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Read chainlink price feeds from file: " + priceFeedRecords);
+        }
+        return priceFeedRecords;
     }
 
     public PriceOracleType getPriceOracleType(String pairId) {

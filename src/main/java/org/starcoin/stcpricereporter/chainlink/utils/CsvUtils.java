@@ -2,6 +2,7 @@ package org.starcoin.stcpricereporter.chainlink.utils;
 
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVRecord;
+import org.starcoin.stcpricereporter.chainlink.FilePriceFeedRecord;
 import org.starcoin.stcpricereporter.chainlink.PriceFeedRecord;
 
 import java.io.IOException;
@@ -43,7 +44,7 @@ public class CsvUtils {
             String enabledStr = record.get(COLUMN_ENABLED);
             Boolean enabled = enabledStr == null || enabledStr.isEmpty() ? null :
                     "Y".equals(enabledStr.toUpperCase()) || Boolean.parseBoolean(enabledStr) ? true : false;
-            PriceFeedRecord priceFeedRecord = new PriceFeedRecord(pair, deviationPercentage, heartBeatHours, decimals, proxy, enabled);
+            PriceFeedRecord priceFeedRecord = new FilePriceFeedRecord(pair, deviationPercentage, heartBeatHours, decimals, proxy, enabled);
 //            if (enabled) {
 //                System.out.println(priceFeedRecord);
 //            }

@@ -5,9 +5,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.starcoin.stcpricereporter.data.model.PriceFeed;
+import org.starcoin.stcpricereporter.data.model.PriceRound;
+import org.starcoin.stcpricereporter.data.model.PriceRoundView;
 import org.starcoin.stcpricereporter.data.repo.PriceFeedRepository;
+import org.starcoin.stcpricereporter.data.repo.PriceRoundRepository;
 import org.starcoin.stcpricereporter.taskservice.StcUsdOracleType;
 
+import javax.transaction.Transactional;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.RoundingMode;
@@ -23,9 +27,42 @@ public class PriceFeedService {
     private static final BigDecimal ETH_TO_WEI = BigDecimal.TEN.pow(18);
     private static final BigDecimal STC_TO_NANOSTC = BigDecimal.TEN.pow(9);
     private static final int DATABASE_HEARTBEAT_SECONDS = 60;
-    private final Logger LOG = LoggerFactory.getLogger(PriceFeedService.class);
+    private static final Logger LOG = LoggerFactory.getLogger(PriceFeedService.class);
+
     @Autowired
     private PriceFeedRepository priceFeedRepository;
+
+    @Autowired
+    private PriceRoundRepository priceRoundRepository;
+
+    /**
+     * Try update price in database, swallow unexpected error.
+     *
+     * @param pairId token pair Id.
+     * @param price  current price.
+     * @return If price in DB updated, return ture, else return false. If UNEXPECTED runtime ERROR CAUGHT, RETURN TRUE!
+     */
+    public static boolean tryUpdatePriceInDatabase(PriceFeedService priceFeedService, String pairId, BigInteger price,
+                                                   BigInteger roundId, Long updatedAt) {
+        try {
+            if (!priceFeedService.tryUpdatePrice(pairId, price, roundId, updatedAt)) {
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Try update database failed. Maybe another process have updated it." + pairId + ": " + price);
+                }
+                return false;
+            } else {
+                return true;
+            }
+        } catch (org.springframework.orm.ObjectOptimisticLockingFailureException optimisticLockingFailureException) {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Try update database failed, cause of ObjectOptimisticLockingFailureException." + pairId + ": " + price);
+            }
+            return false;
+        } catch (RuntimeException exception) {
+            LOG.info("Update price in database caught runtime error. " + pairId + ": " + price, exception);
+            return true;// continue update on-chain.
+        }
+    }
 
     public List<PriceFeed> getPriceFeeds() {
         return priceFeedRepository.findAll();
@@ -42,17 +79,28 @@ public class PriceFeedService {
      * @param price
      * @return If database not need to update, return false. Else return true.
      */
-    public boolean tryUpdatePrice(String pairId, BigInteger price) {
+    @Transactional
+    public boolean tryUpdatePrice(String pairId, BigInteger price, BigInteger roundId, Long updatedAt) {
         PriceFeed priceFeed = assertPriceFeed(pairId);
         if (priceFeed.getLatestPrice() == null
                 || priceFeed.getLatestPrice().compareTo(price) != 0
-                || priceFeed.getUpdatedAt() != null && System.currentTimeMillis() - priceFeed.getUpdatedAt() > 1000 * DATABASE_HEARTBEAT_SECONDS) {
+                || priceFeed.getUpdatedAt() != null && updatedAt - priceFeed.getUpdatedAt() > 1000 * DATABASE_HEARTBEAT_SECONDS) {
             priceFeed.setLatestPrice(price);
             priceFeed.onChainStatusUpdating();
-            priceFeed.setUpdatedAt(System.currentTimeMillis());
+            priceFeed.setUpdatedAt(updatedAt);
             priceFeed.setUpdatedBy("ADMIN");
             priceFeedRepository.save(priceFeed);
             priceFeedRepository.flush();
+            PriceRound priceRound = new PriceRound();
+            priceRound.setPairId(pairId);
+            priceRound.setRoundId(roundId);
+            priceRound.setPrice(price);
+            priceRound.setCreatedAt(updatedAt);
+            priceRound.setUpdatedAt(updatedAt);
+            priceRound.setCreatedBy("ADMIN");
+            priceRound.setUpdatedBy("ADMIN");
+            priceRoundRepository.save(priceRound);
+            priceRoundRepository.flush();
             return true;
         } else {
             if (LOG.isDebugEnabled()) {
@@ -69,7 +117,6 @@ public class PriceFeedService {
         priceFeed.setUpdatedBy("ADMIN");
         priceFeedRepository.save(priceFeed);
     }
-
 
     public void setOnChainStatusNoOnChain(String pairId) {
         PriceFeed priceFeed = assertPriceFeed(pairId);
@@ -130,6 +177,19 @@ public class PriceFeedService {
                 .divide(BigDecimal.TEN.pow(stcUsdPF.getDecimals()), 18, RoundingMode.HALF_UP);
         BigDecimal ethToStc = ethToUsd.divide(stcToUsd, 18, RoundingMode.HALF_UP);
         return ethToStc;
+    }
+
+    public PriceRoundView getProximatePriceRound(String pairId, Long timestamp) {
+        List<PriceRoundView> priceRounds = priceRoundRepository.findProximateRounds(pairId, timestamp);
+        if (priceRounds.size() == 0) {
+            return null;
+        }
+        if (priceRounds.size() == 1) {
+            return priceRounds.get(0);
+        }
+        return Math.abs(priceRounds.get(0).getUpdatedAt().longValue() - timestamp)
+                < Math.abs(priceRounds.get(1).getUpdatedAt().longValue() - timestamp)
+                ? priceRounds.get(0) : priceRounds.get(1);
     }
 
 }

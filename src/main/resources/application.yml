@@ -33,8 +33,9 @@ spring:
       hibernate:
         hbm2ddl:
           # auto: create # 开发阶段使用
-          auto: update
+          auto: none
         dialect: org.hibernate.dialect.MySQL5InnoDBDialect
+    open-in-view: false
 
   flyway:
     baselineOnMigrate: true

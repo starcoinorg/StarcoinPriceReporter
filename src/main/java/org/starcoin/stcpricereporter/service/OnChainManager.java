@@ -6,7 +6,7 @@ import java.math.BigInteger;
 import java.util.Map;
 
 public interface OnChainManager {
-    void initDataSourceOrUpdateOnChain(PriceOracleType priceOracleType, BigInteger price);
+    void initDataSourceOrUpdateOnChain(PriceOracleType priceOracleType, BigInteger price, BigInteger roundId, Long updatedAt);
 
     BigInteger priceOracleRead(PriceOracleType priceOracleType);
 

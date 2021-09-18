@@ -27,6 +27,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static org.starcoin.stcpricereporter.service.PriceFeedService.tryUpdatePriceInDatabase;
 import static org.starcoin.stcpricereporter.utils.OnChainTransactionUtils.toTypeTag;
 
 @ConditionalOnProperty(prefix = "starcoin", value = "on-chain-disabled", havingValue = "false", matchIfMissing = true)
@@ -70,7 +71,7 @@ public class OnChainManagerImpl implements OnChainManager {
     }
 
     @Override
-    public void initDataSourceOrUpdateOnChain(PriceOracleType priceOracleType, BigInteger price) {
+    public void initDataSourceOrUpdateOnChain(PriceOracleType priceOracleType, BigInteger price, BigInteger roundId, Long updatedAt) {
 //        try {
 //            Thread.sleep(Long.MAX_VALUE);//sleep forever now...
 //        } catch (InterruptedException e) {
@@ -79,7 +80,7 @@ public class OnChainManagerImpl implements OnChainManager {
         String pairId = priceOracleType.getStructName(); // Pair Id. in database!
         // /////////////////////////////////////////////
         // try update in database
-        if (!tryUpdatePriceInDatabase(pairId, price)) return;
+        if (!tryUpdatePriceInDatabase(this.priceFeedService, pairId, price, roundId, updatedAt)) return;
         // ////////////////////////////////////////////
         String transactionHash;
         //if (offChainPriceCache.isFirstUpdate()) {
@@ -96,34 +97,6 @@ public class OnChainManagerImpl implements OnChainManager {
             priceFeedService.setOnChainStatusSubmitted(pairId, transactionHash);
         } catch (RuntimeException runtimeException) {
             LOG.info("Update on-chain status in database caught runtime error. PairId: " + pairId, runtimeException);
-        }
-    }
-
-    /**
-     * Try update price in database.
-     *
-     * @param pairId
-     * @param price
-     * @return If price updated, return ture, else return false. If unexpected runtime error caught, return TRUE!
-     */
-    private boolean tryUpdatePriceInDatabase(String pairId, BigInteger price) {
-        try {
-            if (!priceFeedService.tryUpdatePrice(pairId, price)) {
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Try update database failed. Maybe another process have updated it." + pairId + ": " + price);
-                }
-                return false;
-            } else {
-                return true;
-            }
-        } catch (org.springframework.orm.ObjectOptimisticLockingFailureException optimisticLockingFailureException) {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Try update database failed, cause of ObjectOptimisticLockingFailureException." + pairId + ": " + price);
-            }
-            return false;
-        } catch (RuntimeException exception) {
-            LOG.info("Update price in database caught runtime error. " + pairId + ": " + price, exception);
-            return true;// continue update on-chain.
         }
     }
 

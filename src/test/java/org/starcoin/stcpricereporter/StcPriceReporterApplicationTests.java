@@ -3,10 +3,14 @@ package org.starcoin.stcpricereporter;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.starcoin.stcpricereporter.data.model.PriceRoundView;
+import org.starcoin.stcpricereporter.data.repo.PriceRoundRepository;
 import org.starcoin.stcpricereporter.service.OnChainManager;
 import org.starcoin.stcpricereporter.taskservice.PriceOracleType;
 
 import java.math.BigInteger;
+import java.util.Collection;
+import java.util.List;
 
 @SpringBootTest
 class StcPriceReporterApplicationTests {
@@ -14,8 +18,14 @@ class StcPriceReporterApplicationTests {
     @Autowired
     OnChainManager onChainManager;
 
+    @Autowired
+    PriceRoundRepository priceRoundRepository;
+
     @Test
     void contextLoads() throws InterruptedException {
+        List<PriceRoundView> priceRounds = priceRoundRepository.findProximateRounds("ETH_USD", 1631955311000L);
+        priceRounds.forEach(r -> System.out.println(r.getPrice()));
+        if (true) return;
 
         // ---------------------------------------
         // read STC price...

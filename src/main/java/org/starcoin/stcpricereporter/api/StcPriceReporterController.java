@@ -3,6 +3,7 @@ package org.starcoin.stcpricereporter.api;
 import io.swagger.annotations.Api;
 import org.springframework.web.bind.annotation.*;
 import org.starcoin.stcpricereporter.data.model.PriceFeed;
+import org.starcoin.stcpricereporter.data.model.PriceRoundView;
 import org.starcoin.stcpricereporter.service.PriceFeedService;
 
 import javax.annotation.Resource;
@@ -24,6 +25,11 @@ public class StcPriceReporterController {
     @GetMapping("priceFeeds/{pairId}")
     public PriceFeed getPriceFeed(@PathVariable("pairId") String pairId) {
         return priceFeedService.getPriceFeed(pairId);
+    }
+
+    @GetMapping("getProximatePriceRound")
+    public PriceRoundView getProximatePriceRound(@RequestParam("pairId") String pairId, @RequestParam("timestamp") Long timestamp) {
+        return priceFeedService.getProximatePriceRound(pairId, timestamp);
     }
 
     @GetMapping("exchangeRates/ETH_STC")

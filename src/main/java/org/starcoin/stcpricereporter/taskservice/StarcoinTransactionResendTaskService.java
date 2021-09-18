@@ -10,6 +10,7 @@ import org.starcoin.stcpricereporter.data.model.PriceFeed;
 import org.starcoin.stcpricereporter.data.repo.PriceFeedRepository;
 import org.starcoin.stcpricereporter.service.OnChainManager;
 
+import java.math.BigInteger;
 import java.util.List;
 
 @Component
@@ -44,7 +45,9 @@ public class StarcoinTransactionResendTaskService {
                     + updatedBefore + " seconds: " + t.getOnChainTransactionHash());
             //if (null != t.getOnChainTransactionHash() && !t.getOnChainTransactionHash().isEmpty()) {
             try {
-                onChainManager.initDataSourceOrUpdateOnChain(getPriceOracleType(t.getPairId()), t.getLatestPrice());
+                BigInteger roundId = BigInteger.valueOf(System.currentTimeMillis());
+                onChainManager.initDataSourceOrUpdateOnChain(getPriceOracleType(t.getPairId()), t.getLatestPrice(),
+                        roundId, t.getUpdatedAt());
             } catch (RuntimeException exception) {
                 LOG.error("Update on-chain price error.", exception);
                 continue;

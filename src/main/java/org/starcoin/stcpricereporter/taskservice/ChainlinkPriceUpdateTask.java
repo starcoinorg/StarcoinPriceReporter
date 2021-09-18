@@ -59,18 +59,22 @@ public class ChainlinkPriceUpdateTask implements Runnable {
             LOG.debug("Chainlink latestRoundData: " + s);
             BigInteger roundID = s.component1();
             BigInteger price = s.component2();
-            BigInteger startedAt = s.component3();
-            BigInteger timeStamp = s.component4();
-            BigInteger answeredInRound = s.component5();
+            //BigInteger startedAt = s.component3();
+            BigInteger updatedAt = s.component4();
+            //BigInteger answeredInRound = s.component5();
             BigInteger[] priceParts = price.divideAndRemainder(BigInteger.TEN.pow(decimals));
-            LOG.debug(tokenPairName + ", price: " + priceParts[0] + "." + priceParts[1] + ", timestamp: "
-                    + DateTimeUtils.toDefaultZonedDateTime(timeStamp.longValue() * 1000));
-
-            boolean needReport = chainlinkPriceCache.tryUpdate(price, timeStamp.divide(BigInteger.valueOf(1000)).longValue());
+            Long updatedInMills = updatedAt.longValue() * 1000;
+            if (LOG.isDebugEnabled()) {
+                LOG.debug(tokenPairName + ", price: " + priceParts[0] + "." + priceParts[1] + ", timestamp: "
+                        + DateTimeUtils.toDefaultZonedDateTime(updatedInMills));
+            }
+            boolean needReport = chainlinkPriceCache.tryUpdate(price, updatedInMills / 1000);
             if (needReport) {
-                LOG.debug(tokenPairName + ", report on-chain...");
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug(tokenPairName + ", report on-chain...");
+                }
                 try {
-                    this.onChainManager.initDataSourceOrUpdateOnChain(priceOracleType, price);
+                    this.onChainManager.initDataSourceOrUpdateOnChain(priceOracleType, price, roundID, updatedInMills);
                 } catch (RuntimeException runtimeException) {
                     LOG.error("Update " + tokenPairName + " on-chain price error.", runtimeException);
                 }

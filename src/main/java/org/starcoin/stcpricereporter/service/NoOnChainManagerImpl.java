@@ -10,6 +10,8 @@ import org.starcoin.stcpricereporter.taskservice.PriceOracleType;
 import java.math.BigInteger;
 import java.util.Map;
 
+import static org.starcoin.stcpricereporter.service.PriceFeedService.tryUpdatePriceInDatabase;
+
 @ConditionalOnProperty(prefix = "starcoin", value = "on-chain-disabled", havingValue = "true")
 @Component
 public class NoOnChainManagerImpl implements OnChainManager {
@@ -24,8 +26,12 @@ public class NoOnChainManagerImpl implements OnChainManager {
     private StarcoinAccountService starcoinAccountService;
 
     @Override
-    public void initDataSourceOrUpdateOnChain(PriceOracleType priceOracleType, BigInteger price) {
+    public void initDataSourceOrUpdateOnChain(PriceOracleType priceOracleType, BigInteger price, BigInteger roundId, Long updatedAt) {
         String pairId = priceOracleType.getStructName(); // Pair Id. in database!
+        // /////////////////////////////////////////////
+        // try update in database
+        if (!tryUpdatePriceInDatabase(this.priceFeedService, pairId, price, roundId, updatedAt)) return;
+        // ////////////////////////////////////////////
         try {
             priceFeedService.setOnChainStatusNoOnChain(pairId);
         } catch (RuntimeException runtimeException) {

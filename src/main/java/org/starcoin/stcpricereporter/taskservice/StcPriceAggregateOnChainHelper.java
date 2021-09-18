@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.starcoin.stcpricereporter.service.OnChainManager;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 
 public class StcPriceAggregateOnChainHelper {
     private static final Logger LOG = LoggerFactory.getLogger(StcPriceAggregateOnChainHelper.class);
@@ -17,7 +18,10 @@ public class StcPriceAggregateOnChainHelper {
         if (needReport) {
             LOG.debug("STC / USD, report on-chain...");
             try {
-                onChainManager.initDataSourceOrUpdateOnChain(StcUsdOracleType.INSTANCE, StcUsdOracleType.toOracleIntegerPrice(price));
+                Long updatedAt = System.currentTimeMillis();
+                BigInteger roundId = BigInteger.valueOf(updatedAt);
+                onChainManager.initDataSourceOrUpdateOnChain(StcUsdOracleType.INSTANCE,
+                        StcUsdOracleType.toOracleIntegerPrice(price), roundId, updatedAt);
             } catch (RuntimeException runtimeException) {
                 LOG.error("Update " + "STCUSD" + " on-chain price error.", runtimeException);
                 return false;

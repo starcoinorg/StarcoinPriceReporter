@@ -16,10 +16,12 @@ spec:
     spec:
       containers:
       - name: starcoin-pricereporter-barnard
-        image: ghcr.io/starcoinorg/starcoin_pricereporter:sha-b1fabd7
+        image: ghcr.io/starcoinorg/starcoin_pricereporter:sha-56425cf
         ports:
         - containerPort: 8686
         env:
+        - name: spring_profiles_active
+          value: barnard
         - name: STARCOIN_MYSQL_URL
           value: "jdbc:mysql://starcoin-db-2.c0bz9kehdvnb.ap-northeast-1.rds.amazonaws.com:3306/price_oracle_barnard?useUnicode=true&characterEncoding=utf-8&serverTimezone=UTC"
         - name: STARCOIN_MYSQL_USER

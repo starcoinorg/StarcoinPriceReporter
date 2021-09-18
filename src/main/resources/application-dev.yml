@@ -1,6 +1,4 @@
 starcoin:
-  chain-id: ${STARCOIN_CHAIN_ID}
-  rpc-url: ${STARCOIN_RPC_URL}
 #  chain-id: 251 # barnard test network
 #  rpc-url: https://barnard-seed.starcoin.org
   stc-price-reporter:
@@ -16,6 +14,14 @@ starcoin:
 spring:
   flyway:
     enabled: false # 启用或禁用 flyway
+
+  jpa:
+    show-sql: true
+    properties:
+      hibernate:
+        hbm2ddl:
+          # auto: create # 开发阶段使用
+          auto: update
 
 logging:
   level:

@@ -19,10 +19,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static org.starcoin.stcpricereporter.chainlink.utils.CsvUtils.readCsvPriceFeedRecords;
@@ -35,6 +32,8 @@ public class ChainlinkTaskScheduler implements SchedulingConfigurer {
 
     @Value("${ethereum.chainlink-task-scheduler.fixed-delay-seconds}")
     private final int fixedDelaySeconds = 60;
+
+    private final Random fixedDelayRandom = new Random(System.currentTimeMillis());
 
     @Value("${starcoin.price-oracle-type-module-address}")
     private String oracleTypeModuleAddress; // = "0x07fa08a855753f0ff7292fdcbe871216"
@@ -81,7 +80,8 @@ public class ChainlinkTaskScheduler implements SchedulingConfigurer {
                         Calendar nextExecutionTime = new GregorianCalendar();
                         Date lastActualExecutionTime = t.lastActualExecutionTime();
                         nextExecutionTime.setTime(lastActualExecutionTime != null ? lastActualExecutionTime : new Date());
-                        nextExecutionTime.add(Calendar.SECOND, fixedDelaySeconds);
+                        int randomAddedSeconds = fixedDelayRandom.nextInt(fixedDelaySeconds / 10);
+                        nextExecutionTime.add(Calendar.SECOND, fixedDelaySeconds + randomAddedSeconds);
                         return nextExecutionTime.getTime();
                     });
             LOG.info("Task scheduled, " + chainlinkPriceUpdateTask);

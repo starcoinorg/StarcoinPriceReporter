@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: starcoin-pricereporter-barnard
-        image: ghcr.io/starcoinorg/starcoin_pricereporter:sha-56425cf
+        image: ghcr.io/starcoinorg/starcoin_pricereporter:sha-35a6d3d
         ports:
         - containerPort: 8686
         env:

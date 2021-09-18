@@ -1,3 +1,4 @@
+-- DROP TABLE IF EXISTS `price_round`;
 CREATE TABLE `price_round` (
   `pair_id` varchar(50) NOT NULL,
   `round_id` decimal(50,0) NOT NULL,
@@ -9,5 +10,4 @@ CREATE TABLE `price_round` (
   `version` bigint(20) DEFAULT NULL,
   PRIMARY KEY (`pair_id`,`round_id`),
   KEY `IdxPairIdUpdatedAt` (`pair_id`,`updated_at`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
-
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;

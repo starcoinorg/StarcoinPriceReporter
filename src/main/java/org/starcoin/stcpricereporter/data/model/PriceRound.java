@@ -3,6 +3,29 @@ package org.starcoin.stcpricereporter.data.model;
 import javax.persistence.*;
 import java.math.BigInteger;
 
+/**
+ * From chainlink solidity contract:
+ * <p>
+ * function getRoundData(
+ * uint80 _roundId
+ * )
+ * external
+ * view
+ * returns (
+ * uint80 roundId,
+ * int256 answer,
+ * uint256 startedAt,
+ * uint256 updatedAt,
+ * uint80 answeredInRound
+ * );
+ * roundId: The round ID.
+ * <p>
+ * answer: The price.
+ * startedAt: Timestamp of when the round started.
+ * updatedAt: Timestamp of when the round was updated.
+ * answeredInRound: The round ID of the round in which the answer was computed.
+ */
+
 @Entity
 @IdClass(PriceRoundId.class)
 @Table(indexes = {@Index(name = "IdxPairIdUpdatedAt", columnList = "pair_id,updated_at")})
@@ -34,6 +57,12 @@ public class PriceRound {
     @Version
     private Long version;
 
+    @Column(name = "started_at")
+    private Long startedAt;
+
+    @Column(precision = 50, scale = 0)
+    private BigInteger answeredInRound;
+
     @Transient
     private String pairName;
 
@@ -55,29 +84,6 @@ public class PriceRound {
     public void setDecimals(Integer decimals) {
         this.decimals = decimals;
     }
-
-    /**
-     * From chainlink solidity contract:
-     * <p>
-     * function getRoundData(
-     * uint80 _roundId
-     * )
-     * external
-     * view
-     * returns (
-     * uint80 roundId,
-     * int256 answer,
-     * uint256 startedAt,
-     * uint256 updatedAt,
-     * uint80 answeredInRound
-     * );
-     * roundId: The round ID.
-     * <p>
-     * answer: The price.
-     * startedAt: Timestamp of when the round started.
-     * updatedAt: Timestamp of when the round was updated.
-     * answeredInRound: The round ID of the round in which the answer was computed.
-     */
 
     public String getPairId() {
         return pairId;
@@ -143,6 +149,22 @@ public class PriceRound {
         this.version = version;
     }
 
+    public Long getStartedAt() {
+        return startedAt;
+    }
+
+    public void setStartedAt(Long startedAt) {
+        this.startedAt = startedAt;
+    }
+
+    public BigInteger getAnsweredInRound() {
+        return answeredInRound;
+    }
+
+    public void setAnsweredInRound(BigInteger answeredInRound) {
+        this.answeredInRound = answeredInRound;
+    }
+
     @Override
     public String toString() {
         return "PriceRound{" +
@@ -154,6 +176,8 @@ public class PriceRound {
                 ", createdBy='" + createdBy + '\'' +
                 ", updatedBy='" + updatedBy + '\'' +
                 ", version=" + version +
+                ", startedAt=" + startedAt +
+                ", answeredInRound=" + answeredInRound +
                 ", pairName='" + pairName + '\'' +
                 ", decimals=" + decimals +
                 '}';

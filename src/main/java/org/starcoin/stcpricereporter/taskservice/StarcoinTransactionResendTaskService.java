@@ -47,7 +47,7 @@ public class StarcoinTransactionResendTaskService {
             try {
                 BigInteger roundId = BigInteger.valueOf(System.currentTimeMillis());
                 onChainManager.initDataSourceOrUpdateOnChain(getPriceOracleType(t.getPairId()), t.getLatestPrice(),
-                        roundId, t.getUpdatedAt());
+                        roundId, t.getUpdatedAt(), null, null); // todo null??
             } catch (RuntimeException exception) {
                 LOG.error("Update on-chain price error.", exception);
                 continue;

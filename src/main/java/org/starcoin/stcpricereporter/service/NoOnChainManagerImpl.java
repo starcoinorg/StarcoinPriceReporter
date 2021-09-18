@@ -26,11 +26,13 @@ public class NoOnChainManagerImpl implements OnChainManager {
     private StarcoinAccountService starcoinAccountService;
 
     @Override
-    public void initDataSourceOrUpdateOnChain(PriceOracleType priceOracleType, BigInteger price, BigInteger roundId, Long updatedAt) {
+    public void initDataSourceOrUpdateOnChain(PriceOracleType priceOracleType, BigInteger price, BigInteger roundId,
+                                              Long updatedAt, Long startedAt, BigInteger answeredInRound) {
         String pairId = priceOracleType.getStructName(); // Pair Id. in database!
         // /////////////////////////////////////////////
         // try update in database
-        if (!tryUpdatePriceInDatabase(this.priceFeedService, pairId, price, roundId, updatedAt)) return;
+        if (!tryUpdatePriceInDatabase(this.priceFeedService, pairId, price, roundId, updatedAt, startedAt, answeredInRound))
+            return;
         // ////////////////////////////////////////////
         try {
             priceFeedService.setOnChainStatusNoOnChain(pairId);

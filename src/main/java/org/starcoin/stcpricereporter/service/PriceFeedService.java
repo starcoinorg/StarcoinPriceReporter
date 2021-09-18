@@ -43,9 +43,10 @@ public class PriceFeedService {
      * @return If price in DB updated, return ture, else return false. If UNEXPECTED runtime ERROR CAUGHT, RETURN TRUE!
      */
     public static boolean tryUpdatePriceInDatabase(PriceFeedService priceFeedService, String pairId, BigInteger price,
-                                                   BigInteger roundId, Long updatedAt) {
+                                                   BigInteger roundId, Long updatedAt,
+                                                   Long startedAt, BigInteger answeredInRound) {
         try {
-            if (!priceFeedService.tryUpdatePrice(pairId, price, roundId, updatedAt)) {
+            if (!priceFeedService.tryUpdatePrice(pairId, price, roundId, updatedAt, startedAt, answeredInRound)) {
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("Try update database failed. Maybe another process have updated it." + pairId + ": " + price);
                 }
@@ -80,7 +81,8 @@ public class PriceFeedService {
      * @return If database not need to update, return false. Else return true.
      */
     @Transactional
-    public boolean tryUpdatePrice(String pairId, BigInteger price, BigInteger roundId, Long updatedAt) {
+    public boolean tryUpdatePrice(String pairId, BigInteger price, BigInteger roundId, Long updatedAt,
+                                  Long startedAt, BigInteger answeredInRound) {
         PriceFeed priceFeed = assertPriceFeed(pairId);
         if (priceFeed.getLatestPrice() == null
                 || priceFeed.getLatestPrice().compareTo(price) != 0
@@ -97,6 +99,8 @@ public class PriceFeedService {
             priceRound.setPrice(price);
             priceRound.setCreatedAt(updatedAt);
             priceRound.setUpdatedAt(updatedAt);
+            priceRound.setStartedAt(startedAt);
+            priceRound.setAnsweredInRound(answeredInRound);
             priceRound.setCreatedBy("ADMIN");
             priceRound.setUpdatedBy("ADMIN");
             priceRoundRepository.save(priceRound);

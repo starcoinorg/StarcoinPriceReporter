@@ -59,9 +59,9 @@ public class ChainlinkPriceUpdateTask implements Runnable {
             LOG.debug("Chainlink latestRoundData: " + s);
             BigInteger roundID = s.component1();
             BigInteger price = s.component2();
-            //BigInteger startedAt = s.component3();
+            BigInteger startedAt = s.component3();
             BigInteger updatedAt = s.component4();
-            //BigInteger answeredInRound = s.component5();
+            BigInteger answeredInRound = s.component5();
             BigInteger[] priceParts = price.divideAndRemainder(BigInteger.TEN.pow(decimals));
             Long updatedInMills = updatedAt.longValue() * 1000;
             if (LOG.isDebugEnabled()) {
@@ -74,7 +74,8 @@ public class ChainlinkPriceUpdateTask implements Runnable {
                     LOG.debug(tokenPairName + ", report on-chain...");
                 }
                 try {
-                    this.onChainManager.initDataSourceOrUpdateOnChain(priceOracleType, price, roundID, updatedInMills);
+                    this.onChainManager.initDataSourceOrUpdateOnChain(priceOracleType, price, roundID, updatedInMills,
+                            startedAt.longValue() * 1000, answeredInRound);
                 } catch (RuntimeException runtimeException) {
                     LOG.error("Update " + tokenPairName + " on-chain price error.", runtimeException);
                 }

@@ -71,7 +71,8 @@ public class OnChainManagerImpl implements OnChainManager {
     }
 
     @Override
-    public void initDataSourceOrUpdateOnChain(PriceOracleType priceOracleType, BigInteger price, BigInteger roundId, Long updatedAt) {
+    public void initDataSourceOrUpdateOnChain(PriceOracleType priceOracleType, BigInteger price, BigInteger roundId,
+                                              Long updatedAt, Long startedAt, BigInteger answeredInRound) {
 //        try {
 //            Thread.sleep(Long.MAX_VALUE);//sleep forever now...
 //        } catch (InterruptedException e) {
@@ -80,7 +81,8 @@ public class OnChainManagerImpl implements OnChainManager {
         String pairId = priceOracleType.getStructName(); // Pair Id. in database!
         // /////////////////////////////////////////////
         // try update in database
-        if (!tryUpdatePriceInDatabase(this.priceFeedService, pairId, price, roundId, updatedAt)) return;
+        if (!tryUpdatePriceInDatabase(this.priceFeedService, pairId, price, roundId, updatedAt, startedAt, answeredInRound))
+            return;
         // ////////////////////////////////////////////
         String transactionHash;
         //if (offChainPriceCache.isFirstUpdate()) {

@@ -21,7 +21,7 @@ public class StcPriceAggregateOnChainHelper {
                 Long updatedAt = System.currentTimeMillis();
                 BigInteger roundId = BigInteger.valueOf(updatedAt);
                 onChainManager.initDataSourceOrUpdateOnChain(StcUsdOracleType.INSTANCE,
-                        StcUsdOracleType.toOracleIntegerPrice(price), roundId, updatedAt);
+                        StcUsdOracleType.toOracleIntegerPrice(price), roundId, updatedAt, null, null); //todo null??
             } catch (RuntimeException runtimeException) {
                 LOG.error("Update " + "STCUSD" + " on-chain price error.", runtimeException);
                 return false;

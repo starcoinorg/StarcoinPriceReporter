@@ -45,7 +45,7 @@ public class PriceFeedService {
         try {
             if (!priceFeedService.tryUpdatePrice(pairId, price, roundId, updatedAt, startedAt, answeredInRound)) {
                 if (LOG.isDebugEnabled()) {
-                    LOG.debug("Try update database failed. Maybe another process have updated it." + pairId + ": " + price);
+                    LOG.debug("Trying update database return false. Maybe no need to update or another process have updated it." + pairId + ": " + price);
                 }
                 return false;
             } else {

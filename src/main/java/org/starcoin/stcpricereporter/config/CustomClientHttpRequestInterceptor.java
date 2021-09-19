@@ -11,15 +11,15 @@ import java.io.IOException;
 
 public class CustomClientHttpRequestInterceptor implements ClientHttpRequestInterceptor {
 
-  private Logger LOG = LoggerFactory.getLogger(CustomClientHttpRequestInterceptor.class);
+    private final Logger LOG = LoggerFactory.getLogger(CustomClientHttpRequestInterceptor.class);
 
-  @Override
-  public ClientHttpResponse intercept(HttpRequest request, byte[] bytes, ClientHttpRequestExecution execution) throws IOException {
-    // log the http request
-    LOG.debug("URI: {}", request.getURI());
-    LOG.debug("HTTP Method: {}", request.getMethodValue());
-    LOG.debug("HTTP Headers: {}", request.getHeaders());
+    @Override
+    public ClientHttpResponse intercept(HttpRequest request, byte[] bytes, ClientHttpRequestExecution execution) throws IOException {
+        // log the http request
+        LOG.debug("URI: {}", request.getURI());
+        LOG.debug("HTTP Method: {}", request.getMethodValue());
+        LOG.debug("HTTP Headers: {}", request.getHeaders());
 
-    return execution.execute(request, bytes);
-  }
+        return execution.execute(request, bytes);
+    }
 }

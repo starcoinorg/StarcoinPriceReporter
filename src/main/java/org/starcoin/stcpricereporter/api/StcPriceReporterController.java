@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.*;
 import org.starcoin.stcpricereporter.data.model.PriceFeed;
 import org.starcoin.stcpricereporter.data.model.PriceRoundView;
 import org.starcoin.stcpricereporter.service.PriceFeedService;
+import org.starcoin.stcpricereporter.service.PriceRoundService;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -16,6 +17,9 @@ public class StcPriceReporterController {
 
     @Resource
     private PriceFeedService priceFeedService;
+
+    @Resource
+    private PriceRoundService priceRoundService;
 
     @GetMapping("priceFeeds")
     public List<PriceFeed> getPriceFeeds() {
@@ -29,7 +33,7 @@ public class StcPriceReporterController {
 
     @GetMapping("getProximatePriceRound")
     public PriceRoundView getProximatePriceRound(@RequestParam("pairId") String pairId, @RequestParam("timestamp") Long timestamp) {
-        return priceFeedService.getProximatePriceRound(pairId, timestamp);
+        return priceRoundService.getProximatePriceRound(pairId, timestamp);
     }
 
     @GetMapping("exchangeRates/ETH_STC")

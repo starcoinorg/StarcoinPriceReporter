@@ -5,10 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.starcoin.stcpricereporter.data.model.PriceFeed;
-import org.starcoin.stcpricereporter.data.model.PriceRound;
-import org.starcoin.stcpricereporter.data.model.PriceRoundView;
 import org.starcoin.stcpricereporter.data.repo.PriceFeedRepository;
-import org.starcoin.stcpricereporter.data.repo.PriceRoundRepository;
 import org.starcoin.stcpricereporter.taskservice.StcUsdOracleType;
 
 import javax.transaction.Transactional;
@@ -33,7 +30,7 @@ public class PriceFeedService {
     private PriceFeedRepository priceFeedRepository;
 
     @Autowired
-    private PriceRoundRepository priceRoundRepository;
+    private PriceRoundService priceRoundService;
 
     /**
      * Try update price in database, swallow unexpected error.
@@ -93,18 +90,8 @@ public class PriceFeedService {
             priceFeed.setUpdatedBy("ADMIN");
             priceFeedRepository.save(priceFeed);
             priceFeedRepository.flush();
-            PriceRound priceRound = new PriceRound();
-            priceRound.setPairId(pairId);
-            priceRound.setRoundId(roundId);
-            priceRound.setPrice(price);
-            priceRound.setCreatedAt(updatedAt);
-            priceRound.setUpdatedAt(updatedAt);
-            priceRound.setStartedAt(startedAt);
-            priceRound.setAnsweredInRound(answeredInRound);
-            priceRound.setCreatedBy("ADMIN");
-            priceRound.setUpdatedBy("ADMIN");
-            priceRoundRepository.save(priceRound);
-            priceRoundRepository.flush();
+            //LOG.debug("Updated latest price in thread: " + Thread.currentThread().getName());
+            priceRoundService.asyncAddPriceRound(pairId, price, roundId, updatedAt, startedAt, answeredInRound);
             return true;
         } else {
             if (LOG.isDebugEnabled()) {
@@ -183,17 +170,5 @@ public class PriceFeedService {
         return ethToStc;
     }
 
-    public PriceRoundView getProximatePriceRound(String pairId, Long timestamp) {
-        List<PriceRoundView> priceRounds = priceRoundRepository.findProximateRounds(pairId, timestamp);
-        if (priceRounds.size() == 0) {
-            return null;
-        }
-        if (priceRounds.size() == 1) {
-            return priceRounds.get(0);
-        }
-        return Math.abs(priceRounds.get(0).getUpdatedAt().longValue() - timestamp)
-                < Math.abs(priceRounds.get(1).getUpdatedAt().longValue() - timestamp)
-                ? priceRounds.get(0) : priceRounds.get(1);
-    }
 
 }

@@ -11,5 +11,5 @@ CREATE TABLE `price_growth` (
    `updated_by` varchar(70) NOT NULL,
    `version` bigint(20) DEFAULT NULL,
    PRIMARY KEY (`pair_id`)
- ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 

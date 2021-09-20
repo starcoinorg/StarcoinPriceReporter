@@ -53,8 +53,15 @@ public class PriceFeed {
     @Column(nullable = false)
     private Long updatedAt;
 
+    /**
+     * Chainlink feed proxy contract address.
+     */
+    @Column(length = 100)
+    private String chainlinkProxy;
+
     @Version
     private Long version;
+
 
     public String getPairId() {
         return pairId;
@@ -178,5 +185,11 @@ public class PriceFeed {
         this.updatedAt = updatedAt;
     }
 
+    public String getChainlinkProxy() {
+        return chainlinkProxy;
+    }
 
+    public void setChainlinkProxy(String chainlinkProxy) {
+        this.chainlinkProxy = chainlinkProxy;
+    }
 }

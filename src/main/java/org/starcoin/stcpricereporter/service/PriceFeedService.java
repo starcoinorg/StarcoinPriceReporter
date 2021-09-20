@@ -13,6 +13,7 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.RoundingMode;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Price feed service using database.
@@ -127,8 +128,18 @@ public class PriceFeedService {
         return priceFeed;
     }
 
-    public void createPriceFeedIfNotExists(String pairId, String name, Integer decimals,
-                                           BigDecimal deviationPercentage, BigDecimal heartbeatHours) {
+    /**
+     * Create price feed in database if not existed. If existed, just log and ignore it.
+     *
+     * @param pairId              Token pair Id.(also struct name in Move lang contract)
+     * @param name                Token pair name.
+     * @param decimals            decimals.
+     * @param deviationPercentage If price change greater than this deviation, update on-chain.
+     * @param heartbeatHours      heartbeat interval in hours.
+     * @param chainlinkProxy      Chainlink proxy contract address.
+     */
+    public void createPriceFeedIfNotExists(String pairId, String name, Integer decimals, BigDecimal deviationPercentage,
+                                           BigDecimal heartbeatHours, String chainlinkProxy) {
         PriceFeed priceFeed = priceFeedRepository.findById(pairId).orElse(null);
         if (priceFeed == null) {
             priceFeed = new PriceFeed();
@@ -137,11 +148,20 @@ public class PriceFeedService {
             priceFeed.setDecimals(decimals);
             priceFeed.setDeviationPercentage(deviationPercentage);
             priceFeed.setHeartbeatHours(heartbeatHours);
+            priceFeed.setChainlinkProxy(chainlinkProxy);
             priceFeed.setCreatedAt(System.currentTimeMillis());
             priceFeed.setCreatedBy("ADMIN");
             priceFeed.setUpdatedAt(priceFeed.getCreatedAt());
             priceFeed.setUpdatedBy(priceFeed.getCreatedBy());
         } else {
+            LOG.info("Price feed '" + pairId + "' existed, settings in database is not updated really.");
+            if (decimals != null && !Objects.equals(priceFeed.getDecimals(), decimals))
+                LOG.info("Try update decimals, but failed.");
+            if (deviationPercentage != null && deviationPercentage.compareTo(priceFeed.getDeviationPercentage()) != 0)
+                LOG.info("Try update decimals, but failed.");
+            //priceFeed.setHeartbeatHours(heartbeatHours);
+            if (chainlinkProxy != null && chainlinkProxy.compareTo(priceFeed.getChainlinkProxy()) != 0)
+                LOG.info("ry update chainlink proxy, but failed.");
             priceFeed.setUpdatedAt(System.currentTimeMillis());
             priceFeed.setUpdatedBy("ADMIN");
         }
@@ -166,8 +186,7 @@ public class PriceFeedService {
                 .orElseThrow(() -> new RuntimeException("CANNOT get STC price."));
         BigDecimal stcToUsd = new BigDecimal(stcUsdPF.getLatestPrice())
                 .divide(BigDecimal.TEN.pow(stcUsdPF.getDecimals()), 18, RoundingMode.HALF_UP);
-        BigDecimal ethToStc = ethToUsd.divide(stcToUsd, 18, RoundingMode.HALF_UP);
-        return ethToStc;
+        return ethToUsd.divide(stcToUsd, 18, RoundingMode.HALF_UP);
     }
 
 

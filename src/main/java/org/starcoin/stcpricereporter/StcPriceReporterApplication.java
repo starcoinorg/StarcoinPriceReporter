@@ -42,7 +42,7 @@ public class StcPriceReporterApplication {
 		BigDecimal heartbeatHours = BigDecimal.valueOf(StcPriceAggregator.StcPriceCache.HEARTBEAT_SECONDS)
 				.divide(BigDecimal.valueOf(60 * 60), 3, RoundingMode.HALF_UP);
 		priceFeedService.createPriceFeedIfNotExists(pairId, "STC / USD", StcUsdOracleType.PRICE_PRECISION,
-				deviationPercentage, heartbeatHours);
+				deviationPercentage, heartbeatHours, null);
 		//		System.out.println(priceFeedService.getEthToStcExchangeRate());
 		//		System.out.println(priceFeedService.getWeiToNanoStcExchangeRate());
 	}

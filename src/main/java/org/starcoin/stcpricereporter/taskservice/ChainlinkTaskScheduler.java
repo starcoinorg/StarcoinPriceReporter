@@ -69,7 +69,7 @@ public class ChainlinkTaskScheduler implements SchedulingConfigurer {
             // ///////////////////////////////
             String pairId = p.getMoveTokenPairName(); // Pair Id. in database!
             priceFeedService.createPriceFeedIfNotExists(pairId, p.getPair(), p.getDecimals(),
-                    p.getDeviationPercentage(), p.getHeartbeatHours());
+                    p.getDeviationPercentage(), p.getHeartbeatHours(), p.getProxy());
             // ///////////////////////////////
             ChainlinkPriceUpdateTask chainlinkPriceUpdateTask = new ChainlinkPriceUpdateTask(ethereumHttpServiceUrl, p.getPair(), p.getProxy(),
                     p.getDecimals(),

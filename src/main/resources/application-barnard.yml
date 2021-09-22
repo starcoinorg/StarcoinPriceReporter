@@ -1,13 +1,11 @@
 starcoin:
-  chain-id: ${STARCOIN_CHAIN_ID}
-  rpc-url: ${STARCOIN_RPC_URL}
   stc-price-reporter:
     # bixin-task-cron: 1/5 * * * * ?
     # coinex-task-cron: 1/5 * * * * ?
     # gateio-task-cron: 1/10 * * * * ?
-    bixin-task-fixed-delay: 30000
-    coinex-task-fixed-delay: 30000
-    gateio-task-fixed-delay: 30000
+    bixin-task-fixed-delay: 60000
+    coinex-task-fixed-delay: 60000
+    gateio-task-fixed-delay: 60000
 
 #  sender-address: '0x07fa08a855753f0ff7292fdcbe871216'
 #  sender-private-key: ${STARCOIN_SENDER_PRIVATE_KEY}

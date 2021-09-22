@@ -1,6 +1,4 @@
 starcoin:
-  chain-id: ${STARCOIN_CHAIN_ID}
-  rpc-url: ${STARCOIN_RPC_URL}
   stc-price-reporter:
     # bixin-task-cron: 1/5 * * * * ?
     # coinex-task-cron: 1/5 * * * * ?

@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: starcoin-pricereporter
+  name: starcoin-pricereporter
+spec:
+  ports:
+  - port: 80
+    name: http
+    protocol: TCP
+    targetPort: 8686
+  selector:
+    app: starcoin-pricereporter
+  type: LoadBalancer
+status:
+  loadBalancer: {}

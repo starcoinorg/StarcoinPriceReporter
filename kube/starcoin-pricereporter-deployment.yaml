@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: starcoin-pricereporter-deployment
+  labels:
+    app: starcoin-pricereporter
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: starcoin-pricereporter
+  template:
+    metadata:
+      labels:
+        app: starcoin-pricereporter
+    spec:
+      containers:
+      - name: starcoin-pricereporter
+        image: ghcr.io/starcoinorg/starcoin_pricereporter:sha-bb70bd1
+        ports:
+        - containerPort: 8686
+        env:
+        - name: spring_profiles_active
+          value: prod
+        - name: STARCOIN_MYSQL_URL
+          value: "jdbc:mysql://starcoin-db-2.c0bz9kehdvnb.ap-northeast-1.rds.amazonaws.com:3306/price_oracle?useUnicode=true&characterEncoding=utf-8&serverTimezone=UTC"
+        - name: STARCOIN_MYSQL_USER
+          value: "starcoin"
+        - name: STARCOIN_MYSQL_PWD
+          valueFrom:
+            secretKeyRef:
+              name: mysql-pwd
+              key: password
+        - name: STARCOIN_NETWORK
+          value: "main"
+        - name: STARCOIN_RPC_URL
+          value: "https://main-seed.starcoin.org"
+        - name: STARCOIN_CHAIN_ID
+          value: "1"
+        - name: STARCOIN_SENDER_PRIVATE_KEY
+          valueFrom:
+            secretKeyRef:
+              name: barnard-pricereporter-sender-secret
+              key: privatekey
+              # todo change to main network PK...

@@ -36,6 +36,11 @@ public class StcPriceReporterController {
         return priceFeedService.getPriceFeed(pairId);
     }
 
+    @GetMapping("toUsdPriceFeeds")
+    public List<PriceFeed> getToUsdPriceFeeds(@RequestParam("t") List<String> tokenIds) {
+        return priceFeedService.findToUsdPriceFeedsByTokenIdIn(tokenIds);
+    }
+
     @GetMapping("getProximatePriceRound")
     public PriceRoundView getProximatePriceRound(@RequestParam("pairId") String pairId, @RequestParam("timestamp") Long timestamp) {
         return priceRoundService.getProximatePriceRound(pairId, timestamp);

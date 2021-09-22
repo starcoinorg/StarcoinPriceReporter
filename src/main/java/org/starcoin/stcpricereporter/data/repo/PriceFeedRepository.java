@@ -12,4 +12,7 @@ public interface PriceFeedRepository extends JpaRepository<PriceFeed, String> {
     int countByOnChainStatusIn(String[] statuses);
 
     List<PriceFeed> findByOnChainStatusInAndUpdatedAtLessThanOrderByUpdatedAt(String[] statuses, Long updatedBefore);
+
+    List<PriceFeed> findByPairIdIn(List<String> tokenPairIds);
+
 }

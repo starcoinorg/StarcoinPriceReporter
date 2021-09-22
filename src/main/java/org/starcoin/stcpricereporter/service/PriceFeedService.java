@@ -12,6 +12,7 @@ import javax.transaction.Transactional;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.RoundingMode;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -69,6 +70,21 @@ public class PriceFeedService {
 
     public PriceFeed getPriceFeed(String pairId) {
         return priceFeedRepository.findById(pairId).orElse(null);
+    }
+
+    public List<PriceFeed> findToUsdPriceFeedsByTokenIdIn(List<String> tokenIds) {
+        List<String> tokenPairIds = new ArrayList<>();
+        for (String t : tokenIds) {
+            tokenPairIds.add(getToUsdPairId(t));
+        }
+        return priceFeedRepository.findByPairIdIn(tokenPairIds);
+    }
+
+    public String getToUsdPairId(String tokenId) {
+        if ("STC".equals(tokenId)) {//todo confg?
+            return StcUsdOracleType.STC_USD_ORALCE_TYPE_STRUCT_NAME;
+        }
+        return tokenId + "_USD";
     }
 
     /**

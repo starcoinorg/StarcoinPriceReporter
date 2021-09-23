@@ -7,13 +7,16 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.starcoin.stcpricereporter.data.model.PriceGrowth;
 import org.starcoin.stcpricereporter.data.model.PriceRound;
-import org.starcoin.stcpricereporter.data.model.PriceRoundView;
 import org.starcoin.stcpricereporter.data.repo.PriceGrowthRepository;
 import org.starcoin.stcpricereporter.data.repo.PriceRoundRepository;
+import org.starcoin.stcpricereporter.vo.PriceAverage;
+import org.starcoin.stcpricereporter.vo.PriceRoundView;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.RoundingMode;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 @Service
@@ -93,4 +96,46 @@ public class PriceRoundService {
                 < Math.abs(priceRounds.get(1).getUpdatedAt().longValue() - timestamp)
                 ? priceRounds.get(0) : priceRounds.get(1);
     }
+
+    public List<PriceAverage> getPriceAverages(List<String> pairIds, Long afterTimestamp, Long beforeTimestamp) {
+        List<PriceRound> priceRounds = priceRoundRepository.findByPairIdInAndUpdatedAtGreaterThanEqualAndUpdatedAtLessThanOrderByPairId(
+                pairIds, afterTimestamp, beforeTimestamp);
+        List<PriceAverage> priceAverages = new ArrayList<>();
+        String pId = null;
+        List<PriceRound> prs = new ArrayList<>();
+        for (int i = 0; i < priceRounds.size(); i++) {
+            PriceRound pr = priceRounds.get(i);
+            if (!pr.getPairId().equals(pId) && prs.size() > 0) {
+                priceAverages.add(getPriceAverage(prs));
+                prs.clear();
+            }
+            prs.add(pr);
+            pId = pr.getPairId();
+            if (i == priceRounds.size() - 1) {
+                priceAverages.add(getPriceAverage(prs));
+            }
+        }
+        return priceAverages;
+    }
+
+    private PriceAverage getPriceAverage(List<PriceRound> priceRounds) {
+        priceRounds.sort(Comparator.comparing(PriceRound::getPrice));
+        int skip = Math.max(0, ((priceRounds.size() + 1) / 2) - 1);
+        int limit = 1 + (1 + priceRounds.size()) % 2;
+        BigInteger sum = BigInteger.ZERO;
+        BigInteger median = BigInteger.ZERO;
+        for (int i = 0; i < priceRounds.size(); i++) {
+            PriceRound pr = priceRounds.get(i);
+            sum = sum.add(pr.getPrice());
+            if (i >= skip && i < skip + limit) {
+                median = median.add(pr.getPrice());
+            }
+        }
+        PriceAverage priceAverage = new PriceAverage();
+        priceAverage.setPairId(priceRounds.get(0).getPairId());
+        priceAverage.setMean(sum.divide(BigInteger.valueOf(priceRounds.size())));
+        priceAverage.setMedian(median.divide(BigInteger.valueOf(limit)));
+        return priceAverage;
+    }
+
 }

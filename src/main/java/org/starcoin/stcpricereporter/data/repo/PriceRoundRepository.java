@@ -5,7 +5,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.starcoin.stcpricereporter.data.model.PriceRound;
 import org.starcoin.stcpricereporter.data.model.PriceRoundId;
-import org.starcoin.stcpricereporter.data.model.PriceRoundView;
+import org.starcoin.stcpricereporter.vo.PriceRoundView;
 
 import java.util.List;
 
@@ -14,6 +14,8 @@ public interface PriceRoundRepository extends JpaRepository<PriceRound, PriceRou
     PriceRound findFirstByPairIdAndUpdatedAtGreaterThanOrderByUpdatedAt(String pairId, Long afterTimestamp);
 
     PriceRound findFirstByPairIdAndUpdatedAtLessThanOrderByUpdatedAtDesc(String pairId, Long beforeTimestamp);
+
+    List<PriceRound> findByPairIdInAndUpdatedAtGreaterThanEqualAndUpdatedAtLessThanOrderByPairId(List<String> pairIds, Long afterTimestamp, Long beforeTimestamp);
 
     @Query(value = "(SELECT \n" +
             "    r.pair_id as pairId, r.round_id as roundId, r.price as price, r.updated_at as updatedAt, f.pair_name as pairName, f.decimals as decimals \n" +

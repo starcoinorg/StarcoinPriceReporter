@@ -17,3 +17,7 @@ spec:
             backend:
               serviceName: "starcoin-pricereporter"
               servicePort: 80
+          - path: /barnard/*
+            backend:
+              serviceName: "starcoin-pricereporter-barnard"
+              servicePort: 80

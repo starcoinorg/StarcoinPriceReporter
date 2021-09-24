@@ -1,0 +1,19 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: "starcoin-pricereporter-ingress"
+#  namespace: "default"
+  annotations:
+    kubernetes.io/ingress.class: alb
+    alb.ingress.kubernetes.io/scheme: internet-facing
+    alb.ingress.kubernetes.io/target-type: ip
+  labels:
+    app: starcoin-pricereporter
+spec:
+  rules:
+    - http:
+        paths:
+          - path: /main/*
+            backend:
+              serviceName: "starcoin-pricereporter"
+              servicePort: 80

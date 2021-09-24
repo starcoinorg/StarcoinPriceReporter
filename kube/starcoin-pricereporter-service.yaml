@@ -12,6 +12,4 @@ spec:
     targetPort: 8686
   selector:
     app: starcoin-pricereporter
-  type: LoadBalancer
-status:
-  loadBalancer: {}
+  type: ClusterIP

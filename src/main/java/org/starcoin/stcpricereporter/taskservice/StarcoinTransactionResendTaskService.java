@@ -9,6 +9,8 @@ import org.springframework.stereotype.Component;
 import org.starcoin.stcpricereporter.data.model.PriceFeed;
 import org.starcoin.stcpricereporter.data.repo.PriceFeedRepository;
 import org.starcoin.stcpricereporter.service.OnChainManager;
+import org.starcoin.stcpricereporter.vo.PriceOracleType;
+import org.starcoin.stcpricereporter.vo.StcUsdOracleType;
 
 import java.math.BigInteger;
 import java.util.List;

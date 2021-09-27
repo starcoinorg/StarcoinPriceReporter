@@ -6,7 +6,7 @@ import com.novi.serde.Int128;
 import com.novi.serde.SerializationError;
 import com.novi.serde.Unsigned;
 import org.starcoin.bean.TypeObj;
-import org.starcoin.stcpricereporter.taskservice.PriceOracleType;
+import org.starcoin.stcpricereporter.vo.PriceOracleType;
 import org.starcoin.types.*;
 
 import java.math.BigInteger;

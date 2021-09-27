@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.starcoin.stcpricereporter.chainlink.PriceFeedRecord;
 import org.starcoin.stcpricereporter.service.OnChainManager;
 import org.starcoin.stcpricereporter.service.PriceFeedService;
+import org.starcoin.stcpricereporter.vo.PriceOracleType;
 
 import java.io.BufferedReader;
 import java.io.IOException;

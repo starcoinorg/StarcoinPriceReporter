@@ -1,6 +1,6 @@
 package org.starcoin.stcpricereporter.service;
 
-import org.starcoin.stcpricereporter.taskservice.PriceOracleType;
+import org.starcoin.stcpricereporter.vo.PriceOracleType;
 
 import java.math.BigInteger;
 import java.util.Map;

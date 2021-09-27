@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.starcoin.stcpricereporter.model.AggregatorV3Interface;
 import org.starcoin.stcpricereporter.service.OnChainManager;
 import org.starcoin.stcpricereporter.utils.DateTimeUtils;
+import org.starcoin.stcpricereporter.vo.PriceOracleType;
 import org.web3j.crypto.Credentials;
 import org.web3j.protocol.Web3j;
 import org.web3j.protocol.http.HttpService;

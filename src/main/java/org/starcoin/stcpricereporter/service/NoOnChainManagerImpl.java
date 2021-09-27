@@ -5,7 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
-import org.starcoin.stcpricereporter.taskservice.PriceOracleType;
+import org.starcoin.stcpricereporter.vo.PriceOracleType;
 
 import java.math.BigInteger;
 import java.util.Map;

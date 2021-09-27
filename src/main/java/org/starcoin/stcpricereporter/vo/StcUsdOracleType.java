@@ -1,4 +1,4 @@
-package org.starcoin.stcpricereporter.taskservice;
+package org.starcoin.stcpricereporter.vo;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;

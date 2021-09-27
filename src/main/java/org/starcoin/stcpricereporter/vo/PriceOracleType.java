@@ -1,4 +1,4 @@
-package org.starcoin.stcpricereporter.taskservice;
+package org.starcoin.stcpricereporter.vo;
 
 public class PriceOracleType {
     private String moduleAddress;

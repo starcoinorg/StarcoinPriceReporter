@@ -12,7 +12,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.starcoin.stcpricereporter.service.PriceFeedService;
 import org.starcoin.stcpricereporter.service.OnChainManager;
 import org.starcoin.stcpricereporter.taskservice.StcPriceAggregator;
-import org.starcoin.stcpricereporter.taskservice.StcUsdOracleType;
+import org.starcoin.stcpricereporter.vo.StcUsdOracleType;
 import springfox.documentation.oas.annotations.EnableOpenApi;
 
 import java.math.BigDecimal;

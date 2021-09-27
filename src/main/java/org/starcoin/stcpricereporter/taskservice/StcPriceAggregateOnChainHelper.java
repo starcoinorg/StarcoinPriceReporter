@@ -3,6 +3,7 @@ package org.starcoin.stcpricereporter.taskservice;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.starcoin.stcpricereporter.service.OnChainManager;
+import org.starcoin.stcpricereporter.vo.StcUsdOracleType;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;

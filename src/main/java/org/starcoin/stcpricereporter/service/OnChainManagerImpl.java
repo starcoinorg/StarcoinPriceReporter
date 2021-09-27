@@ -10,9 +10,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
-import org.starcoin.stcpricereporter.taskservice.PriceOracleType;
 import org.starcoin.stcpricereporter.utils.JsonRpcUtils;
 import org.starcoin.stcpricereporter.utils.OnChainTransactionUtils;
+import org.starcoin.stcpricereporter.vo.PriceOracleType;
 import org.starcoin.types.AccountAddress;
 import org.starcoin.types.Ed25519PrivateKey;
 import org.starcoin.types.TransactionPayload;
@@ -68,6 +68,12 @@ public class OnChainManagerImpl implements OnChainManager {
 
     private static boolean indicatesSuccess(Map<String, Object> responseObj) {
         return !responseObj.containsKey("error");// && (responseObj.containsKey("result") && null != responseObj.getJSONObject("result"));
+    }
+
+    public static String getTypeArgString(PriceOracleType priceOracleType) {
+        return priceOracleType.getModuleAddress()
+                + "::" + priceOracleType.getModuleName()
+                + "::" + priceOracleType.getStructName();
     }
 
     @Override
@@ -129,12 +135,6 @@ public class OnChainManagerImpl implements OnChainManager {
                 Collections.singletonList(getTypeArgString(priceOracleType)),
                 Collections.singletonList(senderAddressHex));
         return new BigInteger(((List<Object>) resultObj).get(0).toString());
-    }
-
-    private String getTypeArgString(PriceOracleType priceOracleType) {
-        return priceOracleType.getModuleAddress()
-                + "::" + priceOracleType.getModuleName()
-                + "::" + priceOracleType.getStructName();
     }
 
     /**

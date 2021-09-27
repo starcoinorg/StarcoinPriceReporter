@@ -3,10 +3,10 @@ package org.starcoin.stcpricereporter;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.starcoin.stcpricereporter.vo.PriceRoundView;
 import org.starcoin.stcpricereporter.data.repo.PriceRoundRepository;
 import org.starcoin.stcpricereporter.service.OnChainManager;
-import org.starcoin.stcpricereporter.taskservice.PriceOracleType;
+import org.starcoin.stcpricereporter.vo.PriceOracleType;
+import org.starcoin.stcpricereporter.vo.PriceRoundView;
 
 import java.math.BigInteger;
 import java.util.List;

@@ -69,13 +69,15 @@ public class ChainlinkTaskScheduler implements SchedulingConfigurer {
         for (PriceFeedRecord p : priceFeedRecords) {
             // ///////////////////////////////
             String pairId = p.getMoveTokenPairName(); // Pair Id. in database!
-            priceFeedService.createPriceFeedIfNotExists(pairId, p.getPair(), p.getDecimals(),
+            String pairName = p.getPair();
+            priceFeedService.createPriceFeedIfNotExists(pairId, pairName, p.getDecimals(),
                     p.getDeviationPercentage(), p.getHeartbeatHours(), p.getProxy());
             // ///////////////////////////////
-            ChainlinkPriceUpdateTask chainlinkPriceUpdateTask = new ChainlinkPriceUpdateTask(ethereumHttpServiceUrl, p.getPair(), p.getProxy(),
+            PriceOracleType priceOracleType = getPriceOracleType(p.getMoveTokenPairName());
+            ChainlinkPriceUpdateTask chainlinkPriceUpdateTask = new ChainlinkPriceUpdateTask(ethereumHttpServiceUrl, pairName, p.getProxy(),
                     p.getDecimals(),
                     this.onChainManager,
-                    getPriceOracleType(p.getMoveTokenPairName()));
+                    priceOracleType);
             taskRegistrar.getScheduler().schedule(chainlinkPriceUpdateTask,//() -> scheduleFixed(),
                     t -> {
                         Calendar nextExecutionTime = new GregorianCalendar();

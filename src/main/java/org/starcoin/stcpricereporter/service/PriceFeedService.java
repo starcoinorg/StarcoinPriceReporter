@@ -22,6 +22,7 @@ import java.util.List;
 public class PriceFeedService {
     public static final String PAIR_ID_STC_USD = StcUsdOracleType.STC_USD_ORALCE_TYPE_STRUCT_NAME;
     public static final String PAIR_ID_ETH_USD = "ETH_USD";
+    public static final String PAIR_NAME_STC_USD = "STC / USD";
     private static final BigDecimal ETH_TO_WEI = BigDecimal.TEN.pow(18);
     private static final BigDecimal STC_TO_NANOSTC = BigDecimal.TEN.pow(9);
     private static final int DATABASE_HEARTBEAT_SECONDS = 60;

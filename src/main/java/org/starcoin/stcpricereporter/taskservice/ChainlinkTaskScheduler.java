@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.starcoin.stcpricereporter.chainlink.PriceFeedRecord;
 import org.starcoin.stcpricereporter.service.OnChainManager;
 import org.starcoin.stcpricereporter.service.PriceFeedService;
+import org.starcoin.stcpricereporter.service.PricePairService;
 import org.starcoin.stcpricereporter.vo.PriceOracleType;
 
 import java.io.BufferedReader;
@@ -51,6 +52,9 @@ public class ChainlinkTaskScheduler implements SchedulingConfigurer {
     @Autowired
     private PriceFeedService priceFeedService;
 
+    @Autowired
+    private PricePairService pricePairService;
+
     @Bean
     public TaskScheduler poolScheduler() {
         ThreadPoolTaskScheduler scheduler = new ThreadPoolTaskScheduler();
@@ -74,6 +78,8 @@ public class ChainlinkTaskScheduler implements SchedulingConfigurer {
                     p.getDeviationPercentage(), p.getHeartbeatHours(), p.getProxy());
             // ///////////////////////////////
             PriceOracleType priceOracleType = getPriceOracleType(p.getMoveTokenPairName());
+            pricePairService.createOrUpdatePricePair(pairId, pairName, priceOracleType, p.getDecimals());
+            // ///////////////////////////////
             ChainlinkPriceUpdateTask chainlinkPriceUpdateTask = new ChainlinkPriceUpdateTask(ethereumHttpServiceUrl, pairName, p.getProxy(),
                     p.getDecimals(),
                     this.onChainManager,

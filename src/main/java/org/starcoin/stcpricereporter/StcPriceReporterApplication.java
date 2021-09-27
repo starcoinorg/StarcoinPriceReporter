@@ -11,6 +11,7 @@ import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.starcoin.stcpricereporter.service.OnChainManager;
 import org.starcoin.stcpricereporter.service.PriceFeedService;
+import org.starcoin.stcpricereporter.service.PricePairService;
 import org.starcoin.stcpricereporter.taskservice.StcPriceAggregator;
 import org.starcoin.stcpricereporter.vo.StcUsdOracleType;
 import springfox.documentation.oas.annotations.EnableOpenApi;
@@ -31,6 +32,9 @@ public class StcPriceReporterApplication {
     @Autowired
     private OnChainManager onChainManager;
 
+    @Autowired
+    private PricePairService pricePairService;
+
     public static void main(String[] args) {
         SpringApplication.run(StcPriceReporterApplication.class, args);
     }
@@ -46,8 +50,8 @@ public class StcPriceReporterApplication {
                 deviationPercentage, heartbeatHours, null);
         //		System.out.println(priceFeedService.getEthToStcExchangeRate());
         //		System.out.println(priceFeedService.getWeiToNanoStcExchangeRate());
+        pricePairService.createOrUpdatePricePair(pairId, pairName, StcUsdOracleType.INSTANCE, StcUsdOracleType.PRICE_PRECISION);
     }
-
 
     @EventListener(ApplicationReadyEvent.class)
     void initStarcoinTransactionSenderAccount() {

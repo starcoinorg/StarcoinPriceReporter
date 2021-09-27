@@ -4,11 +4,13 @@ import io.swagger.annotations.Api;
 import org.springframework.web.bind.annotation.*;
 import org.starcoin.stcpricereporter.data.model.PriceFeed;
 import org.starcoin.stcpricereporter.data.model.PriceGrowth;
-import org.starcoin.stcpricereporter.vo.PriceAverage;
-import org.starcoin.stcpricereporter.vo.PriceRoundView;
+import org.starcoin.stcpricereporter.data.model.PricePair;
 import org.starcoin.stcpricereporter.service.PriceFeedService;
 import org.starcoin.stcpricereporter.service.PriceGrowthService;
+import org.starcoin.stcpricereporter.service.PricePairService;
 import org.starcoin.stcpricereporter.service.PriceRoundService;
+import org.starcoin.stcpricereporter.vo.PriceAverage;
+import org.starcoin.stcpricereporter.vo.PriceRoundView;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -27,6 +29,9 @@ public class StcPriceReporterController {
     @Resource
     private PriceGrowthService priceGrowthService;
 
+    @Resource
+    private PricePairService pricePairService;
+
     @GetMapping("priceFeeds")
     public List<PriceFeed> getPriceFeeds() {
         return priceFeedService.getPriceFeeds();
@@ -35,6 +40,11 @@ public class StcPriceReporterController {
     @GetMapping("priceFeeds/{pairId}")
     public PriceFeed getPriceFeed(@PathVariable("pairId") String pairId) {
         return priceFeedService.getPriceFeed(pairId);
+    }
+
+    @GetMapping("pricePairs")
+    public List<PricePair> getPricePairs() {
+        return pricePairService.getPricePairs();
     }
 
     @GetMapping("toUsdPriceFeeds")

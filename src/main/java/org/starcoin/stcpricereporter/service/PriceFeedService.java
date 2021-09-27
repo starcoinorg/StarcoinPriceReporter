@@ -80,7 +80,7 @@ public class PriceFeedService {
         return priceFeedRepository.findByPairIdIn(tokenPairIds);
     }
 
-    public String getToUsdPairId(String tokenId) {
+    private String getToUsdPairId(String tokenId) {
         if ("STC".equals(tokenId)) {//todo confg?
             return StcUsdOracleType.STC_USD_ORALCE_TYPE_STRUCT_NAME;
         }

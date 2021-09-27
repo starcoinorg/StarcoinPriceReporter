@@ -1,5 +1,7 @@
 package org.starcoin.stcpricereporter.service;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.starcoin.stcpricereporter.data.model.PricePair;
@@ -7,9 +9,11 @@ import org.starcoin.stcpricereporter.data.repo.PricePairRepository;
 import org.starcoin.stcpricereporter.vo.PriceOracleType;
 
 import java.util.List;
+import java.util.Objects;
 
 @Service
 public class PricePairService {
+    private static final Logger LOG = LoggerFactory.getLogger(PricePairService.class);
 
     @Autowired
     private PricePairRepository pricePairRepository;
@@ -26,8 +30,15 @@ public class PricePairService {
             pricePair.setCreatedBy("admin");
             pricePair.setUpdatedAt(pricePair.getCreatedAt());
             pricePair.setUpdatedBy(pricePair.getCreatedBy());
-        } else {
-            //todo update price pair info in database.
+        } else if (!Objects.equals(pricePair.getOnChainStructType(), priceOracleType.toMoveStructType())
+                || !Objects.equals(pricePair.getPairName(), pairName)
+                || !Objects.equals(pricePair.getDecimals(), decimals)) {
+            if (LOG.isInfoEnabled()) LOG.info("Update price pair info. Pair Id: " + pairId);
+            pricePair.setPairName(pairName);
+            pricePair.setOnChainStructType(priceOracleType.toMoveStructType());
+            pricePair.setDecimals(decimals);
+            pricePair.setUpdatedAt(System.currentTimeMillis());
+            pricePair.setUpdatedBy("admin");
         }
         pricePairRepository.save(pricePair);
     }

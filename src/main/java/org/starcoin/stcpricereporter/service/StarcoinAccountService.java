@@ -19,7 +19,7 @@ public class StarcoinAccountService {
      * Reset account sequence number in database. If account is not existed in database, create it.
      */
     @Transactional
-    public void resetSequenceNumber(String address, BigInteger txnCount) {
+    public void resetSequenceNumber(String address, BigInteger seqNumber) {
         StarcoinAccount starcoinAccount = starcoinAccountRepository.findById(address).orElse(null);
         if (starcoinAccount == null) {
             starcoinAccount = new StarcoinAccount();
@@ -27,8 +27,8 @@ public class StarcoinAccountService {
             starcoinAccount.setCreatedBy("ADMIN");
             starcoinAccount.setCreatedAt(System.currentTimeMillis());
         }
-        starcoinAccount.setConfirmedSequenceNumber(txnCount.subtract(BigInteger.ONE));
-        starcoinAccount.setSequenceNumber(txnCount);
+        starcoinAccount.setConfirmedSequenceNumber(seqNumber.subtract(BigInteger.ONE));
+        starcoinAccount.setSequenceNumber(seqNumber);
         starcoinAccount.setUpdatedBy("ADMIN");
         starcoinAccount.setUpdatedAt(System.currentTimeMillis());
         starcoinAccountRepository.save(starcoinAccount);

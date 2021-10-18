@@ -1,6 +1,8 @@
-# Starcoin Price Reporter
+# Starcoin Token Pair Price Reporter(Price Oracle Off-Chain Application)
 
-本应用提供 STC 兑美元及其他若干币对（Token Pair）的价格信息。
+本应用是 Starcoin 币对价格 Oracle 的链下服务组件。
+
+应用可以提供 STC 兑美元及其他若干币对（Token Pair）的价格信息。
 
 ## 链下 RESTful API
 
@@ -109,9 +111,11 @@ https://price-api.starcoin.org/barnard/v1/toUsdPriceFeeds?t=STC&t=BTC
 
 注意：本方法仅简单地通过拼接 Token Id 以及 `USD` 或 `_USD` 得到 Pair Id，然后以该 pairId 查询币对的价格信息。
 
-## 链上合约
+## 链上接口（Move 合约）
 
-Starcoin 链上存在 Price Oracle 模块（Move 合约）用于读取币对（Token Pair）价格信息。 可以使用此方法读取链上的币对价格：
+本应用会将币对价格写入 Starcoin 链上合约。
+
+Starcoin 链上存在用于读取币对（Token Pair）价格信息的 Price Oracle 模块。 可以使用此方法读取已经上链的币对价格：
 
 ```text
 0x00000000000000000000000000000001::PriceOracle::read
@@ -141,7 +145,7 @@ STC / USD 币对的 Oarcle Type 为：
 
 ### 当前主网上的 Oracle Types
 
-【即将发布……】
+【即将部署……】
 
 ## 代码说明
 

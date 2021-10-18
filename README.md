@@ -70,7 +70,7 @@ https://price-api.starcoin.org/barnard/v1/priceGrowths?p=STCUSD&p=ETH_USD&p=BTC_
 请求 URL 示例：
 
 ```url
-https://price-api.starcoin.org/main/v1/getPriceAverages?p=BTC_USD&p=STCUSD&after=1632720000000&before=1632729164168
+https://price-api.starcoin.org/barnard/v1/getPriceAverages?p=BTC_USD&p=STCUSD&after=1632720000000&before=1632729164168
 ```
 
 查询参数：
@@ -100,7 +100,7 @@ https://price-api.starcoin.org/barnard/v1/exchangeRates/WEI_NANOSTC
 请求 URL 示例：
 
 ```url
-https://price-api.starcoin.org/main/v1/toUsdPriceFeeds?t=STC&t=BTC
+https://price-api.starcoin.org/barnard/v1/toUsdPriceFeeds?t=STC&t=BTC
 ```
 
 查询参数：
@@ -153,7 +153,7 @@ Chainlink Price Feeds 合约地址见：https://docs.chain.link/docs/reference-c
 
 ### 部署及运行应用
 
-目前应用使用 CSV 文件保存以太坊上的 Chainlink Price Feeds 的信息（在 `src/main/resources/EthereumPriceFeeds-Mainnet.csv`）。
+目前应用使用 CSV 资源文件保存以太坊上的 Chainlink Price Feeds 的信息（在 `src/main/resources/EthereumPriceFeeds-Mainnet.csv`）。
 
 可以编辑 CSV 文件，然后从 CSV 文件生成 Starcoin 需要的代币对类型（Oracle Type）的 Move 代码，以及可以通过 Starcoin Console 部署 Move 代码、注册价格 Oracle 的脚本。
 

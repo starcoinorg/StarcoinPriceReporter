@@ -36,6 +36,7 @@ public class PriceFeedService {
 
     /**
      * Try update price in database, swallow unexpected error.
+     * This method implemented a sync lock using database, only the node updated DB successfully do On-Chain updating.
      *
      * @param pairId token pair Id.
      * @param price  current price.

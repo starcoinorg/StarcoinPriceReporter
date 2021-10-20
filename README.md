@@ -12,7 +12,7 @@
 
 ### 获取可提供价格的币对列表
 
-获取当前可以提供价格的币对的列表，发送 HTTP GET 请求到 URL：
+获取当前可以提供价格的币对的列表，HTTP GET 请求的 URL 示例：
 
 ```url
 https://price-api.starcoin.org/barnard/v1/pricePairs
@@ -20,19 +20,19 @@ https://price-api.starcoin.org/barnard/v1/pricePairs
 
 ### 获取币对价格 Feed
 
-发送 HTTP GET 请求到 URL：
+获取币对价格，HTTP GET 请求的 URL 示例：
 
 ```url
 https://price-api.starcoin.org/barnard/v1/priceFeeds/{pairId}
 ```
 
-路径参数：
+路径参数（示例代码中以花括号包裹的是参数，按实际需要填写）：
 
 * pairId：币对 Id。支持的的币对 Id 可见「获取可提供价格的币对列表」接口。
 
 ### 获取币对价格 Feed 列表
 
-发送 HTTP GET 请求到 URL：
+获取币对价格 feed，HTTP GET 请求 URL 示例：
 
 ```url
 https://price-api.starcoin.org/barnard/v1/priceFeeds
@@ -141,11 +141,21 @@ STC / USD 币对的 Oarcle Type 为：
 0x07fa08a855753f0ff7292fdcbe871216::{pairId}::{pairId}
 ```
 
-`{pairId}` 为 BTC_USD、ETH_USD 等。
+上面的占位符 `{pairId}` 指的是可获取价格的币对 Id（即 `BTC_USD`、`ETH_USD` 等）。
 
 ### 当前主网上的 Oracle Types
 
-【即将部署……】
+STC / USD 币对的 Oarcle Type 为：
+
+```
+0x00000000000000000000000000000001::STCUSDOracle::STCUSD
+```
+
+其他 Token Pair 的 Oracle Type 统一格式为：
+
+```
+0x82e35b34096f32c42061717c06e44a59::{pairId}::{pairId}
+```
 
 ## 代码说明
 

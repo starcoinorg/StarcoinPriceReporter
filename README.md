@@ -161,7 +161,7 @@ STC / USD 币对的 Oarcle Type 为：
 
 ### 价格来源
 
-本应用将三个交易所的 STC 价格（进行聚合后），以及以太坊链上（由 Chainlink 提供的）代币对价格上报到 Starcoin 网络上的 Oracle 合约。
+本应用将三个交易所的 STC 价格（进行聚合后），以及以太坊链上（由 Chainlink 提供的）币对价格上报到 Starcoin 网络上的 Oracle Move 合约。
 
 Chainlink Price Feeds 合约地址见：https://docs.chain.link/docs/reference-contracts/
 
@@ -169,13 +169,13 @@ Chainlink Price Feeds 合约地址见：https://docs.chain.link/docs/reference-c
 
 目前应用使用 CSV 资源文件保存以太坊上的 Chainlink Price Feeds 的信息（在 `src/main/resources/EthereumPriceFeeds-Mainnet.csv`）。
 
-可以编辑 CSV 文件，然后从 CSV 文件生成 Starcoin 需要的代币对类型（Oracle Type）的 Move 代码，以及可以通过 Starcoin Console 部署 Move 代码、注册价格 Oracle 的脚本。
+可以编辑 CSV 文件，然后从 CSV 文件生成链上注册价格 Oracle 所需要的币对类型（Oracle Type）的 Move 代码，以及可以通过 Starcoin Console 部署 Move 代码、注册价格 Oracle 的脚本。
 
-所生成的 Starcoin 链上的代币对类型的模块名以及结构名从 CSV 中的 Pair 列生成，生成逻辑在 `PriceFeedRecord.getMoveTokenPairName()`。
+所生成的 Starcoin 链上的币对类型的模块名称以及结构（struct）名称从 CSV 中的 Pair 列的值生成，生成逻辑见代码 `PriceFeedRecord.getMoveTokenPairName()`。
 
-然后通过 Starcoin Console 执行脚本。
+编译生成的币对类型 Move 代码，然后可通过 Starcoin Console 执行生成的部署脚本（或者其他 Move 部署工具）将币对类型（`.mv`）代码部署到链上。
 
-运行应用。
+检查、修改应用的其他设置项，运行应用。
 
 ### 应用依赖的链上价格 Oracle 接口
 

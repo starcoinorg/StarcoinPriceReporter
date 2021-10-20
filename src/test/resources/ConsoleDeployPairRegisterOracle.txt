@@ -1,16 +1,16 @@
 
-dev deploy storage/0x07fa08a855753f0ff7292fdcbe871216/modules/BTC_USD.mv -b
-account execute-function -s 0x07fa08a855753f0ff7292fdcbe871216 --function 0x01::PriceOracleScripts::register_oracle -t 0x07fa08a855753f0ff7292fdcbe871216::BTC_USD::BTC_USD --arg 8u8 -b
+dev deploy storage/0x82e35b34096f32c42061717c06e44a59/modules/BTC_USD.mv -b
+account execute-function -s 0x82e35b34096f32c42061717c06e44a59 --function 0x01::PriceOracleScripts::register_oracle -t 0x82e35b34096f32c42061717c06e44a59::BTC_USD::BTC_USD --arg 8u8 -b
 
-dev deploy storage/0x07fa08a855753f0ff7292fdcbe871216/modules/ETH_USD.mv -b
-account execute-function -s 0x07fa08a855753f0ff7292fdcbe871216 --function 0x01::PriceOracleScripts::register_oracle -t 0x07fa08a855753f0ff7292fdcbe871216::ETH_USD::ETH_USD --arg 8u8 -b
+dev deploy storage/0x82e35b34096f32c42061717c06e44a59/modules/ETH_USD.mv -b
+account execute-function -s 0x82e35b34096f32c42061717c06e44a59 --function 0x01::PriceOracleScripts::register_oracle -t 0x82e35b34096f32c42061717c06e44a59::ETH_USD::ETH_USD --arg 8u8 -b
 
-dev deploy storage/0x07fa08a855753f0ff7292fdcbe871216/modules/LINK_USD.mv -b
-account execute-function -s 0x07fa08a855753f0ff7292fdcbe871216 --function 0x01::PriceOracleScripts::register_oracle -t 0x07fa08a855753f0ff7292fdcbe871216::LINK_USD::LINK_USD --arg 8u8 -b
+dev deploy storage/0x82e35b34096f32c42061717c06e44a59/modules/LINK_USD.mv -b
+account execute-function -s 0x82e35b34096f32c42061717c06e44a59 --function 0x01::PriceOracleScripts::register_oracle -t 0x82e35b34096f32c42061717c06e44a59::LINK_USD::LINK_USD --arg 8u8 -b
 
-dev deploy storage/0x07fa08a855753f0ff7292fdcbe871216/modules/SUSHI_USD.mv -b
-account execute-function -s 0x07fa08a855753f0ff7292fdcbe871216 --function 0x01::PriceOracleScripts::register_oracle -t 0x07fa08a855753f0ff7292fdcbe871216::SUSHI_USD::SUSHI_USD --arg 8u8 -b
+dev deploy storage/0x82e35b34096f32c42061717c06e44a59/modules/SUSHI_USD.mv -b
+account execute-function -s 0x82e35b34096f32c42061717c06e44a59 --function 0x01::PriceOracleScripts::register_oracle -t 0x82e35b34096f32c42061717c06e44a59::SUSHI_USD::SUSHI_USD --arg 8u8 -b
 
-dev deploy storage/0x07fa08a855753f0ff7292fdcbe871216/modules/UNI_USD.mv -b
-account execute-function -s 0x07fa08a855753f0ff7292fdcbe871216 --function 0x01::PriceOracleScripts::register_oracle -t 0x07fa08a855753f0ff7292fdcbe871216::UNI_USD::UNI_USD --arg 8u8 -b
+dev deploy storage/0x82e35b34096f32c42061717c06e44a59/modules/UNI_USD.mv -b
+account execute-function -s 0x82e35b34096f32c42061717c06e44a59 --function 0x01::PriceOracleScripts::register_oracle -t 0x82e35b34096f32c42061717c06e44a59::UNI_USD::UNI_USD --arg 8u8 -b
 

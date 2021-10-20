@@ -40,6 +40,6 @@ spec:
         - name: STARCOIN_SENDER_PRIVATE_KEY
           valueFrom:
             secretKeyRef:
-              name: barnard-pricereporter-sender-secret
+              name: pricereporter-sender-secret
               key: privatekey
-              # todo change to main network PK...
+

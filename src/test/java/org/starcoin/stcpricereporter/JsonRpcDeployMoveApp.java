@@ -19,6 +19,7 @@ import org.starcoin.utils.StarcoinClient;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.Reader;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
@@ -30,13 +31,14 @@ import static org.starcoin.stcpricereporter.chainlink.utils.CsvUtils.readCsvPric
 @SpringBootTest
 public class JsonRpcDeployMoveApp {
 
+    // 目前只是用来读取链上的状态
     @Autowired
     private OnChainManager onChainManager;
 
     @Test
     public void testDeploy() {
         String csvFilePath = "src/main/resources/EthereumPriceFeeds-Mainnet.csv";
-        String mvFileBasePath = "/Users/yangjiefeng/Documents/wubuku/StcPriceReporter/src/test/move/storage/0x07fa08a855753f0ff7292fdcbe871216/modules";
+        String mvFileBasePath = "/Users/yangjiefeng/Documents/wubuku/StcPriceReporter/src/test/move/storage/0x82e35b34096f32c42061717c06e44a59/modules";
 
         Reader in;
         try {
@@ -49,12 +51,20 @@ public class JsonRpcDeployMoveApp {
                 .stream().filter(f -> f.getEnabled() != null && f.getEnabled()).collect(Collectors.toList());
         System.out.println(priceFeedRecords);
 
-        ChainInfo chainInfo = ChainInfo.DEFAULT_BARNARD;
+        //ChainInfo chainInfo = ChainInfo.DEFAULT_BARNARD;//使用 barnard 网络！
+        ChainInfo chainInfo = new ChainInfo(
+                System.getenv("STARCOIN_NETWORK"),
+                System.getenv("STARCOIN_RPC_URL"),
+                Integer.parseInt(System.getenv("STARCOIN_CHAIN_ID"))
+        );
         StarcoinClient starcoinClient = new StarcoinClient(chainInfo);
 //        if (args.length < 1) {
 //            throw new IllegalArgumentException("Please enter account private key");
 //        }
         String firstPrivateKeyArg = System.getenv("STARCOIN_SENDER_PRIVATE_KEY");//args[0];
+        if (firstPrivateKeyArg == null || firstPrivateKeyArg.isEmpty()) {
+            throw new RuntimeException("Private key is null!");
+        }
 
         int i = 0;
         for (PriceFeedRecord p : priceFeedRecords) {
@@ -62,11 +72,14 @@ public class JsonRpcDeployMoveApp {
 //                continue; // ignore!!!
 //            }
             Path mvFilePath = Paths.get(mvFileBasePath, p.getMoveTokenPairName() + ".mv");
-            AccountAddress sender = AccountAddressUtils.create("0x07fa08a855753f0ff7292fdcbe871216");
+            if (!Files.exists(mvFilePath)) {
+                throw new RuntimeException("File not exists: " + mvFilePath);
+            }
+            AccountAddress sender = AccountAddressUtils.create("0x82e35b34096f32c42061717c06e44a59");
             Ed25519PrivateKey privateKey = SignatureUtils.strToPrivateKey(firstPrivateKeyArg);
             boolean isModuleResolved;
             try {
-                Object resolvedModuleInfo = onChainManager.resolveModule("0x07fa08a855753f0ff7292fdcbe871216" + "::" + p.getMoveTokenPairName());
+                Object resolvedModuleInfo = onChainManager.resolveModule("0x82e35b34096f32c42061717c06e44a59" + "::" + p.getMoveTokenPairName());
                 isModuleResolved = resolvedModuleInfo != null;
                 System.out.println("Module is resolved: " + p.getMoveTokenPairName());
             } catch (RuntimeException e) {
@@ -91,7 +104,7 @@ public class JsonRpcDeployMoveApp {
 
             if (isModuleResolved) {
                 System.out.println("Register oracle for: " + p.getMoveTokenPairName());
-                PriceOracleType priceOracleType = new PriceOracleType("0x07fa08a855753f0ff7292fdcbe871216", p.getMoveTokenPairName(), p.getMoveTokenPairName());
+                PriceOracleType priceOracleType = new PriceOracleType("0x82e35b34096f32c42061717c06e44a59", p.getMoveTokenPairName(), p.getMoveTokenPairName());
                 TransactionPayload transactionPayload = OnChainTransactionUtils.buildPriceOracleRegisterTransaction(
                         OnChainTransactionUtils.toTypeTag(priceOracleType),
                         p.getDecimals().byteValue(),
@@ -103,6 +116,9 @@ public class JsonRpcDeployMoveApp {
                     Map<String, Object> transactionInfo = waitTransactionInfo(p, transactionHash);
                     if (transactionInfo == null) {
                         System.out.println("Register oracle NOT return transactionInfo: " + p.getMoveTokenPairName());
+                        continue;
+                    } else {
+                        //ok
                         continue;
                     }
                 } catch (RuntimeException runtimeException) {

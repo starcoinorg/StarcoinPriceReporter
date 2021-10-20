@@ -25,7 +25,7 @@ public class PriceFeedService {
     public static final String PAIR_NAME_STC_USD = "STC / USD";
     private static final BigDecimal ETH_TO_WEI = BigDecimal.TEN.pow(18);
     private static final BigDecimal STC_TO_NANOSTC = BigDecimal.TEN.pow(9);
-    private static final int DATABASE_HEARTBEAT_SECONDS = 60;
+    private static final int MAX_NODE_TIME_DIFFERENCE_SECONDS = 60;
     private static final Logger LOG = LoggerFactory.getLogger(PriceFeedService.class);
 
     @Autowired
@@ -65,6 +65,21 @@ public class PriceFeedService {
         }
     }
 
+    /**
+     * Check if update DB is needed.
+     *
+     * @param priceFeed        priceFeed in database
+     * @param currentPrice     current price
+     * @param currentTimestamp current timestamp
+     * @return true if udpate is needed
+     */
+    private static boolean needUpdateLatestPrice(PriceFeed priceFeed, BigInteger currentPrice, Long currentTimestamp) {
+        return priceFeed.getLatestPrice() == null
+                || priceFeed.getLatestPrice().compareTo(currentPrice) != 0
+                // latestPrice in DB == current price, maybe another node updated it.
+                || priceFeed.getUpdatedAt() != null && currentTimestamp - priceFeed.getUpdatedAt() > 1000 * MAX_NODE_TIME_DIFFERENCE_SECONDS;
+    }
+
     public List<PriceFeed> getPriceFeeds() {
         return priceFeedRepository.findAll();
     }
@@ -91,17 +106,15 @@ public class PriceFeedService {
     /**
      * Try update price in database.
      *
-     * @param pairId
-     * @param price
-     * @return If database not need to update, return false. Else return true.
+     * @param pairId token pair Id.
+     * @param price  current price
+     * @return If database not need to update, return false, else update it and return true.
      */
     @Transactional
     public boolean tryUpdatePrice(String pairId, BigInteger price, BigInteger roundId, Long updatedAt,
                                   Long startedAt, BigInteger answeredInRound) {
         PriceFeed priceFeed = assertPriceFeed(pairId);
-        if (priceFeed.getLatestPrice() == null
-                || priceFeed.getLatestPrice().compareTo(price) != 0
-                || priceFeed.getUpdatedAt() != null && updatedAt - priceFeed.getUpdatedAt() > 1000 * DATABASE_HEARTBEAT_SECONDS) {
+        if (needUpdateLatestPrice(priceFeed, price, updatedAt)) {
             priceFeed.setLatestPrice(price);
             priceFeed.onChainStatusUpdating();
             priceFeed.setUpdatedAt(updatedAt);

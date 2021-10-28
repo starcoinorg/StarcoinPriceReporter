@@ -123,11 +123,11 @@ Starcoin 链上存在用于读取币对（Token Pair）价格信息的 Price Ora
 
 Starcoin Java SDK 对该方法进行了封装（`StarcoinClient.priceOracleRead`）。
 
-读取价格信息需传入币对价格的 Oracle Type 作为 TypeArg 参数。
+读取价格信息需传入币对价格的 Oracle Type 作为 TypeArg 参数。另外需要使用价格的写入地址作为参数。
 
 币对价格的 Oracle Type 信息（地址、模块、名称）可见「获取可提供价格的币对列表」接口。
 
-链上读取价格 Scaling Factor 的方法：
+链上读取价格 Scaling Factor（10 的价格小数位次方）的方法：
 
 ```text
 0x00000000000000000000000000000001::PriceOracle::get_scaling_factor
@@ -153,9 +153,9 @@ STC / USD 币对的 Oarcle Type 为：
 
 ### 当前主网上的 Oracle Types
 
-STC / USD 币对的 Oarcle Type 为：
-
 主网上的 Oracle 币对价格写入地址：`0x82e35b34096f32c42061717c06e44a59`。
+
+主网 STC / USD 币对的 Oarcle Type 为：
 
 ```
 0x00000000000000000000000000000001::STCUSDOracle::STCUSD

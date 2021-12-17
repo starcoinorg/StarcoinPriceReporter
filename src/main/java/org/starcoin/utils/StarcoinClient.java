@@ -30,6 +30,7 @@ import org.starcoin.bean.TypeObj;
 import org.starcoin.stdlib.Helpers;
 import org.starcoin.types.*;
 import org.starcoin.types.TransactionPayload.ScriptFunction;
+import org.starcoin.types.Module;
 
 import java.io.File;
 import java.math.BigInteger;

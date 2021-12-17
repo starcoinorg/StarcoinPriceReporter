@@ -145,13 +145,13 @@
 					</pathPrefixes>
 				</configuration>
 				<executions>
-					<execution>
-						<id>generate-sources-web3j</id>
-						<phase>generate-sources</phase>
-						<goals>
-							<goal>generate-sources</goal>
-						</goals>
-					</execution>
+<!--					<execution>-->
+<!--						<id>generate-sources-web3j</id>-->
+<!--						<phase>generate-sources</phase>-->
+<!--						<goals>-->
+<!--							<goal>generate-sources</goal>-->
+<!--						</goals>-->
+<!--					</execution>-->
 				</executions>
 			</plugin>
 

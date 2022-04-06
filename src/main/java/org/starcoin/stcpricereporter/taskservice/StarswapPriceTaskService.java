@@ -64,6 +64,11 @@ public class StarswapPriceTaskService {
                 } catch (RuntimeException runtimeException) {
                     LOG.error("Update " + pairId + " price in DB error.", runtimeException);
                 }
+                try {
+                    priceFeedService.setOnChainStatusNoOnChain(pairId);
+                } catch (RuntimeException runtimeException) {
+                    LOG.info("Update on-chain status in database caught runtime error. PairId: " + pairId, runtimeException);
+                }
             } else {
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("Not need to update {} price in DB, {} = {}", pairId, starswapPriceCache.getPrice(), price);

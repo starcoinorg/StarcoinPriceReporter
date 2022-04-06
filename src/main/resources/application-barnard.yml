@@ -14,6 +14,13 @@ starcoin:
 # ethereum:
 #   http-service-url: https://mainnet.infura.io/v3/72637bfa15a940dcadcec25a6fe0fca1
 
+spring:
+  flyway:
+    enabled: true # 启用或禁用 flyway，生产状态一般情况下应该是启用
+
+  jpa:
+    show-sql: false
+    
 
 logging:
   level:

@@ -46,7 +46,7 @@ public class StcPriceReporterApplication {
         BigDecimal deviationPercentage = StcPriceAggregator.StcPriceCache.DEVIATION_PERCENTAGE;
         BigDecimal heartbeatHours = BigDecimal.valueOf(StcPriceAggregator.StcPriceCache.HEARTBEAT_SECONDS)
                 .divide(BigDecimal.valueOf(60 * 60), 3, RoundingMode.HALF_UP);
-        priceFeedService.createPriceFeedIfNotExists(pairId, pairName, StcUsdOracleType.PRICE_PRECISION,
+        priceFeedService.createPriceFeedIfNotExisted(pairId, pairName, StcUsdOracleType.PRICE_PRECISION,
                 deviationPercentage, heartbeatHours, null);
         //		System.out.println(priceFeedService.getEthToStcExchangeRate());
         //		System.out.println(priceFeedService.getWeiToNanoStcExchangeRate());

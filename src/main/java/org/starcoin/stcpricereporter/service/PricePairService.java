@@ -43,6 +43,26 @@ public class PricePairService {
         pricePairRepository.save(pricePair);
     }
 
+
+    public boolean createPricePairIfNotExisted(String pairId, String pairName, PriceOracleType priceOracleType, Integer decimals) {
+        PricePair pricePair = pricePairRepository.findById(pairId).orElse(null);
+        if (pricePair == null) {
+            pricePair = new PricePair();
+            pricePair.setPairId(pairId);
+            pricePair.setPairName(pairName);
+            pricePair.setOnChainStructType(priceOracleType.toMoveStructType());
+            pricePair.setDecimals(decimals);
+            pricePair.setCreatedAt(System.currentTimeMillis());
+            pricePair.setCreatedBy("admin");
+            pricePair.setUpdatedAt(pricePair.getCreatedAt());
+            pricePair.setUpdatedBy(pricePair.getCreatedBy());
+        } else {
+            return false;
+        }
+        pricePairRepository.save(pricePair);
+        return true;
+    }
+
     public List<PricePair> getPricePairs() {
         return pricePairRepository.findAll();
     }

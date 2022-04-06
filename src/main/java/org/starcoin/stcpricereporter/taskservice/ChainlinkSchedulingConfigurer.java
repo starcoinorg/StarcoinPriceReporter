@@ -74,7 +74,7 @@ public class ChainlinkSchedulingConfigurer implements SchedulingConfigurer {
             // ///////////////////////////////
             String pairId = p.getMoveTokenPairName(); // Pair Id. in database!
             String pairName = p.getPair();
-            priceFeedService.createPriceFeedIfNotExists(pairId, pairName, p.getDecimals(),
+            priceFeedService.createPriceFeedIfNotExisted(pairId, pairName, p.getDecimals(),
                     p.getDeviationPercentage(), p.getHeartbeatHours(), p.getProxy());
             // ///////////////////////////////
             PriceOracleType priceOracleType = getPriceOracleType(p.getMoveTokenPairName());

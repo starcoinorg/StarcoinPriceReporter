@@ -48,7 +48,7 @@ public class PriceFeedService {
         try {
             if (!priceFeedService.tryUpdatePrice(pairId, price, roundId, updatedAt, startedAt, answeredInRound)) {
                 if (LOG.isDebugEnabled()) {
-                    LOG.debug("Trying update database return false. Maybe no need to update or another process have updated it." + pairId + ": " + price);
+                    LOG.debug("Trying update database return false. Maybe no need to update or another process have updated it. " + pairId + ": " + price);
                 }
                 return false;
             } else {
@@ -71,7 +71,7 @@ public class PriceFeedService {
      * @param priceFeed        priceFeed in database
      * @param currentPrice     current price
      * @param currentTimestamp current timestamp
-     * @return true if udpate is needed
+     * @return true if update is needed
      */
     private static boolean needUpdateLatestPrice(PriceFeed priceFeed, BigInteger currentPrice, Long currentTimestamp) {
         return priceFeed.getLatestPrice() == null
@@ -168,8 +168,8 @@ public class PriceFeedService {
      * @param heartbeatHours      heartbeat interval in hours.
      * @param chainlinkProxy      Chainlink proxy contract address.
      */
-    public void createPriceFeedIfNotExists(String pairId, String name, Integer decimals, BigDecimal deviationPercentage,
-                                           BigDecimal heartbeatHours, String chainlinkProxy) {
+    public void createPriceFeedIfNotExisted(String pairId, String name, Integer decimals, BigDecimal deviationPercentage,
+                                            BigDecimal heartbeatHours, String chainlinkProxy) {
         PriceFeed priceFeed = priceFeedRepository.findById(pairId).orElse(null);
         if (priceFeed == null) {
             priceFeed = new PriceFeed();

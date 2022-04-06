@@ -28,9 +28,9 @@ import static org.starcoin.stcpricereporter.chainlink.utils.CsvUtils.readCsvPric
 
 
 @Service
-public class ChainlinkTaskScheduler implements SchedulingConfigurer {
+public class ChainlinkSchedulingConfigurer implements SchedulingConfigurer {
 
-    private static final Logger LOG = LoggerFactory.getLogger(ChainlinkTaskScheduler.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ChainlinkSchedulingConfigurer.class);
 
     @Value("${ethereum.chainlink-task-scheduler.fixed-delay-seconds}")
     private final int fixedDelaySeconds = 60;

@@ -29,7 +29,7 @@ public class StarcoinTransactionResendTaskService {
     private OnChainManager onChainManager;
 
     @Autowired
-    private ChainlinkTaskScheduler chainlinkTaskScheduler;
+    private ChainlinkSchedulingConfigurer chainlinkSchedulingConfigurer;
 
     @Scheduled(fixedDelayString = "${starcoin.transaction-resend-task-service.fixed-delay}")
     public void task() {
@@ -63,7 +63,7 @@ public class StarcoinTransactionResendTaskService {
         if (pairId.equals(StcUsdOracleType.STC_USD_ORALCE_TYPE_STRUCT_NAME)) {
             return StcUsdOracleType.INSTANCE;
         }
-        return chainlinkTaskScheduler.getPriceOracleType(pairId);
+        return chainlinkSchedulingConfigurer.getPriceOracleType(pairId);
     }
 
 }

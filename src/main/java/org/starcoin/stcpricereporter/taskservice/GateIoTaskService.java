@@ -15,7 +15,6 @@ import org.starcoin.stcpricereporter.service.OnChainManager;
 import java.math.BigDecimal;
 import java.util.List;
 
-import static org.starcoin.stcpricereporter.taskservice.StcPriceAggregateOnChainHelper.tryUpdateStcPriceOnChain;
 
 @Component
 public class GateIoTaskService {
@@ -27,6 +26,9 @@ public class GateIoTaskService {
 
     @Autowired
     StcPriceAggregator stcPriceAggregator;
+
+    @Autowired
+    private StcPriceAggregateOnChainHelper stcPriceAggregateOnChainHelper;
 
     @Autowired
     private OnChainManager onChainManager;
@@ -69,7 +71,7 @@ public class GateIoTaskService {
         //System.out.println(decimalPrice);
         //System.out.println(DateTimeUtils.toDefaultZonedDateTime(dateTimeInMillis));
 
-        tryUpdateStcPriceOnChain(DATASOURCE_KEY, price, dateTimeInMillis / 1000,
+        stcPriceAggregateOnChainHelper.tryUpdateStcPriceOnChain(DATASOURCE_KEY, price, dateTimeInMillis / 1000,
                 this.stcPriceAggregator, this.onChainManager);
 
     }

@@ -183,20 +183,23 @@ public class PriceFeedService {
             priceFeed.setCreatedBy("ADMIN");
             priceFeed.setUpdatedAt(priceFeed.getCreatedAt());
             priceFeed.setUpdatedBy(priceFeed.getCreatedBy());
+            //priceFeed.setLatestPrice(price);
+            priceFeedRepository.save(priceFeed);
         } else {
-            LOG.info("Price feed '" + pairId + "' existed, settings in database is not updated really.");
-//            if (decimals != null && !Objects.equals(priceFeed.getDecimals(), decimals))
-//                LOG.info("Try update decimals, but failed.");
-//            if (deviationPercentage != null && !Objects.equals(deviationPercentage, priceFeed.getDeviationPercentage()))
-//                LOG.info("Try update decimals, but failed.");
-//            //priceFeed.setHeartbeatHours(heartbeatHours);
-//            if (chainlinkProxy != null && !Objects.equals(chainlinkProxy, priceFeed.getChainlinkProxy()))
-//                LOG.info("ry update chainlink proxy, but failed.");
-            priceFeed.setUpdatedAt(System.currentTimeMillis());
-            priceFeed.setUpdatedBy("ADMIN");
+            LOG.debug("Price feed '" + pairId + "' existed, settings in database is not updated really.");
+////            if (decimals != null && !Objects.equals(priceFeed.getDecimals(), decimals))
+////                LOG.info("Try update decimals, but failed.");
+////            if (deviationPercentage != null && !Objects.equals(deviationPercentage, priceFeed.getDeviationPercentage()))
+////                LOG.info("Try update decimals, but failed.");
+////            //priceFeed.setHeartbeatHours(heartbeatHours);
+////            if (chainlinkProxy != null && !Objects.equals(chainlinkProxy, priceFeed.getChainlinkProxy()))
+////                LOG.info("ry update chainlink proxy, but failed.");
+//            priceFeed.setUpdatedAt(System.currentTimeMillis());
+//            priceFeed.setUpdatedBy("ADMIN");
+//            //priceFeed.setLatestPrice(price);
+//            priceFeedRepository.save(priceFeed);
         }
-        //priceFeed.setLatestPrice(price);
-        priceFeedRepository.save(priceFeed);
+
     }
 
     /**

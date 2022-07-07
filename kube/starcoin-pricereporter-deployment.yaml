@@ -44,4 +44,6 @@ spec:
             secretKeyRef:
               name: pricereporter-sender-secret
               key: privatekey
+        - name: STC_USD_ROCK_BOTTOM_PRICE
+          value: "0.01"
 

@@ -10,6 +10,7 @@ starcoin:
     gateio-task-fixed-delay: 10000
 #  sender-address: '0x07fa08a855753f0ff7292fdcbe871216'
 #  sender-private-key: ${STARCOIN_SENDER_PRIVATE_KEY}
+  stc-usd-rock-bottom-price: 0.1
 
   starswap:
     get-token-to-usd-exchange-rate-url: https://swap-api.starswap.xyz/main/v1/getToUsdExchangeRate?t={tokenId}

@@ -12,7 +12,6 @@ import org.starcoin.stcpricereporter.service.OnChainManager;
 import java.math.BigDecimal;
 import java.util.Arrays;
 
-import static org.starcoin.stcpricereporter.taskservice.StcPriceAggregateOnChainHelper.tryUpdateStcPriceOnChain;
 
 @Component
 public class CoinExTaskService {
@@ -32,6 +31,9 @@ public class CoinExTaskService {
 
     @Autowired
     OnChainManager onChainManager;
+
+    @Autowired
+    private StcPriceAggregateOnChainHelper stcPriceAggregateOnChainHelper;
 
     //@Scheduled(cron = "${starcoin.stc-price-reporter.coinex-task-cron}")
     @Scheduled(fixedDelayString = "${starcoin.stc-price-reporter.coinex-task-fixed-delay}")
@@ -59,7 +61,7 @@ public class CoinExTaskService {
         //System.out.println(DateTimeUtils.toDefaultZonedDateTime(dateInMilliseconds));
         long dateInSeconds = latestTransactionsDataResponse.data[0].dateInSeconds;
 
-        tryUpdateStcPriceOnChain(DATASOURCE_KEY, price, dateInSeconds,
+        stcPriceAggregateOnChainHelper.tryUpdateStcPriceOnChain(DATASOURCE_KEY, price, dateInSeconds,
                 this.stcPriceAggregator, this.onChainManager);
     }
 
@@ -109,7 +111,7 @@ public class CoinExTaskService {
 
     /**
      * Return value description:
-     *
+     * <p>
      * name	type	description
      * id	Integer	Transaction No
      * date	Integer	Transaction time
@@ -118,7 +120,7 @@ public class CoinExTaskService {
      * price	String	Transaction price
      * type	String	buy; sell;
      */
-    public static class  LatestTransactionData {
+    public static class LatestTransactionData {
 
         private Long id;
 

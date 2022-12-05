@@ -1,4 +1,4 @@
-apiVersion: extensions/v1beta1
+apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: "starcoin-pricereporter-ingress"
@@ -14,10 +14,16 @@ spec:
     - http:
         paths:
           - path: /main/*
+            pathType: ImplementationSpecific
             backend:
-              serviceName: "starcoin-pricereporter"
-              servicePort: 80
+              service:
+                name: "starcoin-pricereporter"
+                port:
+                  number: 80
           - path: /barnard/*
+            pathType: ImplementationSpecific
             backend:
-              serviceName: "starcoin-pricereporter-barnard"
-              servicePort: 80
+              service:
+                name: "starcoin-pricereporter-barnard"
+                port:
+                  number: 80

@@ -24,3 +24,5 @@ hs_err_pid*
 src/test/move/alice
 src/test/move/build
 src/test/move/storage
+
+.idea/

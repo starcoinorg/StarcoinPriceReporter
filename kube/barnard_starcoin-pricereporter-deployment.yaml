@@ -25,7 +25,7 @@ spec:
         - name: FORMAT_MESSAGES_PATTERN_DISABLE_LOOKUPS
           value: "true"
         - name: STARCOIN_MYSQL_URL
-          value: "jdbc:mysql://starcoin-db-2.c0bz9kehdvnb.ap-northeast-1.rds.amazonaws.com:3306/price_oracle_barnard?useUnicode=true&characterEncoding=utf-8&serverTimezone=UTC"
+          value: "jdbc:mysql://starcoin-db-2.czftx6muneg7.ap-northeast-1.rds.amazonaws.com:3306/price_oracle_barnard?useUnicode=true&characterEncoding=utf-8&serverTimezone=UTC"
         - name: STARCOIN_MYSQL_USER
           value: "starcoin"
         - name: STARCOIN_MYSQL_PWD

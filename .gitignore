@@ -26,3 +26,4 @@ src/test/move/build
 src/test/move/storage
 
 .idea/
+target/

@@ -1,4 +1,4 @@
-FROM openjdk:8-jdk-alpine as build
+FROM eclipse-temurin:8-jdk-alpine AS build
 WORKDIR /workspace/app
 
 COPY mvnw .
@@ -8,7 +8,7 @@ COPY src src
 
 RUN --mount=type=cache,target=/root/.m2 ./mvnw install -DskipTests
 
-FROM openjdk:8-jdk-alpine
+FROM eclipse-temurin:8-jre-alpine
 # ARG STARCOIN_MYSQL_URL
 # ARG STARCOIN_MYSQL_USER
 # ARG STARCOIN_MYSQL_PWD

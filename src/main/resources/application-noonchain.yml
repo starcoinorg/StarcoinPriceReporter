@@ -1,9 +1,5 @@
 starcoin:
   on-chain-disabled: true
-  stc-price-reporter:
-    bixin-task-fixed-delay: 10000
-    coinex-task-fixed-delay: 10000
-    gateio-task-fixed-delay: 10000
   transaction-confirm-task-service:
     fixed-delay: 3000000
     confirm-Transaction-created-before-seconds: 30

@@ -29,13 +29,6 @@
 <!--		</dependency>-->
 
 		<dependency>
-			<groupId>io.gate</groupId>
-			<artifactId>gate-api</artifactId>
-			<version>6.21.5</version>
-			<scope>compile</scope>
-		</dependency>
-
-		<dependency>
 			<groupId>org.starcoin</groupId>
 			<artifactId>sdk</artifactId>
 			<version>1.1.18</version>

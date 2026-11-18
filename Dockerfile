@@ -6,7 +6,7 @@ COPY src src
 
 RUN --mount=type=cache,target=/root/.m2 mvn -B install -DskipTests
 
-FROM eclipse-temurin:8-jre-alpine
+FROM eclipse-temurin:8-jre
 # ARG STARCOIN_MYSQL_URL
 # ARG STARCOIN_MYSQL_USER
 # ARG STARCOIN_MYSQL_PWD
@@ -24,7 +24,7 @@ FROM eclipse-temurin:8-jre-alpine
 # ENV STARCOIN_ES_PORT=$STARCOIN_ES_PORT
 # ENV STARCOIN_ES_USER=$STARCOIN_ES_USER
 # ENV STARCOIN_ES_PWD=$STARCOIN_ES_PWD
-RUN addgroup -S starcoin && adduser -S starcoin -G starcoin
+RUN groupadd --system starcoin && useradd --system --gid starcoin starcoin
 VOLUME /tmp
 USER starcoin
 ARG DEPENDENCY=/workspace/app/target

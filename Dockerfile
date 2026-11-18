@@ -1,12 +1,10 @@
-FROM eclipse-temurin:8-jdk-alpine AS build
+FROM maven:3.9-eclipse-temurin-8 AS build
 WORKDIR /workspace/app
 
-COPY mvnw .
-COPY .mvn .mvn
 COPY pom.xml .
 COPY src src
 
-RUN --mount=type=cache,target=/root/.m2 ./mvnw install -DskipTests
+RUN --mount=type=cache,target=/root/.m2 mvn -B install -DskipTests
 
 FROM eclipse-temurin:8-jre-alpine
 # ARG STARCOIN_MYSQL_URL
